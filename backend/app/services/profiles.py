@@ -39,7 +39,7 @@ def completeness(p: dict) -> dict:
 
 def update_profile(db: Db, user_id: str, data: dict) -> None:
     scalar = {k: v for k, v in data.items() if k in {"full_name", "year", "branch", "experience_level", "availability_hrs", "open_to_team",
-                                                       "participation_pref", "location", "education_level", "preferred_format"}}
+                                                       "participation_pref", "location", "education_level", "preferred_format", "onboarding_completed"}}
     if scalar:
         sets = ", ".join(f"{k} = cast(:{k} as {t})" if (t := {"experience_level": "public.skill_level", "participation_pref": "public.participation_pref",
                                                              "preferred_format": "public.opportunity_format"}.get(k)) else f"{k} = :{k}" for k in scalar)

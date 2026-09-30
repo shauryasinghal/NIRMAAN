@@ -65,6 +65,8 @@ def build_where(f: dict, skip: str | None = None) -> tuple[str, dict]:
         where.append("(o.min_team_size is null or o.min_team_size <= :ts) and (o.max_team_size is null or o.max_team_size >= :ts)"); p["ts"] = int(f["team_size"])
     if f.get("verified") is True and skip != "verified":
         where.append("o.verification_status = 'verified'")
+    if f.get("changed_since_alert"):
+        where.append("greatest(o.created_at, o.updated_at) > coalesce(cast(:csa as timestamptz), '-infinity'::timestamptz)"); p["csa"] = f["changed_since_alert"] if f["changed_since_alert"] is not True else None
     if f.get("ids"):
         where.append("o.id = any(cast(:ids as uuid[]))"); p["ids"] = list(f["ids"])
     return " and ".join(where), p

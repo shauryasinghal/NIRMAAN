@@ -14,7 +14,8 @@ def test_profile_roundtrip_and_confirmed_vs_inferred_skills(client, student, svc
     assert r.status_code == 200, r.text
     p = r.json()
     assert p["skills"] == ["machine learning", "python"] and p["interests"] == ["AI/ML"] and p["completeness"]["complete"] is True
-    assert p["preferredFormat"] == "online" and p["location"] == "Mathura"
+    assert p["preferredFormat"] == "online" and p["location"] == "Mathura" and p["onboardingCompleted"] is True
+    assert client.get("/api/auth/me", headers=student.h).json()["onboardingCompleted"] is True
     # an inferred skill is stored separately and is NOT part of `skills`
     from app.services.profiles import add_inferred_skills
     with svc.tx() as db:

@@ -11,7 +11,7 @@ from .core.errors import install_error_handlers
 from .core.logging import configure_logging, get_logger
 from .core.middleware import GlobalRateLimitMiddleware, RequestContextMiddleware
 from .db.session import dispose_engine, open_db
-from .routers import auth, opportunities, profile
+from .routers import alerts, activity, applications, auth, notifications, opportunities, profile, saved
 
 VERSION = "1.0.0"
 log = get_logger("app")
@@ -27,7 +27,11 @@ def create_app() -> FastAPI:
         if s.preload_embedding_model:
             from .engines.originality import embedding_available
             embedding_available()
+        from .jobs.scheduler import make_scheduler
+        scheduler = make_scheduler(s.scheduler_enabled)
+        scheduler.start()
         yield
+        scheduler.stop()
         dispose_engine()
 
     app = FastAPI(
@@ -43,7 +47,7 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestContextMiddleware)
     install_error_handlers(app)
 
-    for r in (auth.router, profile.router, opportunities.router):
+    for r in (auth.router, profile.router, opportunities.router, saved.router, applications.router, notifications.router, activity.router, alerts.router, alerts.internal):
         app.include_router(r)
 
     @app.get("/health", tags=["ops"], summary="Liveness — process is up (no dependencies)")
