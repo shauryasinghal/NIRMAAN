@@ -100,7 +100,7 @@ def _session_active(db: Db, session_id: str, user_id: str) -> bool:
     key = f"{session_id}:{user_id}"
     hit = _session_cache.get(key)
     now = time.monotonic()
-    if hit and now - hit[0] < 15:
+    if hit and now - hit[0] < get_settings().session_cache_seconds:
         return hit[1]
     ok = bool(db.val("select private.session_is_active(cast(:s as uuid), cast(:u as uuid))", s=session_id, u=user_id))
     if len(_session_cache) > 5000:

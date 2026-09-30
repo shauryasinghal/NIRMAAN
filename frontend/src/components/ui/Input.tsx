@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type TextareaHTMLAttributes, forwardRef } from 'react'
+import { type InputHTMLAttributes, type TextareaHTMLAttributes, forwardRef, useId } from 'react'
 import clsx from 'clsx'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -8,7 +8,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className, id, name, ...rest }, ref) => {
-    const resolvedId = id ?? name
+    const auto = useId()
+    const resolvedId = id ?? name ?? auto
     return (
     <div className="w-full">
       {label && (
@@ -25,9 +26,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           error ? 'border-danger-500' : 'border-[var(--border)]',
           className,
         )}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${resolvedId}-error` : undefined}
         {...rest}
       />
-      {error && <p className="text-xs text-danger-500 mt-1">{error}</p>}
+      {error && <p id={`${resolvedId}-error`} className="text-xs text-danger-500 mt-1" role="alert">{error}</p>}
     </div>
     )
   },
@@ -41,7 +44,8 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, className, id, name, ...rest }, ref) => {
-    const resolvedId = id ?? name
+    const auto = useId()
+    const resolvedId = id ?? name ?? auto
     return (
     <div className="w-full">
       {label && (
@@ -58,9 +62,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           error ? 'border-danger-500' : 'border-[var(--border)]',
           className,
         )}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${resolvedId}-error` : undefined}
         {...rest}
       />
-      {error && <p className="text-xs text-danger-500 mt-1">{error}</p>}
+      {error && <p id={`${resolvedId}-error`} className="text-xs text-danger-500 mt-1" role="alert">{error}</p>}
     </div>
     )
   },

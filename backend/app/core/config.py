@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     supabase_jwt_secret: str = ""          # legacy HS256 projects and the test-suite only
     supabase_jwt_audience: str = "authenticated"
     session_check: bool = True             # reject tokens whose auth.sessions row was revoked
+    session_cache_seconds: int = 10        # how long a 'session is active' answer is cached (= worst-case delay before a sign-out takes effect)
 
     # ── HTTP surface ────────────────────────────────────────────────────────
     cors_origins: str = ""                 # comma separated; "*" is refused in production

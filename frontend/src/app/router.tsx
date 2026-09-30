@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
     { element: <PublicOnlyRoute />, children: [
       { path: '/login', element: S(<LoginPage />) }, { path: '/register', element: S(<RegisterPage />) }, { path: '/forgot-password', element: S(<ForgotPasswordPage />) },
     ] },
-    { element: <ProtectedRoute requireOnboarded={false} />, children: [{ path: '/onboarding', element: S(<OnboardingPage />) }] },
+    { element: <ProtectedRoute requireOnboarded={false} shell={false} />, children: [{ path: '/onboarding', element: S(<OnboardingPage />) }] },
     { element: <ProtectedRoute />, children: [
       { path: '/dashboard', ...P(DashboardPage) }, { path: '/opportunities', ...P(OpportunitiesPage) }, { path: '/opportunities/:id', ...P(OpportunityDetailPage) },
       { path: '/compare', ...P(ComparePage) }, { path: '/saved', ...P(SavedPage) }, { path: '/organizations', ...P(OrganizationsPage) }, { path: '/organizations/:slug', ...P(OrganizationDetailPage) },
