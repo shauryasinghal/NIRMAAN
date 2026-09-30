@@ -82,3 +82,12 @@ Content-Type is trusted from the client (no magic-byte check); full body read be
 11. Design-system pass, motion (+reduced motion), responsive (8 widths), a11y, perf.
 12. Tests: pytest (RLS/IDOR/JWT/upload/contracts), vitest, Playwright critical flows.
 13. README, `.env.example`, Vercel + backend host config; deployment claims only when verified.
+
+---
+
+## Resolution (added at the end of the build)
+
+Every P0/P1 item above is addressed; see [FEATURE_MATRIX.md](FEATURE_MATRIX.md) for per-feature status and evidence,
+[SECURITY.md](SECURITY.md) for the audit results, [EVALUATION.md](EVALUATION.md) for the AI engine measurements and
+[DEPLOYMENT.md](DEPLOYMENT.md) for what remains before go-live. Items intentionally not done: applying migrations to the
+hosted project (awaiting approval), real-source ingestion, live Google/Docker/CI verification.
