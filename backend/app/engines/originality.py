@@ -1,107 +1,126 @@
+"""Originality analysis: idea → 384-d MiniLM embedding → pgvector cosine search → explainable verdict.
+
+This module is the model + the decision logic. Vector search itself is a pgvector query (see
+services/originality.py). There is no keyword/TF-IDF stand-in: if the embedding model cannot load, the
+feature reports itself unavailable rather than inventing a score.
+
+Semantic similarity is a screening signal, NOT proof of plagiarism, and "no match" only ever means no
+significant match *in the current comparison corpus* — the wording below never claims an idea is "100% original".
 """
-Originality Checker — semantic similarity screening against a prior-idea corpus.
+from __future__ import annotations
 
-Pipeline: idea text -> embedding -> FAISS nearest-neighbour search -> novelty score
+import re
+import threading
+from typing import Protocol
 
-Embedding model fallback chain (documented, not silent):
-1. Sentence-BERT (`all-MiniLM-L6-v2`) if sentence-transformers + model weights
-   are available (needs one-time internet access to huggingface.co).
-2. TF-IDF vectors as a semantic-similarity-lite fallback, so the pipeline
-   still runs end-to-end offline. Swap step (1) back in by installing
-   sentence-transformers on a machine with internet — no other code changes.
+from ..core.logging import get_logger
 
-Vector search: FAISS `IndexFlatIP` over L2-normalized vectors — inner product
-on unit vectors is mathematically equivalent to cosine similarity, so this is
-a genuine nearest-neighbour search via FAISS, not just a label. Flat (exact,
-brute-force) index is the right choice at this corpus size; swap for an
-IVF/HNSW index only if the corpus grows into the tens of thousands.
-
-IMPORTANT: similarity is a screening signal, not proof of plagiarism.
-High-similarity cases are routed to human-in-the-loop review before any
-flag reaches the student (see routers/idea.py).
-"""
-import numpy as np
-import faiss
-from typing import List, Dict
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-try:
-    from sentence_transformers import SentenceTransformer
-    _MODEL = SentenceTransformer("all-MiniLM-L6-v2")
-    EMBEDDING_MODE = "sentence-bert"
-except Exception:
-    _MODEL = None
-    EMBEDDING_MODE = "tfidf-fallback"
-
-HIGH_SIMILARITY_THRESHOLD = 0.55  # above this -> human-in-the-loop review
+log = get_logger("originality")
+MODEL_TAG = "all-MiniLM-L6-v2"
+DISCLAIMER = "Semantic similarity is a screening signal, not proof of plagiarism."
 
 
-def _embed_all(texts: List[str]) -> np.ndarray:
-    if EMBEDDING_MODE == "sentence-bert":
-        vecs = _MODEL.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
-        vecs = np.ascontiguousarray(vecs.astype("float32"))
+class EmbeddingUnavailable(RuntimeError):
+    pass
+
+
+class Embedder(Protocol):
+    name: str
+    dim: int
+    def encode(self, texts: list[str]) -> list[list[float]]: ...
+
+
+class MiniLMEmbedder:
+    """Loaded once per process (lazily, thread-safe) — never per request."""
+    name, dim = MODEL_TAG, 384
+
+    def __init__(self, model_id: str = "sentence-transformers/all-MiniLM-L6-v2"):
+        self.model_id, self._model, self._lock = model_id, None, threading.Lock()
+
+    def _load(self):
+        if self._model is None:
+            with self._lock:
+                if self._model is None:
+                    try:
+                        from sentence_transformers import SentenceTransformer
+                        self._model = SentenceTransformer(self.model_id)
+                        log.info("embedding model loaded", extra={"event": "model_loaded", "source": self.model_id})
+                    except Exception as exc:  # missing package, no weights, no network …
+                        log.error("embedding model failed to load", extra={"event": "model_load_failed", "code": type(exc).__name__})
+                        raise EmbeddingUnavailable("The embedding model is not available on this server.") from exc
+        return self._model
+
+    def encode(self, texts: list[str]) -> list[list[float]]:
+        vecs = self._load().encode(texts, normalize_embeddings=True, convert_to_numpy=True, show_progress_bar=False)
+        return [v.tolist() for v in vecs]
+
+
+_embedder: Embedder | None = None
+
+
+def get_embedder() -> Embedder:
+    global _embedder
+    if _embedder is None:
+        from ..core.config import get_settings
+        _embedder = MiniLMEmbedder(get_settings().embedding_model)
+    return _embedder
+
+
+def set_embedder(e: Embedder | None) -> None:   # tests / alternative backends
+    global _embedder
+    _embedder = e
+
+
+def embedding_available() -> bool:
+    e = get_embedder()
+    try:
+        if isinstance(e, MiniLMEmbedder):
+            e._load()
+        return True
+    except EmbeddingUnavailable:
+        return False
+
+
+def idea_text(title: str, description: str) -> str:
+    return f"{title.strip()}. {description.strip()}"
+
+
+_STOP = set("a an the and or of to in on for with by from at as is are be this that it its into your our their using use based app platform system tool web mobile students student campus".split())
+
+
+def shared_terms(a: str, b: str, n: int = 6) -> list[str]:
+    tok = lambda t: {w for w in re.findall(r"[a-z][a-z0-9+#\-]{2,}", t.lower()) if w not in _STOP}
+    return sorted(tok(a) & tok(b))[:n]
+
+
+def classify(top: float | None, corpus_size: int, review_thr: float, related_thr: float) -> dict:
+    """Level, user-facing message and confidence — all derived from the top cosine similarity and corpus size."""
+    if top is None or corpus_size == 0:
+        return {"level": "no_corpus", "needsReview": False, "confidence": "low",
+                "label": "No comparison corpus available",
+                "message": "There is nothing to compare against yet, so no originality signal can be given. " + DISCLAIMER}
+    if top >= review_thr:
+        level, label, needs = "high_overlap", "Substantial semantic overlap", True
+        msg = "This idea is semantically very close to existing work and has been queued for human review."
+    elif top >= related_thr:
+        level, label, needs = "related_work", "Related prior work found", False
+        msg = "Related ideas exist in the corpus. A similar topic does not make an idea unoriginal — compare the matches below."
     else:
-        # TF-IDF fallback: fit on the full corpus so the query and corpus share a vocabulary
-        vec = TfidfVectorizer()
-        vecs = vec.fit_transform(texts).toarray()
-        vecs = np.ascontiguousarray(vecs.astype("float32"))
-        faiss.normalize_L2(vecs)  # so inner product == cosine similarity here too
-    return vecs
-
-
-def check_originality(idea_title: str, idea_description: str, corpus: List) -> Dict:
-    idea_text = f"{idea_title}. {idea_description}"
-
-    if not corpus:
-        return {
-            "noveltyScore": 100.0,
-            "topSimilarity": 0.0,
-            "status": "novel",
-            "matches": [],
-            "embeddingMode": EMBEDDING_MODE,
-            "searchBackend": "faiss",
-        }
-
-    corpus_texts = [f"{c.title}. {c.description}" for c in corpus]
-    all_texts = [idea_text] + corpus_texts
-    vectors = _embed_all(all_texts)
-
-    query_vec = vectors[0:1]
-    corpus_vecs = vectors[1:]
-
-    # Real FAISS nearest-neighbour search — not a brute-force sklearn fallback.
-    dim = corpus_vecs.shape[1]
-    index = faiss.IndexFlatIP(dim)
-    index.add(corpus_vecs)
-    k = min(5, corpus_vecs.shape[0])
-    sims, idxs = index.search(query_vec, k)
-    sims, idxs = sims[0], idxs[0]
-
-    matches = []
-    for score, i in zip(sims, idxs):
-        matches.append({
-            "id": corpus[i].id,
-            "title": corpus[i].title,
-            "description": corpus[i].description[:200],
-            "similarity": round(float(score) * 100, 1),
-            "source": corpus[i].source,
-        })
-
-    top_similarity = float(sims[0]) if len(sims) else 0.0
-    novelty_score = round((1 - top_similarity) * 100, 1)
-
-    if top_similarity >= HIGH_SIMILARITY_THRESHOLD:
-        status = "needs_review"
-    elif top_similarity >= 0.35:
-        status = "worth_reviewing"
+        level, label, needs = "no_significant_match", "No significant match found", False
+        msg = "No significant semantic match found in the current comparison corpus."
+    if corpus_size < 20:
+        confidence = "low"
+    elif top >= review_thr + 0.1 or top <= related_thr - 0.15:
+        confidence = "high"
     else:
-        status = "novel"
+        confidence = "medium"
+    return {"level": level, "needsReview": needs, "confidence": confidence, "label": label, "message": f"{msg} {DISCLAIMER}"}
 
+
+def overlap_dimensions(title: str, description: str, domain: str | None, match: dict, title_similarity: float | None) -> dict:
     return {
-        "noveltyScore": novelty_score,
-        "topSimilarity": round(top_similarity * 100, 1),
-        "status": status,
-        "matches": matches,
-        "embeddingMode": EMBEDDING_MODE,
-        "searchBackend": "faiss",
+        "semantic": round(match["similarity"], 3),
+        "title": None if title_similarity is None else round(title_similarity, 3),
+        "sameDomain": (domain == match.get("domain")) if domain and match.get("domain") else None,
+        "sharedTerms": shared_terms(f"{title} {description}", f"{match['title']} {match['description']}"),
     }
