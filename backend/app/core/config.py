@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     embedding_dim: int = 384
     similarity_review_threshold: float = 0.75   # cosine ≥ this → queued for human review
-    similarity_related_threshold: float = 0.55  # cosine ≥ this → "related work" flag
+    similarity_related_threshold: float = 0.45  # cosine ≥ this → "related work" flag (calibrated: docs/EVALUATION.md)
     preload_embedding_model: bool = False
 
     log_level: str = "INFO"

@@ -1,0 +1,284 @@
+{
+ "paraphrases": [
+  [
+   "Skill-based hackathon teammate finder",
+   "Teammate matcher for hackathons",
+   "A platform to find teammates for hackathons whose technical skills match or complement yours."
+  ],
+  [
+   "Recipe recommender using pantry items",
+   "Meal suggestions from what is already in your kitchen",
+   "An app that proposes dishes you can cook from the ingredients you already have at home."
+  ],
+  [
+   "Campus lost-and-found tracker",
+   "University lost item board",
+   "A website where students post and search for items they lost or found around the university."
+  ],
+  [
+   "AI resume screening tool",
+   "CV ranking against a job posting",
+   "Software that ranks candidate CVs against a job description using semantic similarity."
+  ],
+  [
+   "Peer-to-peer tutoring marketplace",
+   "Hire a fellow student as a tutor",
+   "A platform where students who need help in a subject can find and hire other students to tutor them."
+  ],
+  [
+   "Carbon footprint tracker for students",
+   "Daily emissions estimator for students",
+   "An app that estimates a student's daily emissions from how they travel and what they eat."
+  ],
+  [
+   "Mental wellness check-in chatbot",
+   "Conversational bot that asks students how they feel",
+   "A chatbot that regularly asks students how they are feeling and recommends support resources."
+  ],
+  [
+   "Expense splitting app for roommates",
+   "Dividing household costs between flatmates",
+   "A mobile tool for dividing shared household expenses between people who live together."
+  ],
+  [
+   "Attendance tracker with face recognition",
+   "Camera-based automatic class attendance",
+   "A classroom system that marks attendance automatically by recognising students' faces from a camera."
+  ],
+  [
+   "Second-hand textbook marketplace",
+   "Buy and sell used course books on campus",
+   "A campus marketplace where students buy and sell used course books to one another."
+  ],
+  [
+   "Carpooling app for campus commute",
+   "Ride sharing for students going to the same university",
+   "An app that pairs students travelling along similar routes to campus so they can share rides."
+  ],
+  [
+   "Internship application tracker",
+   "Keep track of internship applications and interview rounds",
+   "A dashboard for tracking internship applications, their deadlines and interview stages."
+  ],
+  [
+   "Plagiarism checker for assignment submissions",
+   "Detecting overlap between student assignments",
+   "A tool that flags textual overlap between submitted assignments and existing sources."
+  ],
+  [
+   "Volunteer hour tracking app",
+   "Log and verify volunteering hours for credit",
+   "An application to record and verify the hours students spend volunteering for community service credit."
+  ],
+  [
+   "Lab equipment booking system",
+   "Reserve time on shared laboratory instruments",
+   "A scheduler that lets students reserve time slots on shared laboratory equipment."
+  ],
+  [
+   "Scholarship eligibility matcher",
+   "Find scholarships you qualify for",
+   "A service that checks a student's profile against scholarships they are eligible to apply for."
+  ],
+  [
+   "Language exchange partner finder",
+   "Practice speaking each other's native language",
+   "An app that pairs students who want to practise speaking each other's native languages."
+  ],
+  [
+   "Campus safety SOS app",
+   "Emergency button that alerts campus security",
+   "An app with an emergency button that immediately alerts campus security and nearby friends."
+  ],
+  [
+   "Time-boxed focus session app",
+   "Pomodoro study timer with shared rooms",
+   "A Pomodoro-style focus timer with shared virtual study room sessions for students."
+  ],
+  [
+   "Lecture notes sharing and search",
+   "Searchable library of student lecture notes",
+   "A searchable repository of lecture notes shared by students and organised by course."
+  ],
+  [
+   "Cafeteria menu and crowd predictor",
+   "Forecast how busy the canteen will be",
+   "An app that predicts how crowded the cafeteria will be and shows today's menu."
+  ],
+  [
+   "Peer code review scheduler",
+   "Match students to review each other's code",
+   "A tool that matches students to review one another's code before submission deadlines."
+  ],
+  [
+   "Group project task tracker",
+   "Kanban board for student team projects",
+   "A lightweight Kanban-style tracker for student group project deadlines."
+  ],
+  [
+   "Alumni mentorship matching platform",
+   "Pair students with alumni mentors",
+   "A platform connecting current students with alumni mentors in similar career paths."
+  ]
+ ],
+ "unrelated": [
+  [
+   "Beehive acoustic health monitor",
+   "Low-power microphones and temperature sensors inside beehives streaming colony health indicators to beekeepers to prevent swarming and disease."
+  ],
+  [
+   "Underwater drone for coral reef surveys",
+   "A low-cost autonomous submersible that photographs coral reefs on a schedule and estimates bleaching from colour changes."
+  ],
+  [
+   "Braille 3D printing for textbooks",
+   "Converting diagrams in school textbooks into tactile 3D printed models for visually impaired students."
+  ],
+  [
+   "Wildfire smoke plume forecasting",
+   "Combining satellite imagery and wind data to forecast where wildfire smoke will travel over the next twelve hours."
+  ],
+  [
+   "Sign language translating glove",
+   "A sensor glove that recognises hand gestures and converts sign language into spoken words in real time."
+  ],
+  [
+   "Soil pH and moisture probe network",
+   "Wireless probes across a farm reporting soil acidity and moisture so fertiliser is applied only where needed."
+  ],
+  [
+   "Tidal energy buoy",
+   "A floating generator that converts the rise and fall of tides into electricity for coastal villages."
+  ],
+  [
+   "Museum augmented reality guide",
+   "Pointing a phone at an exhibit to overlay its history, restoration details and related artefacts."
+  ],
+  [
+   "Chess opening trainer",
+   "A spaced repetition trainer that drills the opening lines a player actually meets in their online games."
+  ],
+  [
+   "Step-free route planner for old city centres",
+   "Routing wheelchair users through historic districts using crowd-sourced data on kerbs, ramps and cobblestones."
+  ],
+  [
+   "E-waste collection drone",
+   "Drones that locate and collect discarded electronics from remote areas and carry them to recycling points."
+  ],
+  [
+   "Wearable particulate matter sensor",
+   "A clip-on device measuring the air pollution a person is exposed to along their daily route."
+  ],
+  [
+   "Bird song identification",
+   "Recording birdsong on a phone and identifying the species with a neural network trained on field recordings."
+  ],
+  [
+   "Spice supply chain provenance ledger",
+   "A shared ledger tracking spices from farm to shop to prove origin and prevent adulteration."
+  ],
+  [
+   "Automated bridge crack detection",
+   "Drones photographing bridge undersides and a vision model flagging cracks that need inspection."
+  ],
+  [
+   "Solar cooker with sun tracking",
+   "A parabolic cooker that rotates to follow the sun so households can cook without fuel."
+  ],
+  [
+   "Medication voice assistant for the elderly",
+   "A spoken reminder device that tells elderly patients which pills to take and alerts family if a dose is missed."
+  ],
+  [
+   "Cricket bowling action analysis",
+   "Using phone video and pose estimation to check a bowler's action for illegal elbow extension."
+  ],
+  [
+   "Fish freshness detector",
+   "A handheld sensor that judges how fresh a fish is from the colour of its eyes and gills."
+  ],
+  [
+   "Reinforcement learning traffic signals",
+   "Adaptive traffic light timings learned from live camera counts to reduce queueing at junctions."
+  ],
+  [
+   "Sanskrit manuscript OCR",
+   "Recognising handwritten Sanskrit manuscripts on palm leaves and producing searchable digital text."
+  ],
+  [
+   "Predictive maintenance for power looms",
+   "Vibration sensors that warn textile mill owners days before a loom bearing fails."
+  ],
+  [
+   "Rainwater harvesting dashboard",
+   "Showing households how much rain their roof collected and when their tank will run dry."
+  ],
+  [
+   "Seismic early warning for schools",
+   "Low-cost accelerometers that give schools a few seconds of warning before earthquake shaking arrives."
+  ]
+ ],
+ "hard_paraphrases": [
+  [
+   "Recipe recommender using pantry items",
+   "Culinary assistant for leftover groceries",
+   "Suggests dinners you could prepare from whatever groceries remain in your refrigerator."
+  ],
+  [
+   "Carpooling app for campus commute",
+   "Sharing vehicles among undergraduates",
+   "Undergraduates who travel along the same road to college share a vehicle to save fuel."
+  ],
+  [
+   "Campus lost-and-found tracker",
+   "Digital board for misplaced belongings",
+   "Reporting misplaced belongings and reuniting them with their owners at the institute."
+  ],
+  [
+   "Attendance tracker with face recognition",
+   "Automatic roll call from classroom footage",
+   "Roll call performed automatically by identifying learners biometrically from lecture hall video."
+  ],
+  [
+   "Second-hand textbook marketplace",
+   "Exchange for pre-owned reading material",
+   "A place for undergraduates to trade pre-owned academic reading material with each other."
+  ],
+  [
+   "Expense splitting app for roommates",
+   "Settling shared bills in a flat",
+   "Settling shared bills fairly among people who live in the same flat."
+  ],
+  [
+   "Mental wellness check-in chatbot",
+   "Virtual companion for emotional state",
+   "A virtual companion that periodically asks undergraduates about their emotional state and points them to help."
+  ],
+  [
+   "Scholarship eligibility matcher",
+   "Discovering financial aid you meet the criteria for",
+   "Discovering financial aid programmes whose criteria a learner satisfies."
+  ],
+  [
+   "Campus safety SOS app",
+   "Panic alert to university guards",
+   "A panic alert notifying university guards and close contacts during danger."
+  ],
+  [
+   "Lab equipment booking system",
+   "Timetable for borrowing scientific apparatus",
+   "A timetable for borrowing scientific apparatus in the college laboratories."
+  ],
+  [
+   "Internship application tracker",
+   "Organiser for placement applications",
+   "An organiser for placement applications showing closing dates and the stage of each selection process."
+  ],
+  [
+   "Skill-swap platform for students",
+   "Learners teaching one another abilities",
+   "Learners teaching one another different abilities in a mutual exchange."
+  ]
+ ]
+}
