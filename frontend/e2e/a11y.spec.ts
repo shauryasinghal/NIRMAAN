@@ -2,8 +2,11 @@ import type { Page } from '@playwright/test'
 import { test, expect, auth, AxeBuilder } from './support/fixtures'
 
 async function scan(page: Page, label: string) {
-  const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
-  const bad = r.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
+  const run = async () => (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()).violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
+  let bad = await run()
+  // Colour contrast is computed from live styles, so a page still mid-transition (route fade-in, slow CI runner) reports false violations.
+  // Re-scan for a few seconds while contrast is the ONLY problem; a real, persistent violation still fails, and any other rule fails at once.
+  for (let i = 0; i < 10 && bad.length && bad.every((v) => v.id === 'color-contrast'); i++) { await page.waitForTimeout(500); bad = await run() }
   expect(bad.map((v) => `${label}: ${v.id} (${v.impact}) — ${v.nodes.length} node(s): ${v.nodes[0]?.target.join(' ')}`), `axe violations on ${label}`).toEqual([])
 }
 // Scan the SETTLED page. `networkidle` can fire while entrance animations (e.g. the landing hero's ~1.3s fade-in) are still running, and a
