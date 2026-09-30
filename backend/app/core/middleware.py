@@ -101,10 +101,12 @@ def client_ip(request: Request) -> str:
 
 
 def rate_limit(name: str, limit: int, window: int = 60):
-    """Per-user (falls back to per-IP) limit for expensive routes: Depends(rate_limit('originality', 10))."""
-    def dep(request: Request):
-        who = getattr(getattr(request.state, "user", None), "id", None) or client_ip(request)
-        ok, retry = limiter.hit(f"{name}:{who}", limit, window)
+    """Per-USER limit for expensive authenticated routes: Depends(rate_limit('originality', 10)).
+    It depends on get_current_user so the key is the verified user id (never the client IP, which is shared behind NAT)."""
+    from .security import get_current_user
+
+    def dep(request: Request, user=Depends(get_current_user)):
+        ok, retry = limiter.hit(f"{name}:{user.id}", limit, window)
         if not ok:
             log.warning("rate limited", extra={"event": "rate_limited", "path": request.url.path})
             raise AppError(429, "rate_limited", "Too many requests. Please slow down.", {"retryAfterSeconds": retry}, headers={"Retry-After": str(retry)})

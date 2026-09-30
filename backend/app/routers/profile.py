@@ -53,3 +53,11 @@ def skills(db: Db = Depends(get_db)):
 @router.get("/interests", response_model=list[VocabItem], tags=["skills"])
 def interests(db: Db = Depends(get_db)):
     return db.all("select slug, name from public.interests order by name")
+
+
+@router.delete("/profile/items/{item_id}", status_code=204, summary="Remove a resume-derived or typed profile item")
+def delete_item(item_id: str, user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    from ..services.common import parse_uuid
+    if not db.run("delete from public.profile_items where id = cast(:i as uuid) and profile_id = cast(:u as uuid)", i=parse_uuid(item_id, "item"), u=user.id):
+        raise not_found("Item")
+    return Response(status_code=204)

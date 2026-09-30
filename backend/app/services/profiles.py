@@ -6,7 +6,7 @@ from .common import interest_ids, skill_ids
 
 PROFILE_COLS = """p.id::text as id, p.email, p.full_name, p.role::text as role, p.year, p.branch, p.experience_level::text as experience_level,
   p.availability_hrs, p.open_to_team, p.onboarding_completed, p.onboarding_completed_at, p.participation_pref::text as participation_pref,
-  p.location, p.education_level, p.preferred_format::text as preferred_format, p.created_at"""
+  p.location, p.education_level, p.preferred_format::text as preferred_format, p.links, p.created_at"""
 
 
 def get_profile(db: Db, user_id: str) -> dict:
@@ -24,6 +24,7 @@ def get_profile(db: Db, user_id: str) -> dict:
     p["skill_details"] = skills
     p["interests"] = [i["name"] for i in interests]
     p["skill_evidence"] = evidence
+    p["items"] = db.all("select id::text as id, kind, text, source from public.profile_items where profile_id = cast(:u as uuid) order by kind, created_at", u=user_id)
     p["completeness"] = completeness(p)
     return p
 

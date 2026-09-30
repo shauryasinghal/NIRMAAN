@@ -54,5 +54,7 @@ class ProfileOut(ApiModel):
     inferred_skills: list[dict]
     interests: list[str]
     skill_evidence: list[dict]
+    items: list[dict] = []
+    links: dict = {}
     completeness: Completeness
     created_at: dt.datetime
