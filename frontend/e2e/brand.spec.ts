@@ -120,13 +120,13 @@ test.describe('signed-in app shell', () => {
     expect(await contrast(logo), 'white wordmark on the always-dark sidebar').toBeGreaterThanOrEqual(7)
     await page.screenshot({ path: info.outputPath('sidebar-expanded.png') })
     await page.getByRole('button', { name: 'Collapse sidebar' }).click()
-    await expect.poll(async () => { const c = (await logo.boundingBox())!; return +(c.width / c.height).toFixed(2) }, { message: 'collapsed sidebar shows the mark alone' }).toBeLessThan(1)
+    await expect.poll(async () => { const c = await logo.boundingBox(); return c ? +(c.width / c.height).toFixed(2) : 99 }, { message: 'collapsed sidebar shows the mark alone' }).toBeLessThan(1)
     b = (await logo.boundingBox())!; expect(Math.abs(b.width / b.height - RATIO.mark)).toBeLessThan(0.06)
     const aside = (await page.locator('aside.bg-navy-900').boundingBox())!; expect(b.x).toBeGreaterThanOrEqual(aside.x); expect(b.x + b.width).toBeLessThanOrEqual(aside.x + aside.width)
     await page.screenshot({ path: info.outputPath('sidebar-collapsed.png') })
     await link.click(); await expect(page).toHaveURL(/\/dashboard/)                                                      // the logo goes home
     await page.getByRole('button', { name: 'Expand sidebar' }).click()
-    await expect.poll(async () => { const c = (await logo.boundingBox())!; return c.width / c.height }).toBeGreaterThan(3)
+    await expect.poll(async () => { const c = await logo.boundingBox(); return c ? c.width / c.height : 0 }).toBeGreaterThan(3)
   })
   for (const [w, h] of WIDTHS) {
     test(`dashboard at ${w}px: shell logo undistorted, no horizontal scroll`, async ({ page }, info) => {
