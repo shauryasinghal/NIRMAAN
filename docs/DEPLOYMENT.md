@@ -82,6 +82,11 @@ Health: `GET /health` (liveness, no dependencies) and `GET /ready` (database, pg
 The API runs behind one process-local rate limiter; for more than one instance swap `SlidingWindowLimiter` for Redis.
 `SESSION_CACHE_SECONDS` (default 10) is the worst-case delay before a sign-out invalidates an access token.
 
+**Token verification troubleshooting.** A genuine Supabase token is verified against the project's JWKS (`/auth/v1/.well-known/jwks.json`, ES256).
+- `401 "Invalid or expired token"` → the token itself failed (signature, issuer, audience, expiry). The log line `auth_token_rejected` carries the PyJWT error *class* in `code` (e.g. `InvalidAudienceError`) — never the token.
+- `503 service_unavailable` ("Sign-in verification is temporarily unavailable") + log `auth_jwks_unavailable` → the API could not fetch the signing keys (network or TLS trust). It still fails closed, but it is an outage, not a bad token, so clients do not refresh/retry or sign the user out.
+- The JWKS download uses `certifi`'s CA bundle (as `httpx` does), not the OS store: python.org's macOS Python has no default store and used to fail with `CERTIFICATE_VERIFY_FAILED`, rejecting every real Google/email session. Regression: `backend/tests/api/test_oauth_token_verification.py` (real TLS handshake against a local JWKS server).
+
 ## 4. Frontend (Vercel)
 
 1. Import the repo, **root directory `frontend`**, framework Vite.

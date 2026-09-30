@@ -11,18 +11,20 @@ from the database — never from anything the client sent:
 """
 from __future__ import annotations
 
+import ssl
 import time
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import Iterator
 
+import certifi
 import jwt
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import PyJWKClient
 
 from .config import get_settings
-from .errors import forbidden, unauthorized
+from .errors import forbidden, unauthorized, unavailable
 from .logging import get_logger, user_id_var
 from ..db.session import Db, open_db
 
@@ -58,9 +60,16 @@ class CurrentUser:
 _jwks_clients: dict[str, PyJWKClient] = {}
 
 
+def _ssl_context() -> ssl.SSLContext:
+    """PyJWKClient downloads the signing keys with urllib, which trusts only the operating system's CA store. Some Python builds
+    (e.g. python.org's macOS installer) ship with none, so the fetch died with CERTIFICATE_VERIFY_FAILED and EVERY real Supabase
+    token was answered "Invalid or expired token". certifi's bundle is what httpx already uses everywhere else in this API."""
+    return ssl.create_default_context(cafile=certifi.where())
+
+
 def _jwks(url: str) -> PyJWKClient:
     if url not in _jwks_clients:
-        _jwks_clients[url] = PyJWKClient(url, cache_keys=True, lifespan=600, timeout=5)
+        _jwks_clients[url] = PyJWKClient(url, cache_keys=True, lifespan=600, timeout=5, ssl_context=_ssl_context())
     return _jwks_clients[url]
 
 
@@ -85,8 +94,13 @@ def verify_token(token: str) -> dict:
         )
     except jwt.ExpiredSignatureError:
         raise unauthorized("Your session has expired. Please sign in again.")
-    except (jwt.PyJWTError, ValueError, KeyError):
-        log.warning("token rejected", extra={"event": "auth_token_rejected"})
+    except jwt.PyJWKClientConnectionError as exc:
+        # We could not reach the key store, so we cannot say anything about the token. That is OUR outage, not a bad token:
+        # still fail closed, but as 503 (the client must not refresh-and-retry or sign the user out over it).
+        log.error("signing keys unavailable", extra={"event": "auth_jwks_unavailable", "code": type(exc).__name__})
+        raise unavailable("Sign-in verification is temporarily unavailable. Please try again in a moment.")
+    except (jwt.PyJWTError, ValueError, KeyError) as exc:
+        log.warning("token rejected", extra={"event": "auth_token_rejected", "code": type(exc).__name__})   # class only — never the token
         raise unauthorized("Invalid or expired token")
     if claims.get("role") != "authenticated":
         raise unauthorized("Invalid or expired token")
