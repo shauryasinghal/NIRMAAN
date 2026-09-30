@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(
         title="NIRMAAN API", version=VERSION, lifespan=lifespan,
-        description="The AI Operating System for Student Innovation. Authentication is handled by Supabase Auth; "
+        description="NIRMAAN — Discover, Validate, Build. Authentication is handled by Supabase Auth; "
                     "send the Supabase access token as `Authorization: Bearer <jwt>`.",
         docs_url=None if s.is_production else "/docs", redoc_url=None if s.is_production else "/redoc", openapi_url=None if s.is_production else "/openapi.json",
     )

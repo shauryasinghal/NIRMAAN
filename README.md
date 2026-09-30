@@ -1,4 +1,4 @@
-# NIRMAAN — The AI Operating System for Student Innovation
+# NIRMAAN — Discover | Validate | Build
 
 Discover opportunities that fit you, understand *why*, build a team that covers what's missing, validate an idea
 before you build it, apply, and improve — one connected loop:
@@ -16,8 +16,8 @@ Supabase is the source of truth. The API never issues tokens; it verifies Supaba
 from the database (never from the client), and runs every request as the Postgres `authenticated` role with the
 caller's claims so RLS applies to the API exactly as it does to a direct client.
 
-> **Honest status.** Verified locally: 142 backend tests, 58 frontend tests, 49 database security checks, 188 Playwright E2E tests
-> (flows, axe accessibility, 8 responsive widths, resume-review layout at 5 widths) plus the strict-CSP production-build test.
+> **Honest status.** Verified locally: 142 backend tests, 70 frontend tests, 49 database security checks, 221 Playwright E2E tests
+> (flows, axe accessibility, 8 responsive widths, resume-review layout and brand identity at 5 widths) plus the strict-CSP production-build test.
 > **Hosted Supabase (`nirmaan`):** all 21 migrations are applied and the migration history matches the files (`supabase db push --dry-run` → up to date);
 > existing users/data were preserved; the profile-role escalation hole is closed; advisors show only the Pro-plan-only leaked-password warning;
 > the API starts against the hosted database (`/ready` ok, JWKS token verification rejects forged/expired/anon tokens, CORS locked to the configured origin).
@@ -67,8 +67,8 @@ The automated E2E suite uses a small **test-only** stand-in for Supabase Auth's 
 ```bash
 supabase/tests/run.sh && supabase/tests/upgrade_test.sh     # database security + upgrade path
 cd backend  && ./venv/bin/python -m pytest tests            # 142 tests (real MiniLM + pgvector for originality)
-cd frontend && npm test                                     # 58 unit/component tests
-cd frontend && npx playwright test                          # 189 E2E: auth, discovery, team, originality, applications,
+cd frontend && npm test                                     # 70 unit/component tests
+cd frontend && npx playwright test                          # 222 E2E: auth, discovery, team, originality, applications,
                                                             #   alerts, resume, reviewer/admin, axe a11y, 8 viewport widths
 cd frontend && npx playwright test -c playwright.csp.config.ts   # production build under the real CSP headers
 cd backend  && ./venv/bin/python -m eval.originality_eval        # ML quality numbers (docs/EVALUATION.md)

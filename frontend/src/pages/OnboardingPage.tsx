@@ -49,7 +49,7 @@ export function OnboardingPage() {
   return (
     <div className="min-h-screen bg-grid bg-radial-glow px-4 py-8">
       <div className={step === 4 ? 'max-w-3xl mx-auto' : 'max-w-xl mx-auto'}>   {/* the resume review needs room for evidence text beside its controls */}
-        <div className="flex justify-center mb-6"><NirmaanLogo className="text-lg" /></div>
+        <div className="flex justify-center mb-6 text-navy-900 dark:text-white"><NirmaanLogo variant="compact" size={34} /></div>
         <ol className="flex items-center gap-1.5 mb-6" aria-label="Progress">{STEPS.map((s, i) => (
           <li key={s} className="flex-1" aria-current={i === step ? 'step' : undefined}><div className={`h-1.5 rounded-full ${i <= step ? 'bg-accent-500' : 'bg-black/10 dark:bg-white/10'}`} /><span className={`text-[10px] mt-1 block ${i === step ? 'font-medium' : 'text-muted'}`}>{s}</span></li>))}
         </ol>

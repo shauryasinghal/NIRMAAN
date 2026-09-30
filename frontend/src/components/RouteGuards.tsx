@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Outlet, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { ErrorState, Skeleton } from './ui/primitives'
+import { ErrorState } from './ui/primitives'
+import { BrandLoader } from './common/NirmaanMark'
 import type { Role } from '../types'
 
 const AppShell = lazy(() => import('./layout/AppShell').then((m) => ({ default: m.AppShell })))
@@ -9,9 +10,7 @@ const RANK: Record<Role, number> = { student: 1, reviewer: 2, admin: 3 }
 
 export function FullPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
-      <div className="w-64 space-y-3"><Skeleton className="h-4 w-1/2" /><Skeleton className="h-3 w-full" /><Skeleton className="h-3 w-3/4" /><span className="sr-only">Loading…</span></div>
-    </div>
+    <div className="min-h-screen flex items-center justify-center"><BrandLoader /></div>
   )
 }
 

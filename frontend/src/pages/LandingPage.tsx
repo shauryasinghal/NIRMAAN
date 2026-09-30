@@ -50,7 +50,7 @@ function FloatingNav() {
       }}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
-        <NirmaanLogo />
+        <Link to="/" aria-label="NIRMAAN — home" className="focus-ring rounded"><NirmaanLogo variant="compact" size={30} decorative /></Link>
         <nav className="hidden md:flex items-center gap-6 text-sm text-muted">
           <a href="#intelligence" className="hover:text-[var(--text)] transition-colors">Intelligence</a>
           <a href="#how-it-works" className="hover:text-[var(--text)] transition-colors">How it works</a>
@@ -76,7 +76,7 @@ export function LandingPage() {
         <div aria-hidden className="absolute inset-0 bg-grid bg-radial-glow pointer-events-none [mask-image:linear-gradient(to_bottom,black_55%,transparent)]" />
         <div className="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center relative">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.2 }}>
-            <p className="text-xs font-medium text-accent-500 tracking-[0.2em] mb-4">THE AI OPERATING SYSTEM FOR STUDENT INNOVATION</p>
+            <NirmaanLogo variant="full" className="w-[min(100%,21rem)] mx-auto mb-10 text-navy-900 dark:text-white" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
@@ -217,6 +217,7 @@ export function LandingPage() {
       </section>
 
       <footer className="max-w-6xl mx-auto px-6 py-10 text-xs text-muted border-t" style={{ borderColor: 'var(--border)' }}>
+        <NirmaanLogo variant="full" className="w-56 mb-5 text-navy-900 dark:text-white" />
         NIRMAAN — GLA University B.Tech CSE (AI/ML) mini-project, Team Code Blooded (T-102).
       </footer>
     </div>

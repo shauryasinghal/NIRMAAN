@@ -6,7 +6,17 @@ async function scan(page: Page, label: string) {
   const bad = r.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
   expect(bad.map((v) => `${label}: ${v.id} (${v.impact}) — ${v.nodes.length} node(s): ${v.nodes[0]?.target.join(' ')}`), `axe violations on ${label}`).toEqual([])
 }
-const ready = async (page: Page) => { await page.waitForLoadState('networkidle'); await expect(page.locator('#root')).not.toBeEmpty() }
+// Scan the SETTLED page. `networkidle` can fire while entrance animations (e.g. the landing hero's ~1.3s fade-in) are still running, and a
+// half-transparent button genuinely has low computed contrast. The animation library marks what it animates with an inline `opacity` style,
+// so wait until every such element in the first viewport has finished fading in (scroll-reveals below the fold stay hidden by design).
+const ready = async (page: Page) => {
+  await page.waitForLoadState('networkidle'); await expect(page.locator('#root')).not.toBeEmpty()
+  await page.waitForFunction(() => [...document.querySelectorAll<HTMLElement>('body [style*="opacity"]')].every((el) => {
+    const r = el.getBoundingClientRect(); if (!r.width || !r.height || r.top >= innerHeight || r.bottom <= 0) return true
+    if (!el.textContent?.trim()) return true                                  // contrast only concerns text; empty decorative layers (hover highlights) rest at opacity 0 by design
+    return getComputedStyle(el).opacity === '1'
+  }), undefined, { timeout: 15_000 })
+}
 
 test.describe('public pages', () => {
   for (const path of ['/', '/login', '/register', '/forgot-password']) test(`axe: ${path}`, async ({ page }) => { await page.goto(path); await ready(page); await scan(page, path) })

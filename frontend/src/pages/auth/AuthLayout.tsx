@@ -9,7 +9,7 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-grid bg-radial-glow">
       <main className="w-full max-w-md">
-        <Link to="/" className="flex justify-center mb-8 focus-ring rounded"><NirmaanLogo className="text-xl" /></Link>
+        <Link to="/" aria-label="NIRMAAN — home" className="flex justify-center mb-8 focus-ring rounded"><NirmaanLogo variant="full" decorative className="w-[min(100%,19rem)] text-navy-900 dark:text-white" /></Link>
         <div className="surface-elevated rounded-2xl p-6 sm:p-8">
           <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
           {subtitle && <p className="text-sm text-muted mt-1 mb-6">{subtitle}</p>}

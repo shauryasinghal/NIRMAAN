@@ -24,3 +24,62 @@ frontend/test-results/
 # Local tooling (repo-local Supabase CLI install) and CLI state — never commit
 .tools/
 supabase/.temp/
+
+# Brand generator intermediates (regenerate with frontend/brand-src/trace_logo.py — see docs/BRAND.md)
+frontend/brand-src/build/
+
+# ── Secrets & credentials — never commit (only *.example templates are tracked) ─────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+credentials*.json
+service-account*.json
+service_account*.json
+client_secret*.json
+.npmrc
+.netrc
+.aws/
+.secrets/
+.vercel/
+.supabase/
+
+# ── Database dumps & local databases (NOT *.sql: the migrations are source) ─────────────────────────────────────────
+*.dump
+*.sql.gz
+*.sql.zip
+*.bak
+*.backup
+pg_dump*
+*.sqlite
+*.sqlite3
+
+# ── Logs ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── ML model caches & weights (the embedding model is downloaded at first use; never vendored) ─────────────────────
+.cache/
+.huggingface/
+huggingface/
+models--*/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.gguf
+
+# ── Test / coverage / tool caches ────────────────────────────────────────────────────────────────────────────────────
+coverage/
+htmlcov/
+.coverage
+.nyc_output/
+*.tsbuildinfo
+.mypy_cache/
+.ruff_cache/
+*.egg-info/

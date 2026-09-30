@@ -11,7 +11,7 @@ import { useTheme } from '../../context/ThemeContext'
 import { useQuery } from '@tanstack/react-query'
 import { notificationService } from '../../lib/services'
 import { CommandPalette, recordRecentPage } from '../common/CommandPalette'
-import { NirmaanMark } from '../common/NirmaanMark'
+import { NirmaanLogo } from '../common/NirmaanMark'
 import clsx from 'clsx'
 
 const NAV_SECTIONS = [
@@ -109,15 +109,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           collapsed ? 'w-[72px]' : 'w-60',
         )}
       >
-        <div className="mb-6 flex items-center justify-between px-1">
-          {!collapsed && (
-            <div className="flex items-center gap-2 text-white">
-              <NirmaanMark size={18} />
-              <div>
-                <div className="text-sm font-semibold tracking-tight leading-none">NIRMAAN</div>
-              </div>
-            </div>
-          )}
+        <div className={clsx('mb-6 flex px-1', collapsed ? 'flex-col items-center gap-4' : 'items-center justify-between gap-2')}>
+          {/* variant="auto": the compact lockup in the 240px sidebar, just the mark once it collapses to 72px */}
+          <NavLink to="/dashboard" aria-label="NIRMAAN — go to dashboard" className={clsx('focus-ring rounded text-white', collapsed ? 'w-[26px]' : 'min-w-0 flex-1')}>
+            <NirmaanLogo variant="auto" size={collapsed ? 30 : 32} decorative />
+          </NavLink>
           <button
             onClick={() => setCollapsed((c) => !c)}
             className="text-white/40 hover:text-white p-1 rounded-md hover:bg-white/5"
@@ -198,7 +194,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* Mobile top bar */}
         <header className="md:hidden flex items-center justify-between px-4 py-3 surface border-b sticky top-0 z-20" style={{ borderColor: 'var(--border)' }}>
-          <span className="font-semibold flex items-center gap-2"><NirmaanMark size={16} /> NIRMAAN</span>
+          <NavLink to="/dashboard" aria-label="NIRMAAN — go to dashboard" className="focus-ring rounded"><NirmaanLogo variant="compact" size={26} decorative /></NavLink>
           <div className="flex items-center gap-2">
             <button onClick={() => setPaletteOpen(true)} className="p-1.5 rounded-lg text-muted"><Search size={16} /></button>
             <NavLink to="/notifications" className="relative p-1.5 rounded-lg text-muted" aria-label="Notifications">
