@@ -61,7 +61,9 @@ test.describe('staff pages', () => {
   test('axe: reviewer queue, review detail', async ({ browser }) => {
     const c = await browser.newContext({ storageState: auth('reviewer') }); const page = await c.newPage()
     await page.goto('/review'); await ready(page); await scan(page, '/review')
-    await page.getByRole('link', { name: /Teammate matcher/ }).first().click(); await ready(page); await scan(page, 'review detail'); await c.close()
+    await page.getByRole('link', { name: /Teammate matcher/ }).first().click()
+    await expect(page).toHaveURL(/\/review\/.+/); await expect(page.getByRole('heading', { level: 1 })).toBeVisible()   // the route change has really happened, so `ready` cannot pass against the outgoing page's settled opacity
+    await ready(page); await scan(page, 'review detail'); await c.close()
   })
   test('axe: admin', async ({ browser }) => {
     const c = await browser.newContext({ storageState: auth('admin') }); const page = await c.newPage()
