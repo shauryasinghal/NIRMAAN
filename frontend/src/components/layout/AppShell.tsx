@@ -3,9 +3,10 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard, Compass, Users, ShieldCheck, History, User, Settings, LogOut,
-  ClipboardList, ChevronsLeft, ChevronsRight, Search, ChevronDown, Sun, Moon, Bookmark, Activity, Bell, Building2,
+  ClipboardList, ChevronsLeft, ChevronsRight, Search, ChevronDown, Sun, Moon, Bookmark, Activity, Bell, Building2, Menu, ShieldAlert,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { Dialog } from '../ui/kit'
 import { useTheme } from '../../context/ThemeContext'
 import { useQuery } from '@tanstack/react-query'
 import { notificationService } from '../../lib/services'
@@ -38,22 +39,26 @@ const workspaceNav = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 const reviewerSection = { label: 'Review', items: [{ to: '/review', label: 'Review Queue', icon: ClipboardList }] }
+const adminSection = { label: 'Admin', items: [{ to: '/admin', label: 'Admin', icon: ShieldAlert }] }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { role, logout } = useAuth()
+  const { me, role, signOut } = useAuth()
   const { mode, setMode } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
-  const sections = role === 'REVIEWER' ? [...NAV_SECTIONS, reviewerSection] : NAV_SECTIONS
+  const sections = [...NAV_SECTIONS, ...(role === 'reviewer' || role === 'admin' ? [reviewerSection] : []), ...(role === 'admin' ? [adminSection] : [])]
+  const [menuOpen, setMenuOpen] = useState(false)
+  const initial = (me?.fullName || me?.email || '?').trim().charAt(0).toUpperCase()
+  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : ''
   const allFlatItems = sections.flatMap((s) => s.items)
 
-  const handleLogout = () => { logout(); navigate('/login') }
+  const handleLogout = async () => { await signOut(); navigate('/login') }
   const toggleTheme = () => setMode(mode === 'dark' ? 'light' : 'dark')
-  const { data: notifData } = useQuery({ queryKey: ['notifications'], queryFn: notificationService.list, refetchInterval: 30_000 })
-  const unreadCount = notifData?.unreadCount ?? 0
+  const { data: unreadData } = useQuery({ queryKey: ['notifications', 'unread'], queryFn: notificationService.unreadCount, refetchInterval: 30_000 })
+  const unreadCount = unreadData?.unread ?? 0
 
   useEffect(() => {
     recordRecentPage(location.pathname)
@@ -97,6 +102,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-lg focus:bg-white focus:text-navy-900 focus:shadow">Skip to content</a>
       <aside
         className={clsx(
           'shrink-0 hidden md:flex md:flex-col p-4 bg-navy-900 transition-[width] duration-200',
@@ -173,13 +179,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                 className="flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
               >
                 <span className="h-6 w-6 rounded-full bg-accent-500 text-white text-[11px] flex items-center justify-center">
-                  {role === 'REVIEWER' ? 'R' : 'S'}
+                  {initial}
                 </span>
-                <span className="text-muted">{role === 'REVIEWER' ? 'Reviewer' : 'Student'}</span>
+                <span className="text-muted max-w-[140px] truncate">{me?.fullName || roleLabel}</span>
                 <ChevronDown size={13} className="text-muted" />
               </button>
               {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 rounded-lg surface-elevated py-1 text-sm z-30" onMouseLeave={() => setProfileMenuOpen(false)}>
+                <div className="absolute right-0 mt-2 w-48 rounded-lg surface-elevated py-1 text-sm z-30" onMouseLeave={() => setProfileMenuOpen(false)}>
+                  <div className="px-3 py-1.5 text-xs text-muted border-b mb-1 truncate" style={{ borderColor: 'var(--border)' }}>{me?.email}<span className="ml-1.5 uppercase tracking-wide">· {roleLabel}</span></div>
                   <NavLink to="/profile" className="block px-3 py-1.5 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Profile</NavLink>
                   <NavLink to="/settings" className="block px-3 py-1.5 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Settings</NavLink>
                   <button onClick={handleLogout} className="block w-full text-left px-3 py-1.5 text-danger-500 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Log out</button>
@@ -203,7 +210,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
             <div className="relative">
               <button onClick={() => setProfileMenuOpen((o) => !o)} className="h-7 w-7 rounded-full bg-accent-500 text-white text-xs flex items-center justify-center">
-                {role === 'REVIEWER' ? 'R' : 'S'}
+                {initial}
               </button>
               {profileMenuOpen && (
                 <div className="absolute right-0 mt-2 w-36 rounded-lg surface-elevated py-1 text-sm z-30">
@@ -216,8 +223,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 min-w-0 pb-20 md:pb-8">
-          <div className="max-w-5xl mx-auto w-full px-5 md:px-8 pt-6">
+        <main id="main" tabIndex={-1} className="flex-1 min-w-0 pb-24 md:pb-8 outline-none">
+          <div className="max-w-6xl mx-auto w-full px-4 sm:px-5 md:px-8 pt-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
@@ -233,13 +240,34 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 surface flex justify-around py-2 z-20">
-        {allFlatItems.slice(0, 4).map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => clsx('flex flex-col items-center gap-0.5 text-[10px] px-2 py-1 min-h-[44px] justify-center', isActive ? 'text-accent-500' : 'text-muted')}>
-            <Icon size={18} /> {label}
+      <nav aria-label="Primary" className="md:hidden fixed bottom-0 left-0 right-0 surface flex justify-around py-1 z-20 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+        {[allFlatItems[0], allFlatItems[1], allFlatItems[3], allFlatItems.find((i) => i.to === '/applications')!].map(({ to, label, icon: Icon }) => (
+          <NavLink key={to} to={to} className={({ isActive }) => clsx('flex flex-col items-center gap-0.5 text-[10px] px-2 py-1 min-h-[48px] min-w-[56px] justify-center focus-ring', isActive ? 'text-accent-500' : 'text-muted')}>
+            <Icon size={18} aria-hidden /> {label}
           </NavLink>
         ))}
+        <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 text-[10px] px-2 py-1 min-h-[48px] min-w-[56px] justify-center text-muted focus-ring" aria-haspopup="dialog">
+          <Menu size={18} aria-hidden /> Menu
+        </button>
       </nav>
+
+      <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} title="Menu">
+        <nav aria-label="All pages" className="space-y-4">
+          {[...sections, { label: 'Workspace', items: workspaceNav }].map((sec) => (
+            <div key={sec.label}>
+              <p className="text-[10px] uppercase tracking-wider text-muted mb-1">{sec.label}</p>
+              <div className="grid grid-cols-2 gap-1">
+                {sec.items.map(({ to, label, icon: Icon }) => (
+                  <NavLink key={to} to={to} onClick={() => setMenuOpen(false)} className={({ isActive }) => clsx('flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm min-h-[44px] focus-ring', isActive ? 'bg-accent-500/10 text-accent-500' : 'hover:bg-black/[0.05] dark:hover:bg-white/[0.08]')}>
+                    <Icon size={16} aria-hidden /> {label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          ))}
+          <button onClick={() => { setMenuOpen(false); void handleLogout() }} className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-danger-500 hover:bg-danger-500/10 min-h-[44px] focus-ring"><LogOut size={16} aria-hidden /> Log out</button>
+        </nav>
+      </Dialog>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>

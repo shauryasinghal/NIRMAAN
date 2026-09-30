@@ -18,19 +18,19 @@ const FRICTIONS = [
 
 const STEPS = [
   { n: '01', title: 'Build profile', copy: 'Skills, interests, experience and availability — the signal everything else runs on.' },
-  { n: '02', title: 'Discover', copy: 'Opportunities ranked by content-based fit, not recency.' },
+  { n: '02', title: 'Discover', copy: 'Opportunities ranked by an explainable fit score — with the reasons and the blockers shown.' },
   { n: '03', title: 'Build', copy: 'A skill-complementary team, not just whoever you already know.' },
   { n: '04', title: 'Validate', copy: 'Your idea screened against prior work before you commit weeks.' },
   { n: '05', title: 'Move forward', copy: 'One dashboard, all three engines, a confident next step.' },
 ]
 
 const TECH = [
-  { label: 'TF-IDF + Cosine Similarity', note: 'Opportunity Recommender — runs today' },
-  { label: 'Weighted Skill Graph', note: 'Team Builder — in-memory graph today, Neo4j-ready adapter' },
-  { label: 'Sentence-BERT / TF-IDF', note: 'Originality embeddings — model swaps automatically by availability' },
-  { label: 'FAISS Vector Search', note: 'Originality nearest-neighbour search — runs today' },
-  { label: 'FastAPI + React', note: 'The actual stack behind this page' },
-  { label: 'SQLite / PostgreSQL', note: 'Same code path, either database' },
+  { label: 'Explainable fit scoring', note: '8 weighted signals — skills, interests, experience, format, deadline, behaviour — every score reproducible and itemised' },
+  { label: 'Skill-coverage team builder', note: 'Greedy set-cover on marginal contribution; diversity means skills and roles, never demographics' },
+  { label: 'MiniLM embeddings + pgvector', note: '384-dimensional sentence embeddings searched with cosine similarity in Postgres (HNSW)' },
+  { label: 'Supabase Auth + Row Level Security', note: 'Email or Google sign-in; every table locked to its owner in the database itself' },
+  { label: 'FastAPI + React 19', note: 'Typed API with a single error contract; verified Supabase tokens on every request' },
+  { label: 'Human review with an audit trail', note: 'High-similarity ideas go to reviewers; every decision is immutable and logged' },
 ]
 
 function FloatingNav() {
@@ -104,6 +104,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.85, ease: EASE_OUT }}
             className="mt-16 grid sm:grid-cols-3 gap-4 items-start"
+            role="img" aria-label="Illustration of the three NIRMAAN engines. Example values only."
           >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="flex justify-center">
               <OpportunityMatchVisual animate={false} />
@@ -115,11 +116,12 @@ export function LandingPage() {
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }} className="flex justify-center">
               <Card variant="elevated" className="p-4 flex flex-col items-center">
-                <div className="text-3xl font-semibold text-success-500">87</div>
-                <div className="text-[10px] text-muted uppercase tracking-wide mt-1">Screening score</div>
+                <div className="text-sm font-semibold text-success-500 text-center">No significant match found</div>
+                <div className="text-[10px] text-muted uppercase tracking-wide mt-1">Originality signal</div>
               </Card>
             </motion.div>
           </motion.div>
+          <p className="text-[11px] text-muted mt-3">Illustration — example values, not live data.</p>
         </div>
       </section>
 
@@ -154,12 +156,12 @@ export function LandingPage() {
           />
           <EnginePanel
             icon={Users} tag="BUILD" title="Team Intelligence" reverse
-            copy="A weighted skill-complementarity graph finds teammates who cover what you're missing — coverage and diversity, not just shared tags."
+            copy="Start from an opportunity's real requirements. NIRMAAN finds teammates who cover what's missing, and explains every pick."
             visual={<Card variant="elevated" className="p-5 flex justify-center"><TeamNetworkVisual /></Card>}
           />
           <EnginePanel
             icon={ShieldCheck} tag="VALIDATE" title="Originality Intelligence"
-            copy="Your idea, embedded and searched against a prior-idea corpus via FAISS — a screening signal, with human review before any overlap flag reaches you."
+            copy="Your idea, embedded and searched against a comparison corpus with pgvector — a screening signal, never a verdict, with human review for close matches."
             visual={<Card variant="elevated" className="p-5 flex justify-center"><OriginalityFieldVisual /></Card>}
           />
         </div>
@@ -188,7 +190,7 @@ export function LandingPage() {
       {/* TECHNICAL CREDIBILITY */}
       <section id="technology" className="max-w-4xl mx-auto px-6 py-24 border-t" style={{ borderColor: 'var(--border)' }}>
         <ScrollReveal>
-          <p className="text-xs font-medium text-accent-500 tracking-[0.2em] mb-8">UNDER THE HOOD — ACCURATE TO WHAT RUNS TODAY</p>
+          <p className="text-xs font-medium text-accent-500 tracking-[0.2em] mb-8">UNDER THE HOOD</p>
         </ScrollReveal>
         <Stagger className="grid sm:grid-cols-2 gap-3">
           {TECH.map((t) => (

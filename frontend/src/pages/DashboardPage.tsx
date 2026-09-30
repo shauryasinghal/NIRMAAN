@@ -1,210 +1,77 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Users, ShieldCheck, ChevronRight, Sparkles, Compass, ArrowRight, ClipboardList, Zap } from 'lucide-react'
-import { profileService, opportunityService, originalityService, applicationService, intelligenceService } from '../lib/services'
-import { SkeletonDashboard, EmptyState, ScoreRing, Badge } from '../components/ui/primitives'
-import { Card } from '../components/ui/Card'
+import { useQuery } from '@tanstack/react-query'
+import { ArrowRight, CalendarClock, Lightbulb, Target, Users } from 'lucide-react'
 import { Button } from '../components/ui/Button'
-import { OpportunityCard } from '../components/opportunities/OpportunityCard'
+import { Card } from '../components/ui/Card'
+import { Badge, EmptyState, ErrorState, SkeletonDashboard } from '../components/ui/primitives'
+import { DemoBadge, FitBadge, Notice, Section, StatCard, StatusPill } from '../components/ui/kit'
+import { SaveButton } from '../components/opportunities/SaveButton'
+import { useAuth } from '../context/AuthContext'
+import { dashboardService } from '../lib/services'
+import { deadlineLabel, formatDate, titleCase, urgencyTone } from '../lib/format'
+import { APPLICATION_STATUSES } from '../types'
 
-const WORKFLOW = [
-  { label: 'Discover', to: '/opportunities', icon: Compass },
-  { label: 'Build', to: '/team-builder', icon: Users },
-  { label: 'Validate', to: '/originality', icon: ShieldCheck },
-]
-const ACTIVE_STATUSES = ['applying', 'applied', 'shortlisted', 'interview']
+const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Working late' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening' }
 
 export function DashboardPage() {
-  const profileQ = useQuery({ queryKey: ['profile'], queryFn: profileService.get })
-  const recsQ = useQuery({ queryKey: ['recommend', 4], queryFn: () => opportunityService.recommend(4) })
-  const historyQ = useQuery({ queryKey: ['history'], queryFn: originalityService.history })
-  const appsQ = useQuery({ queryKey: ['applications'], queryFn: applicationService.list })
-  const nbaQ = useQuery({ queryKey: ['next-best-action'], queryFn: intelligenceService.nextBestAction })
-  const skillGapsQ = useQuery({ queryKey: ['skill-gaps'], queryFn: intelligenceService.skillGaps })
-
-  if (profileQ.isLoading || recsQ.isLoading || historyQ.isLoading) return <SkeletonDashboard />
-  if (!profileQ.data) return null
-
-  const profile = profileQ.data
-  const recs = recsQ.data?.items ?? []
-  const history = historyQ.data?.items ?? []
-  const applications = appsQ.data?.items ?? []
-  const best = recs[0]
-  const rest = recs.slice(1)
-  const closingSoon = recs.filter((r) => r.urgency === 'critical' || r.urgency === 'soon')
-  const activeApplications = applications.filter((a) => ACTIVE_STATUSES.includes(a.status))
-
+  const { me } = useAuth()
+  const q = useQuery({ queryKey: ['dashboard'], queryFn: dashboardService.get })
+  if (q.isLoading) return <SkeletonDashboard />
+  if (q.isError || !q.data) return <ErrorState message={(q.error as Error)?.message} onRetry={() => q.refetch()} />
+  const d = q.data
+  const nba = d.nextBestAction
+  const pipelineTotal = d.pipeline.total
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Good day, {profile.name.split(' ')[0]}</h1>
-      <p className="text-muted text-sm mb-6">Your innovation workspace is ready.</p>
+      <header className="mb-6"><h1 className="text-2xl font-semibold tracking-tight">{greeting()}{d.greetingName ? `, ${d.greetingName}` : me?.fullName ? `, ${me.fullName.split(' ')[0]}` : ''}</h1>
+        <p className="text-sm text-muted mt-1">Here's where things stand — every number below is computed from your own data.</p></header>
 
-      {nbaQ.data?.action && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <Card variant="highlight" className="p-4 mb-6 flex items-center justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <div className="h-8 w-8 rounded-lg bg-accent-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                <Zap size={15} className="text-accent-500" />
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wide text-accent-500 font-medium mb-0.5">Next best action</p>
-                <p className="text-sm font-medium">{nbaQ.data.action.title}</p>
-                <p className="text-xs text-muted mt-0.5">{nbaQ.data.action.detail}</p>
-              </div>
-            </div>
-            <Link to={nbaQ.data.action.link} className="shrink-0"><Button size="sm">{nbaQ.data.action.action}</Button></Link>
-          </Card>
-        </motion.div>
-      )}
+      {!d.profile.completeness.complete && <div className="mb-6"><Notice tone="warning" title={`Your profile is ${d.profile.completeness.percent}% complete`}>Add your {d.profile.completeness.missing.join(', ')} for scores that mean something. <Link to="/profile" className="underline">Finish profile</Link></Notice></div>}
 
-      {/* Innovation workflow — clickable stages */}
-      <div className="flex items-center gap-1.5 mb-8 overflow-x-auto pb-1">
-        {WORKFLOW.map(({ label, to, icon: Icon }, i) => (
-          <div key={to} className="flex items-center gap-1.5 shrink-0">
-            <Link to={to} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs surface-interactive text-muted hover:text-[var(--text)]">
-              <Icon size={12} /> {label}
-            </Link>
-            {i < WORKFLOW.length - 1 && <ArrowRight size={12} className="text-muted/40 shrink-0" />}
-          </div>
-        ))}
-      </div>
+      <Card variant="highlight" className="p-5 mb-6" aria-label="Next best action">
+        <div className="flex items-center gap-2 text-[11px] font-medium text-accent-500 tracking-[0.15em] uppercase mb-2"><Target size={13} aria-hidden /> Next best action</div>
+        {nba.action ? (<div className="flex flex-wrap items-center justify-between gap-4"><div className="min-w-0 max-w-2xl"><h2 className="text-lg font-semibold leading-snug">{nba.action.title}</h2><p className="text-sm text-muted mt-1">{nba.action.reason}</p></div>
+          <Link to={nba.action.cta.href}><Button>{nba.action.cta.label} <ArrowRight size={15} /></Button></Link></div>) : <p className="text-sm">{nba.message ?? 'Nothing needs your attention right now.'}</p>}
+        {nba.alternatives.length > 0 && <details className="mt-4"><summary className="text-xs text-muted cursor-pointer focus-ring rounded w-fit">{nba.alternatives.length} more thing{nba.alternatives.length === 1 ? '' : 's'} coming up</summary>
+          <ul className="mt-2 space-y-1.5">{nba.alternatives.map((a) => <li key={a.kind + a.title} className="text-sm flex flex-wrap items-baseline justify-between gap-2"><span><Link to={a.cta.href} className="font-medium hover:underline focus-ring rounded">{a.title}</Link> <span className="text-muted">· {a.reason}</span></span></li>)}</ul></details>}
+      </Card>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-        <Kpi label="Profile" value={profile.profile_complete ? 'Complete' : 'Incomplete'} delay={0} />
-        <Kpi label="Recommended" value={String(recs.length)} delay={0.05} />
-        <Kpi label="Ideas checked" value={String(history.length)} delay={0.1} />
-        <Kpi label="Skills logged" value={String(profile.skills.length)} delay={0.15} />
-      </div>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+        <StatCard label="Saved" value={d.totals.saved} to="/saved" /><StatCard label="Applications" value={d.totals.applications} to="/applications" /><StatCard label="Teams" value={d.totals.teams} to="/team-builder" />
+        <StatCard label="Ideas checked" value={d.totals.ideas} to="/originality/history" /><StatCard label="Strong matches (70%+)" value={d.totals.opportunitiesAbove70} hint={`of ${d.totals.opportunitiesScored} scored`} to="/opportunities?sort=fit" /></div>
 
-      {!profile.profile_complete && (
-        <Card variant="highlight" className="p-4 mb-6 flex items-center justify-between">
-          <div className="text-sm">
-            <p className="font-medium">Your profile needs a little more signal</p>
-            <p className="text-muted text-xs mt-0.5">Add skills and interests to unlock accurate recommendations.</p>
-          </div>
-          <Link to="/profile"><Button size="sm">Complete profile</Button></Link>
-        </Card>
-      )}
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 min-w-0">
+          <Section title="Recommended for you" hint={`Based on ${d.basedOn.confirmedSkills} confirmed skills, ${d.basedOn.interests} interests${d.basedOn.behaviouralEvents >= 5 ? ` and ${d.basedOn.behaviouralEvents} recent actions` : ''}.`} action={<Link to="/opportunities?sort=fit" className="text-xs text-accent-500 focus-ring rounded">See all →</Link>}>
+            {d.recommendations.length === 0 ? <EmptyState icon={Target} title="No recommendations yet" description="Add skills and interests to your profile so NIRMAAN can rank opportunities for you." action={<Link to="/profile"><Button variant="secondary">Update profile</Button></Link>} /> : (
+              <ul className="space-y-3">{d.recommendations.map((o) => (
+                <li key={o.id}><Card variant="interactive" className="p-4 relative"><div className="flex items-start gap-3"><div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-1">{o.category && <Badge tone="accent">{o.category}</Badge>}{o.isDemo && <DemoBadge />}{o.applicationStatus && <StatusPill status={o.applicationStatus} />}</div>
+                  <Link to={`/opportunities/${o.id}`} className="font-medium text-sm after:absolute after:inset-0 focus-ring rounded">{o.title}</Link><p className="text-xs text-muted">{o.organization} · <span className={o.urgency === 'critical' ? 'text-danger-500 font-medium' : ''}>{deadlineLabel(o.daysRemaining, o.urgency)}</span></p>
+                  {o.fit && (o.fit.reasons[0] || o.fit.concerns[0]) && <p className="text-xs text-muted mt-1.5 line-clamp-2">{o.fit.reasons[0] ?? o.fit.concerns[0]}</p>}</div>
+                  {o.fit && <FitBadge score={o.fit.overall} confidence={o.fit.confidence} />}</div><div className="relative z-10 mt-2"><SaveButton id={o.id} saved={o.saved} /></div></Card></li>))}</ul>)}
+          </Section>
+          {d.skillGaps.length > 0 && <Section title="Skill gaps worth closing" hint="Missing skills ranked by how many relevant opportunities they'd open up." action={<a id="skills" className="sr-only" href="#skills">Skills</a>}>
+            <ul className="space-y-3">{d.skillGaps.map((g) => (<li key={g.skill}><Card className="p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-medium text-sm capitalize">{g.skill} {g.inferred && <Badge tone="warning">suggested — unconfirmed</Badge>}</p><p className="text-xs text-muted mt-0.5">Missing from {g.unlocks} relevant {g.unlocks === 1 ? 'opportunity' : 'opportunities'}{g.highFitUnlocks > 0 && ` · lifts ${g.highFitUnlocks} to 75%+ fit`}</p></div><Badge>{g.teamRole}</Badge></div>
+              <p className="text-sm mt-2">{g.action}</p>{g.opportunities[0] && <p className="text-xs text-muted mt-2">e.g. <Link to={`/opportunities/${g.opportunities[0].id}`} className="hover:underline focus-ring rounded">{g.opportunities[0].title}</Link>: {Math.round(g.opportunities[0].fitNow)}% → {Math.round(g.opportunities[0].fitWithSkill)}% with it</p>}{g.inferred && <Link to="/profile" className="text-xs text-accent-500 mt-1 inline-block focus-ring rounded">Review in profile →</Link>}</Card></li>))}</ul></Section>}
+        </div>
 
-      {/* Best match — visually dominant, real backend fit score */}
-      {best && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <Card variant="highlight" className="p-6 mb-6">
-            <p className="text-[11px] font-medium text-accent-500 tracking-wide mb-4">YOUR BEST MATCH</p>
-            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-              <ScoreRing value={best.fitScore} size={88} label="fit" />
-              <div className="flex-1 min-w-0">
-                <h2 className="text-lg font-medium">{best.title}</h2>
-                <p className="text-sm text-muted mt-0.5">{best.organization} · {best.domain} · deadline {best.deadline || 'TBD'}</p>
-                <p className="text-xs text-muted mt-2 max-w-md">{best.reason}</p>
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {best.matchedSkills.map((s) => <Badge key={s} tone="success">✓ {s}</Badge>)}
-                  {best.missingSkills.slice(0, 2).map((s) => <Badge key={s} tone="warning">△ {s}</Badge>)}
-                </div>
-                <Link to={`/opportunities/${best.id}`}>
-                  <Button size="sm" className="mt-4">View opportunity <ArrowRight size={14} /></Button>
-                </Link>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-      )}
+        <div className="space-y-8 min-w-0">
+          <Section title="Upcoming deadlines" hint="From what you saved or are applying to.">{d.deadlines.length === 0 ? <p className="text-sm text-muted">No deadlines in the next 30 days for your saved or in-progress opportunities.</p> : <ul className="space-y-2">{d.deadlines.map((x) => <li key={x.opportunityId} className="surface rounded-lg p-3"><Link to={`/opportunities/${x.opportunityId}`} className="text-sm font-medium hover:underline focus-ring rounded">{x.title}</Link><div className="flex items-center gap-2 mt-1 text-xs text-muted"><CalendarClock size={12} aria-hidden /><Badge tone={urgencyTone(x.urgency)}>{deadlineLabel(x.daysRemaining, x.urgency)}</Badge><span>{formatDate(x.deadline, { day: 'numeric', month: 'short' })}</span>{x.status && <StatusPill status={x.status} />}</div></li>)}</ul>}</Section>
 
-      {rest.length > 0 && (
-        <Card variant="elevated" className="p-5 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium">More matched opportunities</h2>
-            <Link to="/opportunities" className="text-xs text-accent-500 flex items-center gap-1">View all <ChevronRight size={12} /></Link>
-          </div>
-          <div className="space-y-3">{rest.map((o) => <OpportunityCard key={o.id} opp={o} />)}</div>
-        </Card>
-      )}
+          <Section title="Application pipeline" action={<Link to="/applications" className="text-xs text-accent-500 focus-ring rounded">Open →</Link>}>{pipelineTotal === 0 ? <p className="text-sm text-muted">You aren't tracking any applications yet.</p> : (<div>
+            <div className="flex h-2 rounded-full overflow-hidden bg-black/[0.06] dark:bg-white/[0.08]" role="img" aria-label={`Pipeline: ${APPLICATION_STATUSES.filter((s) => d.pipeline.counts[s]).map((s) => `${d.pipeline.counts[s]} ${s}`).join(', ')}`}>{APPLICATION_STATUSES.map((s, i) => d.pipeline.counts[s] > 0 && <span key={s} style={{ width: `${(d.pipeline.counts[s] / pipelineTotal) * 100}%`, background: `color-mix(in srgb, var(--color-accent-500) ${30 + (i * 70) / 9}%, var(--color-cyan-500))` }} />)}</div>
+            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">{APPLICATION_STATUSES.filter((s) => d.pipeline.counts[s] > 0).map((s) => <li key={s} className="flex justify-between"><span className="capitalize text-muted">{titleCase(s)}</span><span className="tabular-nums font-medium">{d.pipeline.counts[s]}</span></li>)}</ul></div>)}</Section>
 
-      {recs.length === 0 && (
-        <Card variant="elevated" className="p-5 mb-6">
-          <EmptyState
-            icon={Sparkles}
-            title="Your profile needs a little more signal"
-            description="Add skills and interests to improve matching."
-            action={<Link to="/profile"><Button size="sm">Complete profile</Button></Link>}
-          />
-        </Card>
-      )}
+          {d.insights.length > 0 && <Section title="Needs attention"><ul className="space-y-2">{d.insights.map((i, n) => <li key={n}><Notice tone={i.kind === 'urgent' ? 'danger' : 'warning'} title={i.title}>{i.detail}</Notice></li>)}</ul></Section>}
 
-      {(skillGapsQ.data?.items.length ?? 0) > 0 && (
-        <Card variant="elevated" className="p-5 mb-6">
-          <h2 className="font-medium mb-1">Your biggest skill gaps</h2>
-          <p className="text-xs text-muted mb-3">Skills missing across your current recommendations — adding one for real would unlock these opportunities.</p>
-          <div className="space-y-2">
-            {skillGapsQ.data!.items.slice(0, 4).map((g) => (
-              <div key={g.skill} className="flex items-center justify-between text-sm">
-                <span className="capitalize">{g.skill}</span>
-                <span className="text-xs text-muted">unlocks {g.unlocksCount} opportunit{g.unlocksCount === 1 ? 'y' : 'ies'}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
+          <Section title="Teams" action={<Link to="/team-builder" className="text-xs text-accent-500 focus-ring rounded">Team Builder →</Link>}>
+            {d.pendingInvitations > 0 && <div className="mb-2"><Notice tone="accent" title={`${d.pendingInvitations} pending invitation${d.pendingInvitations === 1 ? '' : 's'}`}><Link to="/team-builder" className="underline">Respond</Link></Notice></div>}
+            {d.teams.length === 0 ? <p className="text-sm text-muted">No teams yet.</p> : <ul className="space-y-2">{d.teams.map((t) => <li key={t.id} className="surface rounded-lg p-3 text-sm flex items-center gap-2"><Users size={14} className="text-muted shrink-0" aria-hidden /><span className="min-w-0 truncate">{t.name || t.opportunity || 'Untitled team'}</span><Badge>{t.status}</Badge></li>)}</ul>}</Section>
 
-      {closingSoon.length > 0 && (
-        <Card variant="elevated" className="p-5 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium">Closing soon</h2>
-            <Badge tone="warning">{closingSoon.length} opportunit{closingSoon.length === 1 ? 'y' : 'ies'}</Badge>
-          </div>
-          <div className="space-y-3">{closingSoon.slice(0, 3).map((o) => <OpportunityCard key={o.id} opp={o} />)}</div>
-        </Card>
-      )}
-
-      {activeApplications.length > 0 && (
-        <Card variant="elevated" className="p-5 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium">Continue your applications</h2>
-            <Link to="/applications" className="text-xs text-accent-500 flex items-center gap-1">View all <ChevronRight size={12} /></Link>
-          </div>
-          <div className="space-y-2">
-            {activeApplications.slice(0, 3).map((a) => (
-              <Link key={a.id} to={`/opportunities/${a.opportunityId}`} className="flex items-center justify-between p-3 rounded-lg surface-interactive text-sm">
-                <span className="min-w-0 truncate">{a.title}</span>
-                <Badge tone="accent">{a.status}</Badge>
-              </Link>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card variant="interactive" className="p-5">
-          <ClipboardList size={20} className="text-accent-500 mb-2" />
-          <h2 className="font-medium mb-1">Track your applications</h2>
-          <p className="text-sm text-muted mb-3">Kanban pipeline from wishlist to selected.</p>
-          <Link to="/applications"><Button size="sm">Open Applications</Button></Link>
-        </Card>
-        <Card variant="interactive" className="p-5">
-          <Users size={20} className="text-accent-500 mb-2" />
-          <h2 className="font-medium mb-1">Build your ideal team</h2>
-          <p className="text-sm text-muted mb-3">Skill-complementary teammates, not just your friend circle.</p>
-          <Link to="/team-builder"><Button size="sm">Find teammates</Button></Link>
-        </Card>
-        <Card variant="interactive" className="p-5">
-          <ShieldCheck size={20} className="text-accent-500 mb-2" />
-          <h2 className="font-medium mb-1">Have an idea?</h2>
-          <p className="text-sm text-muted mb-3">Check it against prior work before investing weeks.</p>
-          <Link to="/originality"><Button size="sm">Check originality</Button></Link>
-        </Card>
+          <Section title="Recent ideas" action={<Link to="/originality" className="text-xs text-accent-500 focus-ring rounded">Check one →</Link>}>{d.ideas.length === 0 ? <p className="text-sm text-muted flex gap-2"><Lightbulb size={14} className="mt-0.5 shrink-0" aria-hidden /> Nothing checked yet.</p> : <ul className="space-y-2">{d.ideas.map((i) => <li key={i.id} className="surface rounded-lg p-3 text-sm"><Link to={`/originality/history/${i.id}`} className="font-medium hover:underline focus-ring rounded">{i.title}</Link><div className="flex gap-2 mt-1"><Badge>{titleCase(i.status)}</Badge>{i.topSimilarity !== null && <span className="text-xs text-muted tabular-nums">{Math.round(i.topSimilarity)}% closest</span>}</div></li>)}</ul>}</Section>
+        </div>
       </div>
     </div>
-  )
-}
-
-function Kpi({ label, value, delay }: { label: string; value: string; delay: number }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay }}>
-      <Card variant="elevated" className="p-4">
-        <div className="text-xs text-muted">{label}</div>
-        <div className="text-xl font-semibold mt-1">{value}</div>
-      </Card>
-    </motion.div>
   )
 }

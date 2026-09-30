@@ -1,40 +1,27 @@
-import { Bookmark } from 'lucide-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
-import { savedService } from '../../lib/services'
+import { Bookmark, BookmarkCheck } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import { savedService } from '../../lib/services'
+import type { ApiError } from '../../lib/api'
 
-export function SaveButton({ opportunityId, size = 16 }: { opportunityId: string; size?: number }) {
+export function SaveButton({ id, saved, compact = false }: { id: string; saved: boolean; compact?: boolean }) {
   const qc = useQueryClient()
-  const { data } = useQuery({
-    queryKey: ['saved-status', opportunityId],
-    queryFn: () => savedService.isSaved(opportunityId),
-  })
-  const saved = data?.saved ?? false
-
-  const mutation = useMutation({
-    mutationFn: () => (saved ? savedService.unsave(opportunityId) : savedService.save(opportunityId)),
+  const m = useMutation({
+    mutationFn: () => (saved ? savedService.unsave(id) : savedService.save(id)),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['saved-status', opportunityId] })
-      qc.invalidateQueries({ queryKey: ['saved-opportunities'] })
-      qc.invalidateQueries({ queryKey: ['activity'] })
+      toast.success(saved ? 'Removed from saved' : 'Saved')
+      for (const k of ['opportunities', 'opportunity', 'saved', 'dashboard', 'recommendations', 'activity']) qc.invalidateQueries({ queryKey: [k] })
     },
+    onError: (e: ApiError) => toast.error(e.message),
   })
-
   return (
-    <button
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); mutation.mutate() }}
-      disabled={mutation.isPending}
+    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); m.mutate() }} disabled={m.isPending} aria-pressed={saved}
       aria-label={saved ? 'Remove from saved' : 'Save opportunity'}
-      aria-pressed={saved}
-      className={clsx(
-        'inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors shrink-0',
-        saved ? 'text-accent-500 bg-accent-500/10' : 'text-muted hover:bg-black/[0.05] dark:hover:bg-white/[0.08]',
-      )}
-    >
-      <motion.span initial={false} animate={{ scale: saved ? [1, 1.25, 1] : 1 }} transition={{ duration: 0.25 }}>
-        <Bookmark size={size} fill={saved ? 'currentColor' : 'none'} />
-      </motion.span>
+      className={clsx('inline-flex items-center gap-1.5 rounded-lg text-xs font-medium focus-ring disabled:opacity-60 transition-colors',
+        compact ? 'p-2 min-h-[36px] min-w-[36px] justify-center' : 'px-3 py-2', saved ? 'text-accent-500 bg-accent-500/10' : 'text-muted hover:bg-black/[0.05] dark:hover:bg-white/[0.08]')}>
+      {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+      {!compact && (saved ? 'Saved' : 'Save')}
     </button>
   )
 }

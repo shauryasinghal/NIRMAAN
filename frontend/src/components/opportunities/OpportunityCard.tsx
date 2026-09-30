@@ -1,76 +1,62 @@
 import { Link } from 'react-router-dom'
-import { Check, Triangle } from 'lucide-react'
-import type { RecommendedOpportunity } from '../../types'
+import { Building2, CalendarClock, MapPin, Users } from 'lucide-react'
+import clsx from 'clsx'
 import { Badge } from '../ui/primitives'
+import { DemoBadge, FitBadge, StatusPill } from '../ui/kit'
 import { SaveButton } from './SaveButton'
+import { deadlineLabel, money, titleCase } from '../../lib/format'
+import type { OpportunityCardData } from '../../types'
 
-const URGENCY_LABEL: Record<string, string> = {
-  critical: 'Closes soon', soon: 'Closing this week', open: 'Open', expired: 'Closed', unknown: '',
-}
-const URGENCY_TONE: Record<string, 'danger' | 'warning' | 'success' | 'neutral'> = {
-  critical: 'danger', soon: 'warning', open: 'success', expired: 'neutral', unknown: 'neutral',
-}
-
-export function OpportunityCard({
-  opp, compareMode, selected, onToggleCompare,
-}: {
-  opp: RecommendedOpportunity
-  compareMode?: boolean
-  selected?: boolean
-  onToggleCompare?: (id: string) => void
-}) {
-  const fitTone = opp.fitScore >= 65 ? 'success' : opp.fitScore >= 35 ? 'warning' : 'danger'
+export function OpportunityCard({ o, compare, onCompare, compareDisabled }: { o: OpportunityCardData; compare?: boolean; onCompare?: (id: string) => void; compareDisabled?: boolean }) {
+  const matched = new Set(o.fit?.matchedSkills ?? [])
+  const pay = money(o.stipendAmount, o.stipendCurrency)
+  const team = o.participation === 'team' ? (o.minTeamSize && o.maxTeamSize ? `Team of ${o.minTeamSize}–${o.maxTeamSize}` : o.minTeamSize ? `Team of ${o.minTeamSize}+` : 'Team') : o.participation === 'individual' ? 'Individual' : null
+  const headline = o.fit?.concerns[0] && (o.isExpired || o.urgency === 'critical' || (o.fit?.overall ?? 100) < 40) ? o.fit.concerns[0] : o.fit?.reasons[0]
   return (
-    <Link
-      to={`/opportunities/${opp.id}`}
-      onClick={(e) => { if (compareMode) { e.preventDefault(); onToggleCompare?.(opp.id) } }}
-      className="block rounded-lg border p-4 hover:border-accent-500/50 transition-colors relative"
-      style={{ borderColor: selected ? 'var(--color-accent-500)' : 'var(--border)' }}
-    >
-      <div className="flex justify-between items-start gap-3">
-        <div className="min-w-0 flex items-start gap-2.5">
-          {compareMode && (
-            <span
-              className="mt-0.5 h-4 w-4 rounded border flex items-center justify-center shrink-0"
-              style={{ borderColor: selected ? 'var(--color-accent-500)' : 'var(--border)', background: selected ? 'var(--color-accent-500)' : 'transparent' }}
-            >
-              {selected && <span className="h-1.5 w-1.5 rounded-sm bg-white" />}
-            </span>
-          )}
-          <div className="min-w-0">
-            <div className="font-medium text-sm">{opp.title}</div>
-            <div className="text-xs text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
-              <span>{opp.organization} · {opp.domain} · deadline {opp.deadline || 'TBD'}</span>
-              {opp.category && <Badge tone="neutral">{opp.category}</Badge>}
-              {opp.urgency && opp.urgency !== 'unknown' && (
-                <Badge tone={URGENCY_TONE[opp.urgency]}>{URGENCY_LABEL[opp.urgency]}</Badge>
-              )}
-            </div>
+    <article className={clsx('surface-interactive rounded-xl p-4 flex flex-col gap-3 relative', o.isExpired && 'opacity-75')} aria-label={o.title}>
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+            {o.category && <Badge tone="accent">{o.category}</Badge>}
+            {o.difficulty && <Badge>{titleCase(o.difficulty)}</Badge>}
+            {o.isDemo && <DemoBadge />}
+            {!o.isDemo && o.verificationStatus === 'verified' && <Badge tone="success">Verified source</Badge>}
+            {o.applicationStatus && <StatusPill status={o.applicationStatus} />}
           </div>
+          <h3 className="font-semibold leading-snug text-[15px]">
+            <Link to={`/opportunities/${o.id}`} className="after:absolute after:inset-0 after:content-[''] focus-ring rounded">{o.title}</Link>
+          </h3>
+          <Link to={`/organizations/${o.organizationSlug}`} className="relative z-10 inline-flex items-center gap-1 text-xs text-muted hover:text-[var(--text)] mt-0.5 focus-ring rounded"><Building2 size={12} aria-hidden /> {o.organization}</Link>
         </div>
-        <div className="flex items-start gap-2 shrink-0">
-          <div className="text-right">
-            <div className="text-lg font-semibold text-accent-500">{opp.fitScore}%</div>
-            <Badge tone={fitTone as 'success' | 'warning' | 'danger'}>
-              {opp.fitScore >= 65 ? 'Excellent fit' : opp.fitScore >= 35 ? 'Good fit' : 'Partial fit'}
-            </Badge>
-          </div>
-          {!compareMode && <SaveButton opportunityId={opp.id} />}
+        {o.fit && <FitBadge score={o.fit.overall} confidence={o.fit.confidence} />}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+        <span className={clsx('inline-flex items-center gap-1', o.urgency === 'critical' && 'text-danger-500 font-medium', o.urgency === 'soon' && 'text-warning-500')}><CalendarClock size={12} aria-hidden /> {deadlineLabel(o.daysRemaining, o.urgency)}</span>
+        {(o.format || o.workMode) && <span className="capitalize">{[o.format, o.workMode].filter(Boolean).join(' · ')}</span>}
+        {o.location && <span className="inline-flex items-center gap-1"><MapPin size={12} aria-hidden /> {o.location}</span>}
+        {team && <span className="inline-flex items-center gap-1"><Users size={12} aria-hidden /> {team}</span>}
+        {pay && <span>{pay}/mo</span>}{o.prizeText && <span>{o.prizeText}</span>}
+      </div>
+
+      {(o.requiredSkills.length > 0) && (
+        <div className="flex flex-wrap gap-1.5" aria-label="Required skills">
+          {o.requiredSkills.slice(0, 6).map((s) => (
+            <span key={s} className={clsx('text-[11px] px-2 py-0.5 rounded-full border capitalize', matched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-[var(--border)] text-muted')}
+              title={matched.has(s) ? 'You have this skill' : 'Required — not in your confirmed skills'}>{matched.has(s) ? '✓ ' : ''}{s}</span>
+          ))}
         </div>
+      )}
+      {headline && <p className="text-xs text-muted leading-relaxed line-clamp-2">{headline}</p>}
+
+      <div className="relative z-10 flex items-center justify-between mt-auto pt-1">
+        <SaveButton id={o.id} saved={o.saved} />
+        {onCompare && (
+          <label className={clsx('inline-flex items-center gap-1.5 text-xs cursor-pointer min-h-[36px]', compareDisabled && !compare && 'opacity-50 cursor-not-allowed')}>
+            <input type="checkbox" checked={!!compare} disabled={compareDisabled && !compare} onChange={() => onCompare(o.id)} className="h-4 w-4 accent-[var(--color-accent-500)]" /> Compare
+          </label>
+        )}
       </div>
-      <p className="text-xs text-muted mt-2">{opp.reason}</p>
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        {opp.matchedSkills.map((s) => (
-          <span key={s} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-success-500/10 text-success-500">
-            <Check size={10} /> {s}
-          </span>
-        ))}
-        {opp.missingSkills.slice(0, 2).map((s) => (
-          <span key={s} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-warning-500/10 text-warning-500">
-            <Triangle size={10} /> {s}
-          </span>
-        ))}
-      </div>
-    </Link>
+    </article>
   )
 }

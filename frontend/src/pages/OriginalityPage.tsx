@@ -1,93 +1,53 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
-import { useSearchParams, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Target } from 'lucide-react'
-import { originalityService } from '../lib/services'
-import { Card } from '../components/ui/Card'
+import { Link, useSearchParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ShieldCheck } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
 import { Input, Textarea } from '../components/ui/Input'
-import { ScoreRing, Badge, ProcessingState } from '../components/ui/primitives'
+import { ProcessingState } from '../components/ui/primitives'
+import { Notice, PageHeader, Select } from '../components/ui/kit'
+import { IdeaResultView } from '../components/originality/IdeaResultView'
+import { ideaService, opportunityService, profileService } from '../lib/services'
+import type { ApiError } from '../lib/api'
+import type { IdeaResult } from '../types'
 
-const STATUS_LABEL: Record<string, string> = {
-  novel: 'High novelty', worth_reviewing: 'Worth reviewing', needs_review: 'Human review recommended',
-}
-const STATUS_TONE: Record<string, 'success' | 'warning' | 'danger'> = {
-  novel: 'success', worth_reviewing: 'warning', needs_review: 'danger',
-}
+const schema = z.object({ title: z.string().trim().min(3, 'Give your idea a title (3+ characters)').max(200), description: z.string().trim().min(20, 'Describe the idea in at least 20 characters').max(5000), domain: z.string().optional() })
+type Form = z.infer<typeof schema>
 
 export function OriginalityPage() {
-  const [params] = useSearchParams()
-  const opportunityId = params.get('opportunityId')
-  const domain = params.get('domain') || undefined
-
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const mutation = useMutation({
-    mutationFn: () => originalityService.check({ title, description, domain }),
+  const [sp] = useSearchParams(); const qc = useQueryClient()
+  const oppId = sp.get('opportunity')
+  const [result, setResult] = useState<IdeaResult | null>(null)
+  const opp = useQuery({ queryKey: ['opportunity', oppId], queryFn: () => opportunityService.detail(oppId!), enabled: !!oppId })
+  const interests = useQuery({ queryKey: ['vocab', 'interests'], queryFn: profileService.interests, staleTime: Infinity })
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<Form>({ resolver: zodResolver(schema) })
+  const check = useMutation({
+    mutationFn: (v: Form) => ideaService.check({ title: v.title, description: v.description, domain: v.domain || null, opportunityId: oppId }),
+    onSuccess: (r) => { setResult(r); for (const k of ['ideas', 'dashboard', 'activity', 'notifications']) qc.invalidateQueries({ queryKey: [k] }); requestAnimationFrame(() => document.getElementById('result')?.focus()) },
+    onError: (e: ApiError) => { if (e.status !== 503) toast.error(e.message) },
   })
-
+  const desc = watch('description') ?? ''
+  const unavailable = check.error && (check.error as ApiError).status === 503
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-1">Validate your idea before you build it.</h1>
-      <p className="text-muted text-sm mb-6">Semantic similarity against the indexed prior-idea corpus — a screening signal, not proof of plagiarism.</p>
-
-      {opportunityId && (
-        <Card variant="highlight" className="p-4 mb-6 flex items-start gap-3">
-          <Target size={16} className="text-accent-500 mt-0.5 shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium">Validating for a specific opportunity</p>
-            <p className="text-xs text-muted mt-0.5">
-              Checking against the <span className="font-medium">{domain}</span> domain for{' '}
-              <Link to={`/opportunities/${opportunityId}`} className="text-accent-500 hover:underline">this opportunity</Link>.
-            </p>
-          </div>
-        </Card>
-      )}
-
-      <Card variant="elevated" className="p-5 mb-6 space-y-3">
-        <Input label="Idea title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Hackathon teammate matcher" />
-        <Textarea label="Idea description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe what the idea does…" />
-        <Button onClick={() => mutation.mutate()} loading={mutation.isPending} disabled={!title.trim() || !description.trim()}>
-          Check originality
-        </Button>
+    <div className="max-w-4xl">
+      <PageHeader title="Originality check" subtitle="Compare an idea against the corpus using semantic embeddings before you invest weeks in it." actions={<Link to="/originality/history" className="text-sm text-accent-500 focus-ring rounded">History</Link>} />
+      {opp.data && <div className="mb-5"><Notice tone="accent" title={`Validating an idea for ${opp.data.title}`}>This check will be linked to that opportunity. <Link to={`/opportunities/${opp.data.id}`} className="underline">View it</Link></Notice></div>}
+      <Card className="p-5 mb-6">
+        <form className="space-y-4" onSubmit={handleSubmit((v) => check.mutate(v))} noValidate>
+          <Input label="Idea title" maxLength={200} {...register('title')} error={errors.title?.message} placeholder="e.g. Smart irrigation scheduler for small farms" />
+          <div><Textarea label="Describe the idea" rows={6} maxLength={5000} {...register('description')} error={errors.description?.message} placeholder="What problem does it solve, for whom, and how?" /><p className="text-[11px] text-muted mt-1 text-right tabular-nums">{desc.length}/5000</p></div>
+          <Select label="Domain (optional)" {...register('domain')}><option value="">Not specified</option>{interests.data?.map((i) => <option key={i.slug}>{i.name}</option>)}</Select>
+          <div className="flex items-center justify-between gap-3"><p className="text-xs text-muted max-w-md">Your idea is saved to your history. It is never shown to other students.</p><Button type="submit" loading={check.isPending}><ShieldCheck size={15} /> Check originality</Button></div>
+        </form>
       </Card>
-
-      {mutation.isPending && (
-        <ProcessingState label="Generating a semantic representation and searching prior ideas via FAISS…" />
-      )}
-      {mutation.isError && <p className="text-sm text-danger-500">{(mutation.error as Error).message}</p>}
-
-      {mutation.data && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-        <Card variant="elevated" className="p-6">
-          <div className="flex items-center gap-5 mb-6">
-            <ScoreRing value={mutation.data.noveltyScore} label="novelty" />
-            <div>
-              <Badge tone={STATUS_TONE[mutation.data.status] ?? 'neutral'}>{STATUS_LABEL[mutation.data.status] ?? mutation.data.status}</Badge>
-              <p className="text-xs text-muted mt-2">
-                Embedding: {mutation.data.embeddingMode} · Search: {mutation.data.searchBackend}
-              </p>
-            </div>
-          </div>
-
-          <h3 className="text-sm font-medium mb-3">Closest matches</h3>
-          {mutation.data.matches.length === 0 && <p className="text-sm text-muted">No similar prior ideas found in the corpus.</p>}
-          <div className="space-y-2">
-            {mutation.data.matches.map((m) => (
-              <div key={m.id} className="border rounded-lg p-3" style={{ borderColor: 'var(--border)' }}>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{m.title}</span>
-                  <span className="text-accent-500">{m.similarity}%</span>
-                </div>
-                <p className="text-xs text-muted mt-1">{m.description}</p>
-                <p className="text-[10px] text-muted mt-1">{m.source}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-        </motion.div>
-      )}
+      {check.isPending && <ProcessingState label="Embedding your idea and searching the corpus…" />}
+      {unavailable && <Notice tone="warning" title="Analysis is unavailable right now">The embedding model isn't available on this server, so NIRMAAN won't guess a score. Nothing was saved. Please try again later.</Notice>}
+      {result && !check.isPending && <div id="result" tabIndex={-1} className="outline-none" aria-live="polite"><h2 className="text-xl font-semibold mb-4">{result.title}</h2><IdeaResultView r={result} /></div>}
     </div>
   )
 }

@@ -12,7 +12,7 @@ export default function App() {
       <AuthProvider>
         <ThemeProvider>
           <RouterProvider router={router} />
-          <Toaster position="top-right" toastOptions={{ style: { fontSize: '13px' } }} />
+          <Toaster position="top-right" toastOptions={{ style: { fontSize: '13px' }, ariaProps: { role: 'status', 'aria-live': 'polite' } }} />
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

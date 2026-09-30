@@ -1,182 +1,94 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import {
-  Search, LayoutDashboard, Compass, Users, ShieldCheck, History, User, Settings, Sun, LogOut,
-  Bookmark, ClipboardList, Activity, Bell, Building2,
-} from 'lucide-react'
+import { Search, LayoutDashboard, Compass, Users, ShieldCheck, History, User, Settings, Sun, LogOut, Bookmark, ClipboardList, Activity, Bell, Building2, CornerDownLeft, type LucideIcon } from 'lucide-react'
+import clsx from 'clsx'
 import { opportunityService } from '../../lib/services'
+import { EMPTY_FILTERS } from '../../lib/filters'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
+import { Dialog } from '../ui/kit'
 
-const PAGES = [
-  { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
-  { label: 'Opportunities', to: '/opportunities', icon: Compass },
-  { label: 'Organizations', to: '/organizations', icon: Building2 },
-  { label: 'Saved Opportunities', to: '/saved', icon: Bookmark },
-  { label: 'Team Builder', to: '/team-builder', icon: Users },
-  { label: 'Originality Checker', to: '/originality', icon: ShieldCheck },
-  { label: 'History', to: '/originality/history', icon: History },
-  { label: 'My Applications', to: '/applications', icon: ClipboardList },
-  { label: 'Smart Alerts', to: '/smart-alerts', icon: Bell },
-  { label: 'Activity', to: '/activity', icon: Activity },
-  { label: 'Notifications', to: '/notifications', icon: Bell },
-  { label: 'Profile', to: '/profile', icon: User },
-  { label: 'Settings', to: '/settings', icon: Settings },
+const PAGES: { label: string; to: string; icon: LucideIcon }[] = [
+  { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard }, { label: 'Opportunities', to: '/opportunities', icon: Compass },
+  { label: 'Organizations', to: '/organizations', icon: Building2 }, { label: 'Saved opportunities', to: '/saved', icon: Bookmark },
+  { label: 'Team Builder', to: '/team-builder', icon: Users }, { label: 'Originality checker', to: '/originality', icon: ShieldCheck },
+  { label: 'Idea history', to: '/originality/history', icon: History }, { label: 'My applications', to: '/applications', icon: ClipboardList },
+  { label: 'Smart alerts', to: '/smart-alerts', icon: Bell }, { label: 'Activity', to: '/activity', icon: Activity },
+  { label: 'Notifications', to: '/notifications', icon: Bell }, { label: 'Profile', to: '/profile', icon: User }, { label: 'Settings', to: '/settings', icon: Settings },
 ]
-
 const RECENT_KEY = 'nirmaan_recent_pages'
 export function recordRecentPage(pathname: string) {
-  const match = PAGES.find((p) => p.to === pathname)
-  if (!match) return
-  const existing: string[] = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
-  const next = [pathname, ...existing.filter((p) => p !== pathname)].slice(0, 3)
-  localStorage.setItem(RECENT_KEY, JSON.stringify(next))
+  if (!PAGES.some((p) => p.to === pathname)) return
+  try {
+    const existing: string[] = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+    localStorage.setItem(RECENT_KEY, JSON.stringify([pathname, ...existing.filter((p) => p !== pathname)].slice(0, 3)))
+  } catch { /* storage unavailable */ }
 }
+
+type Item = { key: string; label: string; hint?: string; icon: LucideIcon; run: () => void; group: string }
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [debounced, setDebounced] = useState('')
+  const [active, setActive] = useState(0)
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { signOut } = useAuth()
   const { mode, setMode } = useTheme()
+  const listRef = useRef<HTMLUListElement>(null)
 
-  const { data } = useQuery({
-    queryKey: ['opportunities-search'],
-    queryFn: () => opportunityService.list({}),
-    enabled: open,
-  })
+  useEffect(() => { const t = setTimeout(() => setDebounced(query.trim()), 200); return () => clearTimeout(t) }, [query])
+  useEffect(() => { if (!open) { setQuery(''); setActive(0) } }, [open])
 
-  const recent = useMemo(() => {
-    if (query.trim()) return []
-    const paths: string[] = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
-    return paths.map((p) => PAGES.find((pg) => pg.to === p)).filter(Boolean) as typeof PAGES
-  }, [open, query])
+  const search = useQuery({ queryKey: ['palette-search', debounced], queryFn: () => opportunityService.search({ ...EMPTY_FILTERS, q: debounced }, 5), enabled: open && debounced.length >= 2, staleTime: 15_000 })
 
-  const pageResults = useMemo(() => {
-    const q = query.toLowerCase()
-    return PAGES.filter((p) => p.label.toLowerCase().includes(q))
-  }, [query])
+  const items = useMemo<Item[]>(() => {
+    const go = (to: string) => () => { onClose(); navigate(to) }
+    const q = query.trim().toLowerCase()
+    let recent: string[] = []
+    try { recent = q ? [] : JSON.parse(localStorage.getItem(RECENT_KEY) || '[]') } catch { /* ignore */ }
+    const pages: Item[] = PAGES.filter((p) => !q || p.label.toLowerCase().includes(q)).map((p) => ({ key: p.to, label: p.label, icon: p.icon, run: go(p.to), group: recent.includes(p.to) ? 'Recent' : 'Pages' }))
+    pages.sort((a, b) => (a.group === 'Recent' ? -1 : 0) - (b.group === 'Recent' ? -1 : 0))
+    const opps: Item[] = (search.data?.items ?? []).map((o) => ({ key: `o:${o.id}`, label: o.title, hint: o.organization, icon: Compass, run: go(`/opportunities/${o.id}`), group: 'Opportunities' }))
+    const actions: Item[] = [
+      { key: 'a:theme', label: `Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`, icon: Sun, run: () => { setMode(mode === 'dark' ? 'light' : 'dark'); onClose() }, group: 'Actions' },
+      { key: 'a:out', label: 'Log out', icon: LogOut, run: () => { onClose(); void signOut().then(() => navigate('/login')) }, group: 'Actions' },
+    ].filter((a) => !q || a.label.toLowerCase().includes(q))
+    return [...opps, ...pages, ...actions]
+  }, [query, search.data, mode, navigate, onClose, setMode, signOut])
 
-  const actionResults = useMemo(() => {
-    const actions = [
-      { label: mode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme', icon: Sun, run: () => setMode(mode === 'dark' ? 'light' : 'dark') },
-      { label: 'Log out', icon: LogOut, run: () => { logout(); navigate('/login') } },
-    ]
-    const q = query.toLowerCase()
-    return actions.filter((a) => a.label.toLowerCase().includes(q))
-  }, [query, mode])
+  useEffect(() => { setActive(0) }, [items.length, debounced])
+  useEffect(() => { listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }) }, [active])
 
-  const opportunityResults = useMemo(() => {
-    if (!query.trim() || !data) return []
-    const q = query.toLowerCase()
-    return data.items.filter((o) => o.title.toLowerCase().includes(q) || o.organization.toLowerCase().includes(q)).slice(0, 5)
-  }, [query, data])
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(items.length - 1, i + 1)) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => Math.max(0, i - 1)) }
+    else if (e.key === 'Enter') { e.preventDefault(); items[active]?.run() }
+  }
 
-  type Flat = { key: string; label: string; sub?: string; run: () => void }
-  const flat: Flat[] = useMemo(() => [
-    ...recent.map((p) => ({ key: `recent-${p.to}`, label: p.label, run: () => go(p.to) })),
-    ...pageResults.map((p) => ({ key: `page-${p.to}`, label: p.label, run: () => go(p.to) })),
-    ...actionResults.map((a) => ({ key: `action-${a.label}`, label: a.label, run: () => { a.run(); onClose() } })),
-    ...opportunityResults.map((o) => ({ key: `opp-${o.id}`, label: o.title, sub: o.organization, run: () => go(`/opportunities/${o.id}`) })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [recent, pageResults, actionResults, opportunityResults])
-
-  function go(to: string) { navigate(to); onClose() }
-
-  useEffect(() => { if (!open) { setQuery(''); setActiveIndex(0) } }, [open])
-  useEffect(() => { setActiveIndex(0) }, [query])
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, flat.length - 1)) }
-      if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)) }
-      if (e.key === 'Enter') { e.preventDefault(); flat[activeIndex]?.run() }
-    }
-    if (open) document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, onClose, flat, activeIndex])
-
-  if (!open) return null
-
-  let cursor = -1
-  const withCursor = <T,>(items: T[], render: (item: T, isActive: boolean) => React.ReactNode) =>
-    items.map((item) => { cursor += 1; return render(item, cursor === activeIndex) })
-
+  let lastGroup = ''
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/40" onClick={onClose}>
-      <div className="w-full max-w-lg rounded-xl surface-elevated overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
-          <Search size={16} className="text-muted" />
-          <input
-            autoFocus value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search NIRMAAN…"
-            className="flex-1 bg-transparent text-sm outline-none"
-          />
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded surface text-muted">Esc</kbd>
-        </div>
-        <div className="max-h-80 overflow-y-auto py-2">
-          {recent.length > 0 && (
-            <Section label="Recent">
-              {withCursor(recent, (p, active) => (
-                <Row key={p.to} icon={p.icon} label={p.label} active={active} onClick={() => go(p.to)} />
-              ))}
-            </Section>
-          )}
-          {pageResults.length > 0 && (
-            <Section label="Pages">
-              {withCursor(pageResults, (p, active) => (
-                <Row key={p.to} icon={p.icon} label={p.label} active={active} onClick={() => go(p.to)} />
-              ))}
-            </Section>
-          )}
-          {actionResults.length > 0 && (
-            <Section label="Actions">
-              {withCursor(actionResults, (a, active) => (
-                <Row key={a.label} icon={a.icon} label={a.label} active={active} onClick={() => { a.run(); onClose() }} />
-              ))}
-            </Section>
-          )}
-          {opportunityResults.length > 0 && (
-            <Section label="Opportunities">
-              {withCursor(opportunityResults, (o, active) => (
-                <Row key={o.id} label={o.title} sub={`${o.organization} · ${o.domain}`} active={active} onClick={() => go(`/opportunities/${o.id}`)} />
-              ))}
-            </Section>
-          )}
-          {query.trim() && pageResults.length === 0 && actionResults.length === 0 && opportunityResults.length === 0 && (
-            <p className="text-xs text-muted px-4 py-6 text-center">No matches for "{query}"</p>
-          )}
-        </div>
+    <Dialog open={open} onClose={onClose} title="Search NIRMAAN" description="Jump to a page, an opportunity or an action.">
+      <div className="relative">
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
+        <input autoFocus role="combobox" aria-expanded aria-controls="palette-list" aria-activedescendant={items[active] ? `pal-${items[active].key}` : undefined} aria-label="Search"
+          value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={onKey} placeholder="Search opportunities, pages, actions…"
+          className="w-full rounded-lg border bg-transparent pl-9 pr-3 py-2.5 text-sm focus-ring" style={{ borderColor: 'var(--border)' }} />
       </div>
-    </div>
-  )
-}
-
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="px-2 mt-1 first:mt-0">
-      <p className="text-[10px] uppercase tracking-wide text-muted px-2 py-1">{label}</p>
-      {children}
-    </div>
-  )
-}
-
-function Row({ icon: Icon, label, sub, active, onClick }: {
-  icon?: typeof Search; label: string; sub?: string; active: boolean; onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-left"
-      style={{ background: active ? 'color-mix(in srgb, var(--color-accent-500) 10%, transparent)' : undefined }}
-    >
-      {Icon && <Icon size={15} className="text-muted shrink-0" />}
-      <span className="flex flex-col items-start min-w-0">
-        <span className="truncate w-full">{label}</span>
-        {sub && <span className="text-[11px] text-muted truncate w-full">{sub}</span>}
-      </span>
-    </button>
+      <ul id="palette-list" ref={listRef} role="listbox" className="mt-3 max-h-[50vh] overflow-y-auto -mx-1">
+        {search.isFetching && debounced.length >= 2 && <li className="px-3 py-2 text-xs text-muted" role="status">Searching…</li>}
+        {items.length === 0 && !search.isFetching && <li className="px-3 py-6 text-center text-sm text-muted">Nothing matches “{query}”.</li>}
+        {items.map((it, i) => {
+          const header = it.group !== lastGroup ? <li key={`h-${it.group}`} role="presentation" className="px-3 pt-3 pb-1 text-[10px] uppercase tracking-wider text-muted">{it.group}</li> : null
+          lastGroup = it.group
+          return (<span key={it.key} className="contents">{header}
+            <li id={`pal-${it.key}`} role="option" aria-selected={i === active} onMouseEnter={() => setActive(i)} onClick={it.run}
+              className={clsx('flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-sm min-h-[40px]', i === active ? 'bg-accent-500/10 text-accent-500' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]')}>
+              <it.icon size={15} aria-hidden /><span className="flex-1 min-w-0 truncate">{it.label}</span>{it.hint && <span className="text-xs text-muted truncate max-w-[40%]">{it.hint}</span>}
+              {i === active && <CornerDownLeft size={12} aria-hidden />}
+            </li></span>)
+        })}
+      </ul>
+    </Dialog>
   )
 }

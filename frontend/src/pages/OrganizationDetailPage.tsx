@@ -1,55 +1,23 @@
-import { useParams, Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft } from 'lucide-react'
+import { ErrorState, EmptyState, Skeleton } from '../components/ui/primitives'
+import { DemoBadge, Notice, PageHeader } from '../components/ui/kit'
+import { OpportunityCard } from '../components/opportunities/OpportunityCard'
 import { organizationService } from '../lib/services'
-import { Card } from '../components/ui/Card'
-import { Badge, SkeletonCard } from '../components/ui/primitives'
+import type { ApiError } from '../lib/api'
 
 export function OrganizationDetailPage() {
-  const { name } = useParams<{ name: string }>()
-  const { data, isLoading } = useQuery({
-    queryKey: ['organization', name],
-    queryFn: () => organizationService.detail(name!),
-    enabled: !!name,
-  })
-
-  if (isLoading) return <SkeletonCard />
-  if (!data) return null
-
+  const { slug = '' } = useParams()
+  const q = useQuery({ queryKey: ['organization', slug], queryFn: () => organizationService.detail(slug), retry: false })
+  if (q.isLoading) return <div className="space-y-4"><Skeleton className="h-8 w-1/3" /><Skeleton className="h-40 w-full" /></div>
+  if (q.isError || !q.data) return <ErrorState message={(q.error as ApiError)?.status === 404 ? 'That organization does not exist.' : (q.error as Error)?.message} onRetry={(q.error as ApiError)?.status === 404 ? undefined : () => q.refetch()} />
+  const o = q.data
   return (
     <div>
-      <Link to="/organizations" className="text-sm text-muted flex items-center gap-1 mb-4"><ArrowLeft size={14} /> Back to organizations</Link>
-
-      <Card variant="elevated" className="p-6 mb-4">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-500 text-xl font-semibold shrink-0">
-            {data.name.charAt(0)}
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">{data.name}</h1>
-            <p className="text-sm text-muted mt-0.5">{data.opportunityCount} opportunit{data.opportunityCount === 1 ? 'y' : 'ies'} · {data.domains.join(', ')}</p>
-          </div>
-        </div>
-        <p className="text-xs text-muted mt-4">
-          Description, website and verification state are not currently available for this organization — NIRMAAN
-          only shows fields it actually has data for.
-        </p>
-      </Card>
-
-      <h2 className="font-medium mb-3">Opportunities from {data.name}</h2>
-      <div className="space-y-2">
-        {data.opportunities.map((o) => (
-          <Link key={o.id} to={`/opportunities/${o.id}`}>
-            <Card variant="interactive" className="p-3.5 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{o.title}</div>
-                <div className="text-xs text-muted mt-0.5">{o.domain} · deadline {o.deadline || 'TBD'}</div>
-              </div>
-              {o.category && <Badge tone="neutral">{o.category}</Badge>}
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <Link to="/organizations" className="text-xs text-muted hover:text-[var(--text)] focus-ring rounded">← Organizations</Link>
+      <div className="mt-3"><PageHeader title={o.name} subtitle={`${o.openCount} open ${o.openCount === 1 ? 'opportunity' : 'opportunities'}${o.website ? '' : ''}`} actions={o.isDemo ? <DemoBadge /> : undefined} /></div>
+      <div className="mb-6"><Notice>{o.note}{o.website && <> Website: <a className="underline" href={o.website} target="_blank" rel="noopener noreferrer nofollow">{o.website}</a></>}</Notice></div>
+      {o.opportunities.length === 0 ? <EmptyState title="No listings from this organization" /> : <div className="grid md:grid-cols-2 gap-4">{o.opportunities.map((x) => <OpportunityCard key={x.id} o={x} />)}</div>}
     </div>
   )
 }

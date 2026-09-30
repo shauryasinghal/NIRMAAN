@@ -1,120 +1,91 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AlertTriangle, ClipboardList, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { ClipboardList, LayoutGrid, List } from 'lucide-react'
-import { applicationService } from '../lib/services'
-import { Card } from '../components/ui/Card'
-import { EmptyState, SkeletonCard, Badge } from '../components/ui/primitives'
 import { Button } from '../components/ui/Button'
-import type { Application, ApplicationStatus } from '../types'
+import { Textarea, Input } from '../components/ui/Input'
+import { EmptyState, ErrorState, Skeleton } from '../components/ui/primitives'
+import { DemoBadge, Dialog, Notice, PageHeader, Select, StatusPill, Tabs } from '../components/ui/kit'
+import { applicationService } from '../lib/services'
+import { deadlineLabel, formatDate, timeAgo, titleCase } from '../lib/format'
+import type { ApiError } from '../lib/api'
+import { APPLICATION_STATUSES, type Application, type ApplicationStatus } from '../types'
 
-const PIPELINE: ApplicationStatus[] = ['wishlist', 'saved', 'planning', 'applying', 'applied', 'shortlisted', 'interview', 'selected']
-const STATUS_LABEL: Record<string, string> = {
-  wishlist: 'Wishlist', saved: 'Saved', planning: 'Planning', applying: 'Applying', applied: 'Applied',
-  shortlisted: 'Shortlisted', interview: 'Interview', selected: 'Selected', rejected: 'Rejected', withdrawn: 'Withdrawn',
-}
+const EVENT_LABEL: Record<string, string> = { created: 'Added to tracker', status_changed: 'Status changed', note_added: 'Notes updated', next_action_set: 'Next action set', reminder_set: 'Reminder' }
 
-export function ApplicationsPage() {
-  const qc = useQueryClient()
-  const { data, isLoading } = useQuery({ queryKey: ['applications'], queryFn: applicationService.list })
-  const [view, setView] = useState<'board' | 'list'>('board')
-
-  const mutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: ApplicationStatus }) => applicationService.update(id, { status }),
-    onSuccess: () => {
-      toast.success('Status updated')
-      qc.invalidateQueries({ queryKey: ['applications'] })
-      qc.invalidateQueries({ queryKey: ['activity'] })
-    },
-  })
-
-  const items = data?.items ?? []
-  const grouped = useMemo(() => {
-    const map = new Map<string, Application[]>()
-    for (const status of PIPELINE) map.set(status, [])
-    for (const a of items) {
-      if (!map.has(a.status)) map.set(a.status, [])
-      map.get(a.status)!.push(a)
-    }
-    return map
-  }, [items])
-
-  if (isLoading) return <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}</div>
-
-  if (items.length === 0) {
-    return (
-      <div>
-        <h1 className="text-2xl font-semibold mb-1">My Applications</h1>
-        <p className="text-muted text-sm mb-6">Track the opportunities you decide to pursue.</p>
-        <EmptyState
-          icon={ClipboardList}
-          title="Track the opportunities you decide to pursue"
-          description="Add an opportunity to your tracker from its detail page to see it here."
-          action={<Link to="/opportunities"><Button size="sm">Discover opportunities</Button></Link>}
-        />
-      </div>
-    )
-  }
-
+function AppCard({ a, onOpen, onMove, moving }: { a: Application; onOpen: () => void; onMove: (s: ApplicationStatus) => void; moving: boolean }) {
+  const o = a.opportunity
   return (
-    <div>
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-semibold">My Applications</h1>
-        <div className="flex gap-1">
-          <button onClick={() => setView('board')} className={`p-1.5 rounded-lg ${view === 'board' ? 'bg-accent-500/10 text-accent-500' : 'text-muted'}`} aria-label="Board view"><LayoutGrid size={16} /></button>
-          <button onClick={() => setView('list')} className={`p-1.5 rounded-lg ${view === 'list' ? 'bg-accent-500/10 text-accent-500' : 'text-muted'}`} aria-label="List view"><List size={16} /></button>
-        </div>
-      </div>
-      <p className="text-muted text-sm mb-6">{items.length} opportunities in your pipeline.</p>
-
-      {view === 'board' ? (
-        <div className="flex gap-3 overflow-x-auto pb-3">
-          {PIPELINE.map((status) => {
-            const apps = grouped.get(status) ?? []
-            return (
-              <div key={status} className="w-64 shrink-0">
-                <div className="flex items-center justify-between mb-2 px-1">
-                  <span className="text-xs font-medium text-muted uppercase tracking-wide">{STATUS_LABEL[status]}</span>
-                  <span className="text-xs text-muted">{apps.length}</span>
-                </div>
-                <div className="space-y-2">
-                  {apps.map((a) => (
-                    <ApplicationCard key={a.id} app={a} onMove={(next) => mutation.mutate({ id: a.id, status: next })} />
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {items.map((a) => (
-            <ApplicationCard key={a.id} app={a} onMove={(next) => mutation.mutate({ id: a.id, status: next })} wide />
-          ))}
-        </div>
-      )}
+    <div className="surface-interactive rounded-lg p-3 text-sm">
+      <button onClick={onOpen} className="text-left w-full focus-ring rounded" aria-label={`Open ${o.title}`}><p className="font-medium leading-snug">{o.title}</p><p className="text-xs text-muted">{o.organization}</p></button>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted"><span className={o.urgency === 'critical' ? 'text-danger-500 font-medium' : ''}><Clock size={11} className="inline -mt-0.5" aria-hidden /> {deadlineLabel(o.daysRemaining, o.urgency)}</span>{o.isDemo && <DemoBadge />}</div>
+      {a.nextAction && <p className="text-xs mt-2">→ {a.nextAction}</p>}
+      <Select aria-label={`Move ${o.title} to`} value={a.status} onChange={(e) => onMove(e.target.value as ApplicationStatus)} disabled={moving} className="mt-2 !py-1 text-xs">{APPLICATION_STATUSES.map((s) => <option key={s} value={s}>{titleCase(s)}</option>)}</Select>
     </div>
   )
 }
 
-function ApplicationCard({ app, onMove, wide }: { app: Application; onMove: (s: ApplicationStatus) => void; wide?: boolean }) {
-  const currentIndex = PIPELINE.indexOf(app.status)
-  const next = currentIndex >= 0 && currentIndex < PIPELINE.length - 1 ? PIPELINE[currentIndex + 1] : null
+function Detail({ id, onClose }: { id: string; onClose: () => void }) {
+  const qc = useQueryClient()
+  const q = useQuery({ queryKey: ['application', id], queryFn: () => applicationService.get(id) })
+  const a = q.data
+  const [f, setF] = useState<{ notes: string; nextAction: string; reminderAt: string } | null>(null)
+  const form = f ?? (a ? { notes: a.notes, nextAction: a.nextAction ?? '', reminderAt: a.reminderAt ?? '' } : { notes: '', nextAction: '', reminderAt: '' })
+  const [confirmDel, setConfirmDel] = useState(false)
+  const inval = () => { for (const k of ['applications', 'application', 'dashboard', 'activity']) qc.invalidateQueries({ queryKey: [k] }) }
+  const save = useMutation({ mutationFn: () => applicationService.update(id, { notes: form.notes, nextAction: form.nextAction.trim() || null, reminderAt: form.reminderAt || null }), onSuccess: () => { toast.success('Saved'); setF(null); inval() }, onError: (e: ApiError) => toast.error(e.message) })
+  const status = useMutation({ mutationFn: (s: ApplicationStatus) => applicationService.update(id, { status: s }), onSuccess: () => { toast.success('Status updated'); inval() }, onError: (e: ApiError) => toast.error(e.message) })
+  const del = useMutation({ mutationFn: () => applicationService.remove(id), onSuccess: () => { toast.success('Removed from tracker'); inval(); onClose() }, onError: (e: ApiError) => toast.error(e.message) })
   return (
-    <Card variant="interactive" className={`p-3 ${wide ? 'flex items-center justify-between gap-3' : ''}`}>
-      <div className="min-w-0">
-        <Link to={`/opportunities/${app.opportunityId}`} className="font-medium text-sm hover:text-accent-500 line-clamp-1">{app.title}</Link>
-        <p className="text-xs text-muted mt-0.5">{app.organization}</p>
-        {app.urgency && app.urgency !== 'unknown' && (
-          <Badge tone={app.urgency === 'critical' ? 'danger' : app.urgency === 'soon' ? 'warning' : 'neutral'}>{app.deadline}</Badge>
-        )}
-      </div>
-      {next && (
-        <button onClick={() => onMove(next)} className="text-[11px] mt-2 text-accent-500 hover:underline">
-          Move to {STATUS_LABEL[next]} →
-        </button>
-      )}
-    </Card>
+    <Dialog open onClose={onClose} title={a?.opportunity.title ?? 'Application'} description={a ? `${a.opportunity.organization} · ${deadlineLabel(a.opportunity.daysRemaining, a.opportunity.urgency)}` : undefined} wide
+      footer={<><Button variant="danger" size="sm" className="mr-auto" onClick={() => setConfirmDel(true)}>Remove</Button><Button variant="ghost" onClick={onClose}>Close</Button><Button onClick={() => save.mutate()} loading={save.isPending} disabled={!f}>Save</Button></>}>
+      {q.isLoading ? <Skeleton className="h-48 w-full" /> : q.isError || !a ? <ErrorState message={(q.error as Error)?.message} onRetry={() => q.refetch()} /> : (
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <Select label="Status" value={a.status} onChange={(e) => status.mutate(e.target.value as ApplicationStatus)} disabled={status.isPending}>{APPLICATION_STATUSES.map((s) => <option key={s} value={s}>{titleCase(s)}</option>)}</Select>
+            <Input label="Next action" maxLength={300} value={form.nextAction} onChange={(e) => setF({ ...form, nextAction: e.target.value })} placeholder="e.g. Finish the problem statement" />
+            <Input label="Remind me on" type="date" value={form.reminderAt} onChange={(e) => setF({ ...form, reminderAt: e.target.value })} />
+            <Textarea label="Notes" rows={4} maxLength={5000} value={form.notes} onChange={(e) => setF({ ...form, notes: e.target.value })} />
+            <Link to={`/opportunities/${a.opportunity.id}`} className="text-xs text-accent-500 focus-ring rounded">View opportunity →</Link>
+          </div>
+          <div><h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-3">Timeline</h3>
+            <ol className="relative border-l pl-4 space-y-4" style={{ borderColor: 'var(--border)' }}>{(a.timeline ?? []).slice().reverse().map((e) => (
+              <li key={e.id}><span className="absolute -left-[5px] mt-1.5 h-2.5 w-2.5 rounded-full bg-accent-500" aria-hidden /><p className="text-sm font-medium">{EVENT_LABEL[e.kind] ?? e.kind}</p>{e.detail && <p className="text-xs text-muted">{e.detail.replace('->', '→')}</p>}<time className="text-[11px] text-muted" dateTime={e.createdAt}>{formatDate(e.createdAt, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</time></li>))}</ol></div>
+        </div>)}
+      <Dialog open={confirmDel} onClose={() => setConfirmDel(false)} title="Remove from tracker?" description="The timeline for this application is deleted too." footer={<><Button variant="ghost" onClick={() => setConfirmDel(false)}>Cancel</Button><Button variant="danger" onClick={() => del.mutate()} loading={del.isPending}>Remove</Button></>}><p className="text-sm text-muted">The opportunity itself stays in NIRMAAN.</p></Dialog>
+    </Dialog>
+  )
+}
+
+export function ApplicationsPage() {
+  const qc = useQueryClient()
+  const [tab, setTab] = useState<'board' | 'list'>('board'); const [open, setOpen] = useState<string | null>(null)
+  const q = useQuery({ queryKey: ['applications'], queryFn: applicationService.list })
+  const ins = useQuery({ queryKey: ['application-insights'], queryFn: applicationService.insights })
+  const move = useMutation({ mutationFn: ({ id, s }: { id: string; s: ApplicationStatus }) => applicationService.update(id, { status: s }), onSuccess: () => { toast.success('Status updated'); for (const k of ['applications', 'application-insights', 'dashboard', 'activity']) qc.invalidateQueries({ queryKey: [k] }) }, onError: (e: ApiError) => toast.error(e.message) })
+  const d = q.data
+  if (q.isLoading) return <div><PageHeader title="Applications" /><div className="grid md:grid-cols-3 gap-4"><Skeleton className="h-48" /><Skeleton className="h-48" /><Skeleton className="h-48" /></div></div>
+  if (q.isError || !d) return <div><PageHeader title="Applications" /><ErrorState message={(q.error as Error)?.message} onRetry={() => q.refetch()} /></div>
+  const cols = APPLICATION_STATUSES.filter((s) => d.counts[s] > 0 || ['wishlist', 'planning', 'applying', 'applied', 'shortlisted', 'selected'].includes(s))
+  return (
+    <div>
+      <PageHeader title="Applications" subtitle="Your pipeline. Every status change is logged with a real timestamp." actions={<Link to="/opportunities"><Button variant="secondary">Find more</Button></Link>} />
+      {(ins.data?.items.length ?? 0) > 0 && <div className="mb-6 grid gap-2">{ins.data!.items.map((i, n) => <Notice key={n} tone={i.kind === 'urgent' ? 'danger' : 'warning'} title={<span className="inline-flex items-center gap-1.5"><AlertTriangle size={13} aria-hidden /> {i.title}</span>}>{i.detail} <button className="underline focus-ring rounded" onClick={() => setOpen(i.applicationId)}>Open</button></Notice>)}</div>}
+      {d.total === 0 ? <EmptyState icon={ClipboardList} title="No applications tracked yet" description="Open any opportunity and choose “Track this application”." action={<Link to="/opportunities"><Button>Browse opportunities</Button></Link>} /> : (<>
+        <Tabs label="View" value={tab} onChange={setTab} tabs={[{ id: 'board', label: 'Board', count: d.total }, { id: 'list', label: 'List' }]} />
+        <div className="mt-4" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+          {tab === 'board' ? (
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x">{cols.map((s) => (
+              <section key={s} aria-label={titleCase(s)} className="w-72 shrink-0 snap-start"><h2 className="text-xs font-semibold uppercase tracking-wide text-muted mb-2 flex items-center justify-between"><StatusPill status={s} /><span className="tabular-nums">{d.counts[s]}</span></h2>
+                <div className="space-y-2 min-h-[80px] rounded-xl p-1.5" style={{ background: 'color-mix(in srgb, var(--border) 25%, transparent)' }}>
+                  {d.items.filter((a) => a.status === s).map((a) => <AppCard key={a.id} a={a} onOpen={() => setOpen(a.id)} onMove={(st) => move.mutate({ id: a.id, s: st })} moving={move.isPending && move.variables?.id === a.id} />)}
+                  {d.counts[s] === 0 && <p className="text-[11px] text-muted text-center py-4">Nothing here</p>}</div></section>))}</div>
+          ) : (
+            <div className="surface rounded-xl overflow-x-auto"><table className="w-full text-sm min-w-[560px]"><caption className="sr-only">Tracked applications</caption><thead><tr className="text-left text-xs text-muted"><th scope="col" className="p-3">Opportunity</th><th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Deadline</th><th scope="col" className="p-3">Updated</th></tr></thead>
+              <tbody>{d.items.map((a) => <tr key={a.id} className="border-t hover:bg-black/[0.02] dark:hover:bg-white/[0.03]" style={{ borderColor: 'var(--border)' }}><td className="p-3"><button onClick={() => setOpen(a.id)} className="text-left font-medium hover:underline focus-ring rounded">{a.opportunity.title}</button><p className="text-xs text-muted">{a.opportunity.organization}</p></td><td className="p-3"><StatusPill status={a.status} /></td><td className="p-3 text-xs">{formatDate(a.opportunity.deadline)}</td><td className="p-3 text-xs text-muted">{timeAgo(a.updatedAt)}</td></tr>)}</tbody></table></div>)}
+        </div></>)}
+      {open && <Detail id={open} onClose={() => setOpen(null)} />}
+    </div>
   )
 }
