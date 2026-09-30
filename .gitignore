@@ -20,3 +20,7 @@ frontend/e2e/.auth/
 frontend/e2e/.tmp/
 frontend/playwright-report/
 frontend/test-results/
+
+# Local tooling (repo-local Supabase CLI install) and CLI state — never commit
+.tools/
+supabase/.temp/

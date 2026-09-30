@@ -16,11 +16,14 @@ Supabase is the source of truth. The API never issues tokens; it verifies Supaba
 from the database (never from the client), and runs every request as the Postgres `authenticated` role with the
 caller's claims so RLS applies to the API exactly as it does to a direct client.
 
-> **Honest status.** Everything below is built and verified locally: 136 backend tests, 58 frontend tests,
-> 49 database security checks, 179 Playwright E2E tests (flows, axe accessibility, 8 responsive widths, strict CSP).
-> **Not done / not verified:** the migrations have not been applied to the hosted Supabase project (awaiting approval),
-> nothing is deployed, Google sign-in has not been exercised against a real Google client, Docker images were not built
-> (no Docker daemon on the build machine), and the catalog is **demo data** until a real source is enabled.
+> **Honest status.** Verified locally: 138 backend tests, 58 frontend tests, 49 database security checks, 178 Playwright E2E tests
+> (flows, axe accessibility, 8 responsive widths) plus the strict-CSP production-build test.
+> **Hosted Supabase (`nirmaan`):** all 21 migrations are applied and the migration history matches the files (`supabase db push --dry-run` → up to date);
+> existing users/data were preserved; the profile-role escalation hole is closed; advisors show only the Pro-plan-only leaked-password warning;
+> the API starts against the hosted database (`/ready` ok, JWKS token verification rejects forged/expired/anon tokens, CORS locked to the configured origin).
+> **Not done / not verified:** nothing is deployed, Google sign-in has not yet been enabled or exercised against a real Google client,
+> a *valid* hosted user token has not yet been exercised end-to-end, Docker images were not built (no Docker daemon on the build machine),
+> and the catalog is **demo data** until a real source is enabled.
 > See [docs/FEATURE_MATRIX.md](docs/FEATURE_MATRIX.md).
 
 ## Repository map
@@ -63,7 +66,7 @@ The automated E2E suite uses a small **test-only** stand-in for Supabase Auth's 
 
 ```bash
 supabase/tests/run.sh && supabase/tests/upgrade_test.sh     # database security + upgrade path
-cd backend  && ./venv/bin/python -m pytest tests            # 136 tests (real MiniLM + pgvector for originality)
+cd backend  && ./venv/bin/python -m pytest tests            # 138 tests (real MiniLM + pgvector for originality)
 cd frontend && npm test                                     # 58 unit/component tests
 cd frontend && npx playwright test                          # 179 E2E: auth, discovery, team, originality, applications,
                                                             #   alerts, resume, reviewer/admin, axe a11y, 8 viewport widths

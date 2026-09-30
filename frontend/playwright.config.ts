@@ -17,9 +17,9 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     { command: `bash -c "cd ../backend && ${PY.replace('../backend/', './')} -m e2e.seed && ${PY.replace('../backend/', './')} -m e2e.fake_gotrue"`, url: `${AUTH}/auth/v1/settings`, timeout: 300_000, reuseExistingServer: false,
-      env: { DATABASE_URL: DB, SUPABASE_JWT_SECRET: SECRET, NIRMAAN_ENV: 'development', LOG_LEVEL: 'ERROR' } },
+      env: { DATABASE_URL: DB, SUPABASE_JWT_SECRET: SECRET, SUPABASE_URL: '', SUPABASE_ANON_KEY: '', NIRMAAN_ENV: 'development', LOG_LEVEL: 'ERROR' } },   // blank, never inherited from backend/.env (a developer's real project)
     { command: 'cd ../backend && ./venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000', url: 'http://127.0.0.1:8000/health', timeout: 120_000, reuseExistingServer: false,
-      env: { DATABASE_URL: DB, SUPABASE_JWT_SECRET: SECRET, SUPABASE_URL: AUTH, NIRMAAN_ENV: 'development', CORS_ORIGINS: 'http://127.0.0.1:5173,http://localhost:5173', RATE_LIMIT_PER_MINUTE: '100000', SESSION_CACHE_SECONDS: '0', LOG_LEVEL: 'ERROR', LOG_JSON: 'false', CRON_SECRET: 'e2e-cron' } },
+      env: { DATABASE_URL: DB, SUPABASE_JWT_SECRET: SECRET, SUPABASE_URL: AUTH, SUPABASE_ANON_KEY: 'e2e-anon-key-not-a-secret', NIRMAAN_ENV: 'development', CORS_ORIGINS: 'http://127.0.0.1:5173,http://localhost:5173', RATE_LIMIT_PER_MINUTE: '100000', SESSION_CACHE_SECONDS: '0', LOG_LEVEL: 'ERROR', LOG_JSON: 'false', CRON_SECRET: 'e2e-cron' } },
     { command: 'npm run dev -- --host 127.0.0.1 --port 5173 --strictPort', url: 'http://127.0.0.1:5173', timeout: 120_000, reuseExistingServer: false,
       env: { VITE_SUPABASE_URL: AUTH, VITE_SUPABASE_ANON_KEY: 'e2e-anon-key-not-a-secret' } },
   ],

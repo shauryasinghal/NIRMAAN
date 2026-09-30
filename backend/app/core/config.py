@@ -21,6 +21,7 @@ class Settings(BaseSettings):
 
     # ── Supabase Auth: the API only *verifies* tokens; it never issues them ──
     supabase_url: str = ""                 # https://<ref>.supabase.co  → JWKS + issuer + auth settings
+    supabase_anon_key: str = ""            # PUBLIC publishable/anon key. Supabase requires an `apikey` header on /auth/v1/settings; without it Google looks disabled
     supabase_jwt_secret: str = ""          # legacy HS256 projects and the test-suite only
     supabase_jwt_audience: str = "authenticated"
     session_check: bool = True             # reject tokens whose auth.sessions row was revoked

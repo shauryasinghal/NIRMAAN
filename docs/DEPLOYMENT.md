@@ -23,6 +23,12 @@ hosted schema exactly (columns, constraints, indexes, private functions, enums) 
 none drops or truncates data. `20260930090800` relaxes two NOT NULL defaults; `20260930090000` normalises one policy.
 Afterwards run the Supabase advisors and confirm: RLS enabled on every table, no `rls_enabled_no_policy` findings.
 
+**Migration history.** The hosted project's 13 migrations were applied on 2026-09-30 through the MCP `apply_migration` tool, which stamps each with the
+*current time* instead of the filename version. That history was then reconciled with the supported CLI mechanism so `supabase db push` sees nothing pending:
+`supabase migration repair --status applied <the 13 filename versions>` followed by `--status reverted <the 13 stamped versions>`, then `supabase db push --dry-run`
+→ *"Remote database is up to date."* (`repair` edits only `supabase_migrations.schema_migrations`; it runs no SQL.) Prefer `supabase db push` for future migrations so the
+versions match the files from the start.
+
 **Dashboard settings (cannot be done from code):**
 
 | Setting | Where | Value |
@@ -30,8 +36,8 @@ Afterwards run the Supabase advisors and confirm: RLS enabled on every table, no
 | Site URL | Authentication → URL Configuration | your production frontend URL |
 | Redirect URLs | same | `https://YOUR-APP/auth/callback`, `https://YOUR-APP/auth/reset` (+ `http://localhost:5173/...` for dev) |
 | Email confirmations | Authentication → Providers → Email | **on** |
-| Leaked-password protection | Authentication → Policies | **on** (currently flagged by the advisor) |
-| Password minimum length | same | ≥ 8 |
+| Leaked-password protection | Authentication → Policies | **on — requires the Pro plan or above.** The hosted project is on the Free plan, so the advisor keeps flagging it (accepted limitation until upgraded) |
+| Password minimum length / required characters | Authentication → Sign In / Providers → Email | ≥ 10 and the strictest character requirement (available on Free; partly compensates for the missing leaked-password check) |
 | Custom SMTP | Authentication → SMTP | recommended for production volume |
 
 **First administrator.** Public signups are always students. Promote the first admin once, as the database owner (SQL editor):
@@ -66,6 +72,7 @@ The variables `GOOGLE_CLIENT_ID/SECRET/REDIRECT_URI` in the API are for the **op
 | `NIRMAAN_ENV` | `production` (the process **refuses to start** with missing DB/auth config or a wildcard CORS) |
 | `DATABASE_URL` | Supabase → Database → Connection string, **pooler** (port 6543) |
 | `SUPABASE_URL` | `https://<ref>.supabase.co` — enables JWKS verification (asymmetric keys). Legacy HS256 projects also set `SUPABASE_JWT_SECRET`. |
+| `SUPABASE_ANON_KEY` | the **publishable** key (public; never `service_role`). Hosted Supabase answers 401 to `/auth/v1/settings` without an `apikey` header, so without it `/api/auth/config` reports `verified:false` and Google sign-in stays disabled. |
 | `CORS_ORIGINS` | the production frontend origin(s), comma-separated |
 | `FRONTEND_URL` | the frontend URL |
 | `CRON_SECRET` | long random string (for `POST /api/internal/jobs/{sql,alerts,ingest}` with `X-Cron-Secret`) |
@@ -88,7 +95,7 @@ The API runs behind one process-local rate limiter; for more than one instance s
 ## 5. Go-live checklist
 
 - [ ] `supabase/tests/run.sh` and `upgrade_test.sh` green on the exact migration set being applied
-- [ ] New migrations applied to Supabase; advisors show no RLS findings; leaked-password protection on
+- [ ] New migrations applied to Supabase (done 2026-09-30; history reconciled); advisors show no RLS findings; leaked-password protection on (Pro plan) or accepted as a known gap
 - [ ] Redirect URLs + email confirmation configured; first admin promoted
 - [ ] API deployed; `/ready` returns `ready`; `CORS_ORIGINS` is the real origin
 - [ ] Frontend deployed with the two public variables; `vercel.json` API host replaced

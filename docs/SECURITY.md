@@ -57,5 +57,6 @@ sign-out delayed by a hard-coded cache · outdated, vulnerable dependency pins.
 - **Session-revocation window** ≤ `SESSION_CACHE_SECONDS` (default 10 s; set 0 to check every request).
 - **Supabase JS keeps the session in `localStorage`** (its default), so an XSS bug would expose it. Mitigations: strict CSP (`script-src 'self'`), no dangerous DOM sinks, React escaping. Moving to httpOnly cookies would need a server-side session layer.
 - **Not verifiable here:** real GoTrue behaviour (email delivery, password policy, JWKS rotation), real Google OAuth, hosted-project advisors after migration, Docker/CI/Vercel deployment.
-- Leaked-password protection is a Supabase dashboard setting (currently off on the hosted project) — turn it on.
+- Leaked-password protection is a Supabase dashboard setting, **Pro plan and above only**. The hosted project is on the Free plan, so it is off and the advisor reports one WARN for it (accepted). Use a strong minimum password length / character policy (available on Free) meanwhile.
+- The E2E harness blanks `SUPABASE_URL` / `SUPABASE_ANON_KEY` for its own servers, and `app.devseed` refuses to run when `SUPABASE_URL` is set, so a developer's `backend/.env` pointing at a real project can never be seeded or written to by the test runs.
 - Resume parsing is bounded by a wall-clock timeout in a thread; a pathological PDF cannot be forcibly killed. Run the API with a request timeout at the proxy.

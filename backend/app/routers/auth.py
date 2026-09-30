@@ -46,7 +46,9 @@ def _supabase_auth_settings() -> dict | None:
     if not s.supabase_url:
         return None
     try:
-        r = httpx.get(f"{s.supabase_url.rstrip('/')}/auth/v1/settings", timeout=4.0)
+        # Hosted Supabase answers 401 to a request with no `apikey`; the publishable key is public by design.
+        headers = {"apikey": s.supabase_anon_key} if s.supabase_anon_key else {}
+        r = httpx.get(f"{s.supabase_url.rstrip('/')}/auth/v1/settings", headers=headers, timeout=4.0)
         r.raise_for_status()
         return r.json()
     except Exception as exc:
