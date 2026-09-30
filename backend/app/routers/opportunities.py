@@ -127,11 +127,11 @@ def get_opportunity(opportunity_id: str, user: CurrentUser = Depends(require_stu
     demo = r["source_type"] == "dev_seed"
     out = presenters.card(r, fit, oid in saved, apps.get(oid))
     out.update({
-        "description": r["description"], "eligibility": r["eligibility"], "education_requirements": r["education_requirements"],
-        "experience_requirements": r["experience_requirements"], "registration_start": r["registration_start"], "event_start": r["event_start"],
-        "event_end": r["event_end"], "application_url": None if demo else r["application_url"], "last_seen_at": None if demo else r["last_seen_at"],
+        "description": r["description"], "eligibility": r["eligibility"], "educationRequirements": r["education_requirements"],
+        "experienceRequirements": r["experience_requirements"], "registrationStart": r["registration_start"], "eventStart": r["event_start"],
+        "eventEnd": r["event_end"], "applicationUrl": None if demo else r["application_url"], "lastSeenAt": None if demo else r["last_seen_at"],
         "sources": [{"name": x["name"], "kind": x["kind"], "url": x["url"], "lastSeenAt": x["last_seen_at"]} for x in sources],
-        "fit_detail": presenters.fit_detail(fit), "why_not": explain_blockers(s, sig, fit, ctx),
+        "fitDetail": presenters.fit_detail(fit), "whyNot": explain_blockers(s, sig, fit, ctx),
     })
     return out
 

@@ -16,32 +16,36 @@ def urgency(deadline: dt.date | None) -> dict:
     return {"days_remaining": days, "urgency": band, "is_expired": days < 0}
 
 
+def urgency_c(deadline: dt.date | None) -> dict:
+    u = urgency(deadline)
+    return {"daysRemaining": u["days_remaining"], "urgency": u["urgency"], "isExpired": u["is_expired"]}
+
+
 def fit_summary(f: FitResult) -> dict:
-    return {"overall": f.overall, "confidence": f.confidence, "matched_skills": f.matched_skills, "missing_skills": f.missing_skills,
+    return {"overall": f.overall, "confidence": f.confidence, "matchedSkills": f.matched_skills, "missingSkills": f.missing_skills,
             "reasons": f.reasons[:4], "concerns": f.concerns[:3], "expired": f.expired}
 
 
 def fit_detail(f: FitResult) -> dict:
     d = f.as_dict()
-    return {**fit_summary(f), "opportunity_id": d["opportunityId"], "components": d["components"],
-            "preferred_matched": f.preferred_matched, "preferred_missing": f.preferred_missing, "reasons": f.reasons, "concerns": f.concerns}
+    return {**fit_summary(f), "opportunityId": d["opportunityId"], "components": d["components"],
+            "preferredMatched": f.preferred_matched, "preferredMissing": f.preferred_missing, "reasons": f.reasons, "concerns": f.concerns}
 
 
 def card(r: dict, fit: FitResult | None = None, saved: bool = False, app_status: str | None = None) -> dict:
     demo = r["source_type"] == "dev_seed"
-    out = {
-        "id": r["id"], "title": r["title"], "organization": r["organization"], "organization_slug": r["organization_slug"],
-        "category": r["category"], "subcategory": r["subcategory"], "domain": r.get("domain_label"), "domain_label": r.get("domain_label"),
-        "tags": r["tags"] or [], "required_skills": r["required_skills"], "preferred_skills": r["preferred_skills"],
-        "difficulty": r["difficulty"], "format": r["format"], "work_mode": r["work_mode"], "participation": r["participation"],
-        "min_team_size": r["min_team_size"], "max_team_size": r["max_team_size"], "deadline": r["deadline"], **urgency(r["deadline"]),
-        "location": r["location"], "prize_text": r["prize_text"], "stipend_amount": r["stipend_amount"], "stipend_currency": r["stipend_currency"],
-        "salary_text": r["salary_text"], "certificate": r["certificate"], "source": "Demo data" if demo else r["source"], "source_type": r["source_type"],
-        "is_demo": demo, "verification_status": "unverified" if demo else r["verification_status"], "freshness_status": "unknown" if demo else r["freshness_status"],
-        "last_verified_at": None if demo else r["last_verified_at"], "official_url": None if demo else r["external_url"],
-        "saved": saved, "application_status": app_status, "fit": fit_summary(fit) if fit else None,
+    return {
+        "id": r["id"], "title": r["title"], "organization": r["organization"], "organizationSlug": r["organization_slug"],
+        "category": r["category"], "subcategory": r["subcategory"], "domain": r.get("domain_label"), "domainLabel": r.get("domain_label"),
+        "tags": r["tags"] or [], "requiredSkills": r["required_skills"], "preferredSkills": r["preferred_skills"],
+        "difficulty": r["difficulty"], "format": r["format"], "workMode": r["work_mode"], "participation": r["participation"],
+        "minTeamSize": r["min_team_size"], "maxTeamSize": r["max_team_size"], "deadline": r["deadline"], **urgency_c(r["deadline"]),
+        "location": r["location"], "prizeText": r["prize_text"], "stipendAmount": r["stipend_amount"], "stipendCurrency": r["stipend_currency"],
+        "salaryText": r["salary_text"], "certificate": r["certificate"], "source": "Demo data" if demo else r["source"], "sourceType": r["source_type"],
+        "isDemo": demo, "verificationStatus": "unverified" if demo else r["verification_status"], "freshnessStatus": "unknown" if demo else r["freshness_status"],
+        "lastVerifiedAt": None if demo else r["last_verified_at"], "officialUrl": None if demo else r["external_url"],
+        "saved": saved, "applicationStatus": app_status, "fit": fit_summary(fit) if fit else None,
     }
-    return out
 
 
 def user_flags(db: Db, user_id: str, ids: list[str]) -> tuple[set[str], dict[str, str]]:
