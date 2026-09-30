@@ -150,7 +150,8 @@ export function Tabs<T extends string>({ tabs, value, onChange, label }: { tabs:
 }
 
 // ── Dialog: labelled, focus-trapped, Escape/backdrop close, focus restored ──────────────────────
-export function Dialog({ open, onClose, title, description, children, footer, wide }: { open: boolean; onClose: () => void; title: string; description?: string; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
+export function Dialog({ open, onClose, title, description, children, footer, wide, size }: { open: boolean; onClose: () => void; title: string; description?: string; children: ReactNode; footer?: ReactNode; wide?: boolean; size?: 'md' | 'lg' | 'xl' }) {
+  const sz = size ?? (wide ? 'lg' : 'md')
   const ref = useRef<HTMLDivElement>(null)
   const titleId = useId(); const descId = useId()
   useEffect(() => {
@@ -177,12 +178,14 @@ export function Dialog({ open, onClose, title, description, children, footer, wi
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose() }}>
       <div className="absolute inset-0 bg-navy-950/60 backdrop-blur-[2px]" aria-hidden />
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={description ? descId : undefined} tabIndex={-1}
-        className={clsx('relative w-full rounded-t-2xl sm:rounded-2xl surface-elevated max-h-[92vh] flex flex-col outline-none', wide ? 'sm:max-w-2xl' : 'sm:max-w-md')}>
+        className={clsx('relative w-full rounded-t-2xl sm:rounded-2xl surface-elevated flex flex-col outline-none min-w-0',
+          sz === 'xl' ? 'max-h-[92dvh] sm:max-h-[calc(100dvh-3rem)] sm:max-w-[min(900px,calc(100vw-3rem))]' : 'max-h-[92vh]', sz === 'lg' && 'sm:max-w-2xl', sz === 'md' && 'sm:max-w-md')}>
         <div className="flex items-start justify-between gap-4 p-5 pb-3">
           <div className="min-w-0"><h2 id={titleId} className="text-base font-semibold">{title}</h2>{description && <p id={descId} className="text-xs text-muted mt-1">{description}</p>}</div>
           <button onClick={onClose} className="p-1.5 -m-1.5 rounded-lg text-muted hover:bg-black/[0.05] dark:hover:bg-white/[0.08] focus-ring" aria-label="Close dialog"><X size={16} /></button>
         </div>
-        <div className="dialog-body px-5 pb-5 overflow-y-auto">{children}</div>
+        {/* Bottom padding lives on an inner wrapper, not the scroll container: a sticky footer inside can then sit flush with the dialog edge instead of 20px above it. */}
+        <div className="dialog-body min-h-0 min-w-0 px-5 overflow-y-auto overscroll-contain"><div className="pb-5">{children}</div></div>
         {footer && <div className="px-5 py-3 border-t flex justify-end gap-2" style={{ borderColor: 'var(--border)' }}>{footer}</div>}
       </div>
     </div>, document.body)

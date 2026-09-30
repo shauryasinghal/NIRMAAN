@@ -96,7 +96,7 @@ export function ProfilePage() {
         </div>
       </div>
 
-      <Dialog open={resumeOpen} onClose={() => setResumeOpen(false)} title="Import from resume" description="PDF or DOCX. Review everything before it touches your profile." wide>
+      <Dialog open={resumeOpen} onClose={() => setResumeOpen(false)} title="Import from resume" description="PDF or DOCX. Review everything before it touches your profile." size="xl">
         <ResumeImport profile={p} onDone={() => setResumeOpen(false)} />
       </Dialog>
     </div>
