@@ -135,3 +135,16 @@ def catalog(_database):
     with open_db("service_role") as db:
         run_source(db, FixtureSource())
     return True
+
+
+@pytest.fixture(scope="session")
+def reference_corpus(_database):
+    """50 demo reference ideas embedded with the REAL MiniLM model (skipped if the model can't load)."""
+    from app.engines.originality import embedding_available
+    if not embedding_available():
+        pytest.skip("MiniLM weights not available")
+    from app.db.session import open_db
+    from app.devseed import seed_reference_ideas
+    with open_db("service_role") as db:
+        seed_reference_ideas(db)
+    return True
