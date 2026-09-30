@@ -16,7 +16,7 @@ Supabase is the source of truth. The API never issues tokens; it verifies Supaba
 from the database (never from the client), and runs every request as the Postgres `authenticated` role with the
 caller's claims so RLS applies to the API exactly as it does to a direct client.
 
-> **Honest status.** Everything below is built and verified locally: 134 backend tests, 56 frontend tests,
+> **Honest status.** Everything below is built and verified locally: 136 backend tests, 58 frontend tests,
 > 49 database security checks, 179 Playwright E2E tests (flows, axe accessibility, 8 responsive widths, strict CSP).
 > **Not done / not verified:** the migrations have not been applied to the hosted Supabase project (awaiting approval),
 > nothing is deployed, Google sign-in has not been exercised against a real Google client, Docker images were not built
@@ -63,8 +63,8 @@ The automated E2E suite uses a small **test-only** stand-in for Supabase Auth's 
 
 ```bash
 supabase/tests/run.sh && supabase/tests/upgrade_test.sh     # database security + upgrade path
-cd backend  && ./venv/bin/python -m pytest tests            # 134 tests (real MiniLM + pgvector for originality)
-cd frontend && npm test                                     # 56 unit/component tests
+cd backend  && ./venv/bin/python -m pytest tests            # 136 tests (real MiniLM + pgvector for originality)
+cd frontend && npm test                                     # 58 unit/component tests
 cd frontend && npx playwright test                          # 179 E2E: auth, discovery, team, originality, applications,
                                                             #   alerts, resume, reviewer/admin, axe a11y, 8 viewport widths
 cd frontend && npx playwright test -c playwright.csp.config.ts   # production build under the real CSP headers
