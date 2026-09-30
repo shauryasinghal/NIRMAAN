@@ -141,3 +141,25 @@ def test_overlap_dimensions():
     d = overlap_dimensions("Smart irrigation", "IoT sensors water crops", "iot", {"similarity": 0.8, "title": "Drip irrigation", "description": "sensors control water for crops", "domain": "iot"}, 0.6)
     assert d["sameDomain"] is True and "crops" in d["sharedTerms"] and d["semantic"] == 0.8
     assert shared_terms("alpha beta", "gamma") == []
+
+
+# ── display polish (found by looking at the screens, not by a functional test) ──────────────────
+def test_display_helpers_pluralise_and_case_acronyms():
+    from app.engines.display import label, labels, plural
+    assert [plural(1, "opportunity"), plural(2, "opportunity"), plural(3, "relevant opportunity"), plural(2, "day"), plural(1, "day"), plural(2, "key")] == \
+        ["1 opportunity", "2 opportunities", "3 relevant opportunities", "2 days", "1 day", "2 keys"]
+    assert label("nlp") == "NLP" and label("ai/ml") == "AI/ML" and label("python") == "python" and labels(["nlp", "docker"]) == "NLP, docker"
+
+
+def test_generated_sentences_use_display_names_and_correct_plurals():
+    s = StudentSignals(id="s", skills=frozenset({"python"}), interests=frozenset({"ai/ml"}), level="intermediate")
+    o = OppSignals(id="o", domain="ai/ml", required=frozenset({"python", "nlp", "sql"}), difficulty="intermediate", deadline=TODAY + dt.timedelta(days=30))
+    ctx = FitContext(today=TODAY, domain_profiles={"ai/ml": {"python": 1.0, "nlp": 1.0}})
+    r = score_fit(s, o, ctx)
+    text = " | ".join(r.reasons + r.concerns)
+    assert "AI/ML is one of your interests" in text and "Ai/ml" not in text and "Missing 2 required skills: NLP, SQL" in text
+    st = {"profile": {"has_skills": True, "has_interests": True, "has_branch": True},
+          "skill_gaps": [{"skill": "nlp", "unlocks": 6, "highFitUnlocks": 4}]}
+    from app.engines.next_best_action import next_best_actions
+    a = next_best_actions(st, TODAY)["action"]
+    assert a["title"] == "Close a skill gap: NLP" and a["reason"].startswith("NLP is missing") and "6 relevant opportunities" in a["reason"] and "opportunitys" not in a["reason"]

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, FlaskConical, X } from 'lucide-react'
 import clsx from 'clsx'
 import { Badge } from './primitives'
-import { fitTone } from '../../lib/format'
+import { fitTone, skillLabel } from '../../lib/format'
 
 // ── Page scaffolding ─────────────────────────────────────────────────────────────────────────
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: ReactNode; actions?: ReactNode }) {
@@ -103,7 +103,7 @@ export function CheckboxGroup({ legend, options, selected, onToggle, max = 8 }: 
         {merged.slice(0, max).map((o) => (
           <label key={o.value} className="flex items-center gap-2 text-sm cursor-pointer py-1 min-h-[28px]">
             <input type="checkbox" checked={selected.includes(o.value)} onChange={() => onToggle(o.value)} className="h-4 w-4 rounded accent-[var(--color-accent-500)]" />
-            <span className="capitalize flex-1 min-w-0 truncate">{o.label ?? o.value.replace(/_/g, ' ')}</span>
+            <span className="flex-1 min-w-0 truncate">{skillLabel(o.label ?? o.value.replace(/_/g, ' '))}</span>
             {o.count !== undefined && <span className="text-[11px] text-muted tabular-nums">{o.count}</span>}
           </label>
         ))}

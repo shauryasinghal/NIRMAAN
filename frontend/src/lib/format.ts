@@ -1,5 +1,19 @@
 import type { Urgency } from '../types'
 
+const LABELS: Record<string, string> = {
+  nlp: 'NLP', css: 'CSS', sql: 'SQL', iot: 'IoT', devops: 'DevOps', 'ui/ux': 'UI/UX', 'api design': 'API Design', 'ai/ml': 'AI/ML', 'c++': 'C++',
+  javascript: 'JavaScript', typescript: 'TypeScript', 'rest api': 'REST API', graphql: 'GraphQL', postgresql: 'PostgreSQL', mongodb: 'MongoDB', 'node.js': 'Node.js',
+  tensorflow: 'TensorFlow', pytorch: 'PyTorch', fastapi: 'FastAPI', aws: 'AWS', gcp: 'GCP', 'scikit-learn': 'scikit-learn',
+}
+/** Display form of a skill / domain / facet value. Keys stay lowercase in data; this only affects what people read.
+ *  Known acronyms and brand casings are honoured; anything already containing capitals is left alone; the rest is Title Case. */
+export function skillLabel(value: string): string {
+  const raw = value.trim(); const k = raw.toLowerCase()
+  if (LABELS[k]) return LABELS[k]
+  if (raw !== k) return raw
+  return k.replace(/\b[a-z]/g, (c) => c.toUpperCase())
+}
+
 export const titleCase = (s: string) => s.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
 export function formatDate(iso: string | null | undefined, opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }) {

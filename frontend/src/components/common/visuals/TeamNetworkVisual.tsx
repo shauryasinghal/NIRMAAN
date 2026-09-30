@@ -14,7 +14,7 @@ export function TeamNetworkVisual({ compact = false }: { compact?: boolean }) {
   const find = (id: string) => NODES.find((n) => n.id === id)!
   return (
     <div className={compact ? 'w-[200px]' : 'w-full max-w-[280px]'}>
-      <svg viewBox="0 0 260 170" className="w-full h-auto">
+      <svg viewBox="0 0 260 186" className="w-full h-auto">
         {EDGES.map(([a, b], i) => {
           const pa = find(a), pb = find(b)
           return (

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { AxiosError } from 'axios'
 import { ApiError, toApiError } from '../lib/api'
-import { deadlineLabel, fitTone, formatDate, money, timeAgo, titleCase } from '../lib/format'
+import { deadlineLabel, fitTone, formatDate, money, skillLabel, timeAgo, titleCase } from '../lib/format'
 
 describe('formatting never invents data', () => {
   it('labels deadlines', () => {
@@ -22,4 +22,9 @@ describe('API error contract', () => {
   it('never leaks raw server bodies for malformed errors', () => { const e = toApiError(axiosErr(500, '<html>Traceback…</html>')); expect(e.code).toBe('server_error'); expect(e.message).not.toMatch(/Traceback|html/) })
   it('maps network failures to a friendly message', () => { const e = toApiError(new AxiosError('Network Error')); expect(e.code).toBe('network_error'); expect(e.message).toMatch(/couldn't reach/i) })
   it('maps timeouts', () => { const e = toApiError(Object.assign(new AxiosError('t'), { code: 'ECONNABORTED' })); expect(e.code).toBe('timeout') })
+})
+
+describe('skillLabel (display only — data stays lowercase)', () => {
+  it('cases acronyms and brands correctly', () => { expect(['nlp', 'css', 'sql', 'iot', 'devops', 'ui/ux', 'api design', 'javascript', 'ai/ml'].map(skillLabel)).toEqual(['NLP', 'CSS', 'SQL', 'IoT', 'DevOps', 'UI/UX', 'API Design', 'JavaScript', 'AI/ML']) })
+  it('title-cases ordinary lowercase skills and leaves already-cased text alone', () => { expect(skillLabel('machine learning')).toBe('Machine Learning'); expect(skillLabel('python')).toBe('Python'); expect(skillLabel('AI/ML')).toBe('AI/ML'); expect(skillLabel('Data Science')).toBe('Data Science') })
 })

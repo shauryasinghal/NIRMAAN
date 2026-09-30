@@ -8,7 +8,7 @@ import { DemoBadge, FitBadge, Notice, Section, StatCard, StatusPill } from '../c
 import { SaveButton } from '../components/opportunities/SaveButton'
 import { useAuth } from '../context/AuthContext'
 import { dashboardService } from '../lib/services'
-import { deadlineLabel, formatDate, titleCase, urgencyTone } from '../lib/format'
+import { deadlineLabel, formatDate, skillLabel, titleCase, urgencyTone } from '../lib/format'
 import { APPLICATION_STATUSES } from '../types'
 
 const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Working late' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening' }
@@ -52,7 +52,7 @@ export function DashboardPage() {
                   {o.fit && <FitBadge score={o.fit.overall} confidence={o.fit.confidence} />}</div><div className="relative z-10 mt-2"><SaveButton id={o.id} saved={o.saved} /></div></Card></li>))}</ul>)}
           </Section>
           {d.skillGaps.length > 0 && <Section title="Skill gaps worth closing" hint="Missing skills ranked by how many relevant opportunities they'd open up." action={<a id="skills" className="sr-only" href="#skills">Skills</a>}>
-            <ul className="space-y-3">{d.skillGaps.map((g) => (<li key={g.skill}><Card className="p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-medium text-sm capitalize">{g.skill} {g.inferred && <Badge tone="warning">suggested — unconfirmed</Badge>}</p><p className="text-xs text-muted mt-0.5">Missing from {g.unlocks} relevant {g.unlocks === 1 ? 'opportunity' : 'opportunities'}{g.highFitUnlocks > 0 && ` · lifts ${g.highFitUnlocks} to 75%+ fit`}</p></div><Badge>{g.teamRole}</Badge></div>
+            <ul className="space-y-3">{d.skillGaps.map((g) => (<li key={g.skill}><Card className="p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-medium text-sm">{skillLabel(g.skill)} {g.inferred && <Badge tone="warning">suggested — unconfirmed</Badge>}</p><p className="text-xs text-muted mt-0.5">Missing from {g.unlocks} relevant {g.unlocks === 1 ? 'opportunity' : 'opportunities'}{g.highFitUnlocks > 0 && ` · lifts ${g.highFitUnlocks} to 75%+ fit`}</p></div><Badge>{g.teamRole}</Badge></div>
               <p className="text-sm mt-2">{g.action}</p>{g.opportunities[0] && <p className="text-xs text-muted mt-2">e.g. <Link to={`/opportunities/${g.opportunities[0].id}`} className="hover:underline focus-ring rounded">{g.opportunities[0].title}</Link>: {Math.round(g.opportunities[0].fitNow)}% → {Math.round(g.opportunities[0].fitWithSkill)}% with it</p>}{g.inferred && <Link to="/profile" className="text-xs text-accent-500 mt-1 inline-block focus-ring rounded">Review in profile →</Link>}</Card></li>))}</ul></Section>}
         </div>
 

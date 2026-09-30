@@ -71,7 +71,9 @@ export function LandingPage() {
       <FloatingNav />
 
       {/* HERO */}
-      <section className="relative bg-grid bg-radial-glow">
+      <section className="relative">
+        {/* backdrop lives on its own layer so it can fade into the page instead of ending in a hard edge */}
+        <div aria-hidden className="absolute inset-0 bg-grid bg-radial-glow pointer-events-none [mask-image:linear-gradient(to_bottom,black_55%,transparent)]" />
         <div className="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center relative">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.2 }}>
             <p className="text-xs font-medium text-accent-500 tracking-[0.2em] mb-4">THE AI OPERATING SYSTEM FOR STUDENT INNOVATION</p>
@@ -103,7 +105,7 @@ export function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.85, ease: EASE_OUT }}
-            className="mt-16 grid sm:grid-cols-3 gap-4 items-start"
+            className="mt-16 grid sm:grid-cols-3 gap-4 items-center"
             role="img" aria-label="Illustration of the three NIRMAAN engines. Example values only."
           >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="flex justify-center">

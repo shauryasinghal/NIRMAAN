@@ -11,7 +11,7 @@ import { ChipSelector } from '../components/common/ChipSelector'
 import { DemoBadge, Dialog, Meter, Notice, PageHeader, Tabs } from '../components/ui/kit'
 import { opportunityService, profileService, teamService } from '../lib/services'
 import { EMPTY_FILTERS } from '../lib/filters'
-import { timeAgo } from '../lib/format'
+import { skillLabel, timeAgo } from '../lib/format'
 import type { ApiError } from '../lib/api'
 import type { TeamMemberSuggestion, TeamRecord, TeamSuggestion } from '../types'
 
@@ -24,9 +24,9 @@ function MemberCard({ m, picked, onPick }: { m: TeamMemberSuggestion; picked?: b
       </div>
       <p className="text-sm mt-2 leading-relaxed">{m.why}</p>
       <dl className="mt-3 grid gap-2 text-xs">
-        {m.contributedSkills.length > 0 && <div><dt className="text-muted">Brings</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.contributedSkills.map((s) => <Badge key={s} tone="success">{s}</Badge>)}</dd></div>}
-        {m.complementarySkills.length > 0 && <div><dt className="text-muted">Also adds</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.complementarySkills.map((s) => <Badge key={s}>{s}</Badge>)}</dd></div>}
-        {m.overlapSkills.length > 0 && <div><dt className="text-muted">Overlaps with the team</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.overlapSkills.map((s) => <Badge key={s} tone="warning">{s}</Badge>)}</dd></div>}
+        {m.contributedSkills.length > 0 && <div><dt className="text-muted">Brings</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.contributedSkills.map((s) => <Badge key={s} tone="success">{skillLabel(s)}</Badge>)}</dd></div>}
+        {m.complementarySkills.length > 0 && <div><dt className="text-muted">Also adds</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.complementarySkills.map((s) => <Badge key={s}>{skillLabel(s)}</Badge>)}</dd></div>}
+        {m.overlapSkills.length > 0 && <div><dt className="text-muted">Overlaps with the team</dt><dd className="flex flex-wrap gap-1 mt-0.5">{m.overlapSkills.map((s) => <Badge key={s} tone="warning">{skillLabel(s)}</Badge>)}</dd></div>}
         {m.compatibility.score !== null && <div><dt className="text-muted">Compatibility</dt><dd><Meter label="Availability · experience · interests" value={m.compatibility.score} /><p className="text-[11px] text-muted mt-1">{Object.entries(m.compatibility.parts).filter(([, v]) => v !== null).map(([k, v]) => `${k} ${Math.round((v as number) * 100)}%`).join(' · ')}</p></dd></div>}
       </dl>
     </Card>
@@ -84,7 +84,7 @@ function Build() {
         {!result && !suggest.isPending && <EmptyState icon={Users} title="Build a team that covers what you're missing" description="Pick an opportunity (or skills) and NIRMAAN will find complementary teammates, explain each pick and show the coverage." />}
         {result && (<>
           <Card className="p-5 mb-5" variant="elevated"><div className="flex flex-wrap items-start justify-between gap-4">
-            <div><h2 className="text-sm font-semibold">Coverage of required skills</h2><div className="flex flex-wrap gap-1.5 mt-2">{Object.entries(result.coverage).map(([s, ok]) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border capitalize ${ok ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-danger-500/40 bg-danger-500/10 text-danger-500'}`}>{ok ? '✓' : '✗'} {s}</span>)}</div>
+            <div><h2 className="text-sm font-semibold">Coverage of required skills</h2><div className="flex flex-wrap gap-1.5 mt-2">{Object.entries(result.coverage).map(([s, ok]) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border ${ok ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-danger-500/40 bg-danger-500/10 text-danger-500'}`}>{ok ? '✓' : '✗'} {skillLabel(s)}</span>)}</div>
               <p className="text-xs text-muted mt-2">Before: {result.coverageBefore.covered.length}/{Object.keys(result.coverage).length} covered by you alone → after: {Object.values(result.coverage).filter(Boolean).length}/{Object.keys(result.coverage).length}</p></div>
             <div className="text-right"><div className="text-3xl font-semibold tabular-nums">{Math.round(result.metrics.score * 100)}</div><div className="text-[11px] text-muted uppercase tracking-wide">Team balance</div></div></div>
             <p className="text-sm mt-4">{result.summary}</p>

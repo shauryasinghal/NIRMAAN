@@ -7,7 +7,7 @@ import { EmptyState, ErrorState, Skeleton } from '../components/ui/primitives'
 import { DemoBadge, FitBadge, Notice, PageHeader } from '../components/ui/kit'
 import { SaveButton } from '../components/opportunities/SaveButton'
 import { opportunityService } from '../lib/services'
-import { deadlineLabel, formatDate, money, titleCase } from '../lib/format'
+import { deadlineLabel, formatDate, money, skillLabel, titleCase } from '../lib/format'
 
 export function ComparePage() {
   const [sp, setSp] = useSearchParams(); const nav = useNavigate()
@@ -24,8 +24,8 @@ export function ComparePage() {
     ['Difficulty', (o) => (o.difficulty ? titleCase(o.difficulty) : 'Not listed')], ['Format', (o) => [o.format, o.workMode].filter(Boolean).map((x) => titleCase(x!)).join(' · ') || 'Not listed'],
     ['Participation', (o) => (o.participation ? `${titleCase(o.participation)}${o.minTeamSize ? ` (${o.minTeamSize}${o.maxTeamSize ? `–${o.maxTeamSize}` : '+'})` : ''}` : 'Not listed')], ['Location', (o) => o.location ?? 'Not listed'],
     ['Pay / prize', (o) => [o.prizeText, money(o.stipendAmount, o.stipendCurrency), o.salaryText].filter(Boolean).join(' · ') || 'Not listed'],
-    ['Required skills', (o) => <span className="flex flex-wrap gap-1">{o.requiredSkills.length ? o.requiredSkills.map((s) => <span key={s} className={`text-[11px] px-1.5 py-0.5 rounded-full border capitalize ${o.fit?.matchedSkills.includes(s) ? 'border-success-500/40 text-success-500' : 'border-[var(--border)] text-muted'}`}>{o.fit?.matchedSkills.includes(s) ? '✓ ' : ''}{s}</span>) : 'Not listed'}</span>],
-    ['Skills you\'re missing', (o) => o.fit?.missingSkills.length ? o.fit.missingSkills.join(', ') : o.requiredSkills.length ? 'None' : 'n/a'],
+    ['Required skills', (o) => <span className="flex flex-wrap gap-1">{o.requiredSkills.length ? o.requiredSkills.map((s) => <span key={s} className={`text-[11px] px-1.5 py-0.5 rounded-full border ${o.fit?.matchedSkills.includes(s) ? 'border-success-500/40 text-success-500' : 'border-[var(--border)] text-muted'}`}>{o.fit?.matchedSkills.includes(s) ? '✓ ' : ''}{skillLabel(s)}</span>) : 'Not listed'}</span>],
+    ['Skills you\'re missing', (o) => o.fit?.missingSkills.length ? o.fit.missingSkills.map(skillLabel).join(', ') : o.requiredSkills.length ? 'None' : 'n/a'],
     ['Main concern', (o) => o.fit?.concerns[0] ?? 'None found'], ['Source', (o) => (o.isDemo ? 'Demo data' : o.source)],
   ]
   return (

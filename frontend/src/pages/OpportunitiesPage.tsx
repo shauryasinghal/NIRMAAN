@@ -52,7 +52,7 @@ export function OpportunitiesPage() {
       {chips.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4" aria-label="Active filters">
           {chips.map((c) => (
-            <button key={c.key} onClick={() => setFilters(c.remove(filters))} className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/10 text-accent-500 pl-3 pr-2 py-1 text-xs capitalize focus-ring" aria-label={`Remove filter ${c.label}`}>{c.label}<X size={12} /></button>
+            <button key={c.key} onClick={() => setFilters(c.remove(filters))} className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/10 text-accent-500 pl-3 pr-2 py-1 text-xs focus-ring" aria-label={`Remove filter ${c.label}`}>{c.label}<X size={12} /></button>
           ))}
           <button onClick={() => setFilters({ ...EMPTY_FILTERS, sort: filters.sort })} className="text-xs text-muted underline focus-ring rounded">Clear all</button>
         </div>

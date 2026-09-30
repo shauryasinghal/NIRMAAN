@@ -18,7 +18,7 @@ test.describe('sign up → onboarding → dashboard', () => {
     // 2 Skills: continuing with none is refused
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(page.getByRole('alert')).toContainText('at least one skill')
-    await page.getByPlaceholder('Search skills…').fill('python'); await page.getByRole('button', { name: 'python', exact: true }).click()
+    await page.getByPlaceholder('Search skills…').fill('python'); await page.getByRole('button', { name: 'Python', exact: true }).click()
     await page.getByRole('button', { name: 'Continue' }).click()
     // 3 Interests
     await page.getByRole('button', { name: 'AI/ML', exact: true }).click(); await page.getByRole('button', { name: 'Continue' }).click()

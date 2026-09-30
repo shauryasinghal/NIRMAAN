@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import dataclasses
 
+from .display import label, labels, plural
+
 from .recommender import score_fit
 from .types import LEVELS, FitContext, FitResult, OppSignals, StudentSignals
 
@@ -36,9 +38,9 @@ def explain_blockers(s: StudentSignals, o: OppSignals, fit: FitResult, ctx: FitC
         return round(max(0.0, score_fit(new_s or s, new_o or o, ctx).overall - base), 1)
 
     for skill in fit.missing_skills:
-        blockers.append({"kind": "missing_skill", "severity": "blocker", "title": f"{skill} missing",
-                         "detail": f"This opportunity requires {skill}, which isn't among your confirmed skills.",
-                         "fix": f"Learn {skill}, or add a teammate who has it." + (" You have an inferred match — confirm it if it's accurate." if skill in s.inferred_skills else ""),
+        blockers.append({"kind": "missing_skill", "severity": "blocker", "title": f"{label(skill)} missing",
+                         "detail": f"This opportunity requires {label(skill)}, which isn't among your confirmed skills.",
+                         "fix": f"Learn {label(skill)}, or add a teammate who has it." + (" You have an inferred match — confirm it if it's accurate." if skill in s.inferred_skills else ""),
                          "impact": gain(dataclasses.replace(s, skills=s.skills | {skill}))})
 
     if o.deadline is not None:

@@ -22,7 +22,7 @@ describe('opportunity filters ⇄ URL', () => {
   it('builds one removable chip per active filter and removing resets the page', () => {
     const f = { ...EMPTY_FILTERS, category: ['Hackathon'], skill: ['python'], minFit: 60, page: 5 }
     const chips = activeChips(f)
-    expect(chips.map((c) => c.label)).toEqual(['Category: Hackathon', 'Skill: python', 'Fit ≥ 60%'])
+    expect(chips.map((c) => c.label)).toEqual(['Category: Hackathon', 'Skill: Python', 'Fit ≥ 60%'])
     const after = chips[0].remove(f)
     expect(after.category).toEqual([]); expect(after.skill).toEqual(['python']); expect(after.page).toBe(1)
   })

@@ -23,6 +23,8 @@ from __future__ import annotations
 
 import math
 
+from .display import label, labels, plural
+
 from .types import LEVELS, Affinity, Component, FitContext, FitResult, OppSignals, StudentSignals
 
 WEIGHTS = {
@@ -38,10 +40,6 @@ EXPIRED_CAP = 30.0
 
 def _clamp(x: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, x))
-
-
-def _plural(n: int, word: str) -> str:
-    return f"{n} {word}{'' if n == 1 else 's'}"
 
 
 def skill_component(s: StudentSignals, o: OppSignals) -> Component:
@@ -72,12 +70,12 @@ def interest_component(s: StudentSignals, o: OppSignals) -> Component:
     if not o.domain and not o.tags:
         return Component("interest", "Interest match", w, None, "This listing has no domain or tags.")
     if o.domain and o.domain in s.interests:
-        return Component("interest", "Interest match", w, 1.0, f"{o.domain} is one of your interests")
+        return Component("interest", "Interest match", w, 1.0, f"{label(o.domain)} is one of your interests")
     tokens = {t for i in s.interests for t in i.replace("/", " ").split()}
     tag_hits = sorted({t.lower() for t in o.tags} & s.interests | ({t.lower() for t in o.tags} & tokens))
     if tag_hits:
-        return Component("interest", "Interest match", w, _clamp(0.5 + 0.25 * len(tag_hits)), f"tags overlap your interests: {', '.join(tag_hits[:3])}")
-    return Component("interest", "Interest match", w, 0.0, f"{o.domain or 'This domain'} isn't among your interests")
+        return Component("interest", "Interest match", w, _clamp(0.5 + 0.25 * len(tag_hits)), f"tags overlap your interests: {labels(tag_hits[:3])}")
+    return Component("interest", "Interest match", w, 0.0, f"{label(o.domain) or 'This domain'} isn't among your interests")
 
 
 def domain_component(s: StudentSignals, o: OppSignals, ctx: FitContext) -> Component:
@@ -87,8 +85,8 @@ def domain_component(s: StudentSignals, o: OppSignals, ctx: FitContext) -> Compo
         return Component("domain", "Domain alignment", w, None, "Not enough data to compare your skills with this domain.")
     norm = math.sqrt(sum(v * v for v in profile.values())) * math.sqrt(len(s.skills))
     score = _clamp(sum(profile.get(k, 0.0) for k in s.skills) / norm) if norm else 0.0
-    label = "Strong" if score >= 0.6 else "Moderate" if score >= 0.3 else "Weak"
-    return Component("domain", "Domain alignment", w, score, f"{label} overlap between your skills and typical {o.domain} requirements")
+    quality = "Strong" if score >= 0.6 else "Moderate" if score >= 0.3 else "Weak"
+    return Component("domain", "Domain alignment", w, score, f"{quality} overlap between your skills and typical {label(o.domain)} requirements")
 
 
 def experience_component(s: StudentSignals, o: OppSignals) -> Component:
@@ -141,7 +139,7 @@ def deadline_component(s: StudentSignals, o: OppSignals, ctx: FitContext) -> Com
         return Component("deadline", "Deadline feasibility", w, 0.0, "The registration deadline has passed")
     lead = LEAD_DAYS.get(o.difficulty or "", 10) * _clamp(10 / max(s.availability_hrs, 1), 0.5, 2.0)
     score = _clamp(days / lead)
-    detail = f"{_plural(days, 'day')} left; ~{round(lead)} days of lead time suggested at {s.availability_hrs} h/week"
+    detail = f"{plural(days, 'day')} left; ~{round(lead)} days of lead time suggested at {s.availability_hrs} h/week"
     return Component("deadline", "Deadline feasibility", w, score, detail)
 
 
@@ -198,11 +196,11 @@ def explain(s: StudentSignals, o: OppSignals, r: FitResult, ctx: FitContext) -> 
     by = {c.key: c for c in r.components}
     reasons: list[str] = []
     if o.required and r.matched_skills:
-        reasons.append(f"{len(r.matched_skills)}/{len(o.required)} required skills: {', '.join(r.matched_skills[:4])}")
+        reasons.append(f"{len(r.matched_skills)}/{len(o.required)} required skills: {labels(r.matched_skills[:4])}")
     if by["interest"].score == 1.0:
-        reasons.append(by["interest"].detail.capitalize())
+        reasons.append(by["interest"].detail[:1].upper() + by["interest"].detail[1:])
     if (by["domain"].score or 0) >= 0.6:
-        reasons.append(f"Strong {o.domain} alignment with your skills")
+        reasons.append(f"Strong {label(o.domain)} alignment with your skills")
     if by["experience"].score == 1.0:
         reasons.append("Difficulty matches your experience")
     if by["participation"].score == 1.0 and o.participation and s.participation_pref != "either":
@@ -220,11 +218,11 @@ def explain(s: StudentSignals, o: OppSignals, r: FitResult, ctx: FitContext) -> 
     elif o.deadline is not None:
         days = (o.deadline - ctx.today).days
         if days <= 3:
-            concerns.append(f"Deadline in {_plural(days, 'day')}")
+            concerns.append(f"Deadline in {plural(days, 'day')}")
         elif (by["deadline"].score or 1) < 0.5:
             concerns.append(f"Tight timeline: {by['deadline'].detail}")
     if r.missing_skills:
-        concerns.append(f"Missing {_plural(len(r.missing_skills), 'required skill')}: {', '.join(r.missing_skills[:4])}")
+        concerns.append(f"Missing {plural(len(r.missing_skills), 'required skill')}: {labels(r.missing_skills[:4])}")
     if (by["experience"].score or 1) <= 0.5:
         concerns.append(by["experience"].detail)
     if (by["format"].score is not None) and by["format"].score <= 0.3:

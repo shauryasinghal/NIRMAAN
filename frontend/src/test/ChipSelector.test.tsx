@@ -7,8 +7,8 @@ describe('ChipSelector', () => {
   it('adds an option to selection when clicked', async () => {
     const onChange = vi.fn()
     render(<ChipSelector options={['python', 'react']} selected={[]} onChange={onChange} />)
-    await userEvent.click(screen.getByText('python'))
-    expect(onChange).toHaveBeenCalledWith(['python'])
+    await userEvent.click(screen.getByText('Python'))                     // displayed nicely…
+    expect(onChange).toHaveBeenCalledWith(['python'])                    // …stored as the lowercase key
   })
 
   it('removes a selected chip when its remove button is clicked', async () => {

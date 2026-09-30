@@ -1,4 +1,5 @@
 import type { OpportunityFilters } from '../types'
+import { skillLabel } from './format'
 
 export const EMPTY_FILTERS: OpportunityFilters = { category: [], domain: [], skill: [], difficulty: [], format: [], participation: [], workMode: [], freshness: [], sort: 'relevance', page: 1 }
 const SORTS = new Set(['relevance', 'deadline', 'newest', 'fit'])
@@ -35,7 +36,7 @@ export interface FilterChip { key: string; label: string; remove: (f: Opportunit
 export function activeChips(f: OpportunityFilters): FilterChip[] {
   const chips: FilterChip[] = []
   const list = (key: 'category' | 'domain' | 'skill' | 'difficulty' | 'format' | 'participation' | 'freshness' | 'workMode', prefix: string) =>
-    f[key].forEach((v) => chips.push({ key: `${key}:${v}`, label: `${prefix}: ${v}`, remove: (s) => ({ ...s, [key]: s[key].filter((x) => x !== v), page: 1 }) }))
+    f[key].forEach((v) => chips.push({ key: `${key}:${v}`, label: `${prefix}: ${skillLabel(v)}`, remove: (s) => ({ ...s, [key]: s[key].filter((x) => x !== v), page: 1 }) }))
   list('category', 'Category'); list('domain', 'Domain'); list('skill', 'Skill'); list('difficulty', 'Difficulty'); list('format', 'Format')
   list('participation', 'Participation'); list('workMode', 'Work mode'); list('freshness', 'Freshness')
   if (f.q) chips.push({ key: 'q', label: `Search: “${f.q}”`, remove: (s) => ({ ...s, q: undefined, page: 1 }) })

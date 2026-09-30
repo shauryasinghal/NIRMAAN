@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import clsx from 'clsx'
+import { skillLabel } from '../../lib/format'
 
 export function ChipSelector({
   options, selected, onChange, allowCustom = true, placeholder = 'Search or add…',
@@ -29,8 +30,8 @@ export function ChipSelector({
     <div>
       <div className="flex flex-wrap gap-2 mb-3 min-h-[2rem]">
         {selected.map((s) => (
-          <span key={s} className="inline-flex items-center gap-1 pill bg-accent-500/10 text-accent-500 rounded-full px-3 py-1 text-xs capitalize">
-            {s}
+          <span key={s} className="inline-flex items-center gap-1 pill bg-accent-500/10 text-accent-500 rounded-full px-3 py-1 text-xs">
+            {skillLabel(s)}
             <button type="button" onClick={() => toggle(s)} aria-label={`Remove ${s}`}>
               <X size={12} />
             </button>
@@ -54,10 +55,10 @@ export function ChipSelector({
             key={opt}
             type="button"
             onClick={() => toggle(opt)}
-            className={clsx('text-xs px-3 py-1.5 rounded-full border capitalize transition-colors', 'hover:border-accent-500 hover:text-accent-500')}
+            className={clsx('text-xs px-3 py-1.5 rounded-full border transition-colors', 'hover:border-accent-500 hover:text-accent-500')}
             style={{ borderColor: 'var(--border)' }}
           >
-            {opt}
+            {skillLabel(opt)}
           </button>
         ))}
         {allowCustom && query.trim() && !options.some((o) => o.toLowerCase() === query.trim().toLowerCase()) && (

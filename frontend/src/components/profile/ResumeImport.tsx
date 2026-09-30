@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import { Button } from '../ui/Button'
 import { Notice } from '../ui/kit'
 import { profileService } from '../../lib/services'
+import { skillLabel } from '../../lib/format'
 import type { ApiError } from '../../lib/api'
 import type { Profile, ResumeExtraction } from '../../types'
 
@@ -87,7 +88,7 @@ export function ResumeImport({ profile, onDone }: { profile: Profile; onDone?: (
           <ul className="space-y-2">{data.diff.newSkills.map((s) => (
             <li key={s.name} className="rounded-lg border p-3" style={{ borderColor: 'var(--border)' }}>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-medium capitalize">{s.name}</span>
+                <span className="text-sm font-medium">{skillLabel(s.name)}</span>
                 <div role="radiogroup" aria-label={`What to do with ${s.name}`} className="inline-flex rounded-lg border overflow-hidden text-xs" style={{ borderColor: 'var(--border)' }}>
                   {([['add', 'I have this'], ['suggest', 'Suggest only'], ['skip', 'Skip']] as [Choice, string][]).map(([v, l]) => (
                     <button key={v} type="button" role="radio" aria-checked={skillChoice[s.name] === v} onClick={() => setSkillChoice((c) => ({ ...c, [s.name]: v }))}

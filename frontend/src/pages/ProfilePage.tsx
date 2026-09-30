@@ -11,6 +11,7 @@ import { ResumeImport } from '../components/profile/ResumeImport'
 import { Dialog, Notice, PageHeader, Select, Toggle } from '../components/ui/kit'
 import { profileService } from '../lib/services'
 import type { ApiError } from '../lib/api'
+import { skillLabel } from '../lib/format'
 import type { Level, Profile, ProfileUpdate } from '../types'
 
 const KIND_LABEL: Record<string, string> = { education: 'Education', project: 'Projects', experience: 'Experience', certification: 'Certifications', achievement: 'Achievements' }
@@ -65,7 +66,7 @@ export function ProfilePage() {
                 <p className="text-xs text-muted mb-3">Found in your resume. They don't affect scores until you confirm them.</p>
                 <ul className="space-y-2">{p.inferredSkills.map((s) => (
                   <li key={s.name} className="flex items-start justify-between gap-3 rounded-lg border p-3" style={{ borderColor: 'var(--border)' }}>
-                    <div className="min-w-0"><p className="text-sm font-medium capitalize">{s.name}</p>{evidenceFor(s.name).slice(0, 2).map((e, i) => <p key={i} className="text-[11px] text-muted truncate" title={e.evidence}>{e.source}: “{e.evidence}”</p>)}</div>
+                    <div className="min-w-0"><p className="text-sm font-medium">{skillLabel(s.name)}</p>{evidenceFor(s.name).slice(0, 2).map((e, i) => <p key={i} className="text-[11px] text-muted truncate" title={e.evidence}>{e.source}: “{e.evidence}”</p>)}</div>
                     <div className="flex gap-1 shrink-0">
                       <Button size="sm" variant="secondary" onClick={() => confirm.mutate(s.name)} loading={confirm.isPending && confirm.variables === s.name} aria-label={`Confirm ${s.name}`}><Check size={14} /> I have this</Button>
                       <Button size="sm" variant="ghost" onClick={() => dismiss.mutate(s.name)} aria-label={`Dismiss ${s.name}`}><X size={14} /></Button>

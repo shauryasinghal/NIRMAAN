@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { Badge } from '../ui/primitives'
 import { DemoBadge, FitBadge, StatusPill } from '../ui/kit'
 import { SaveButton } from './SaveButton'
-import { deadlineLabel, money, titleCase } from '../../lib/format'
+import { deadlineLabel, money, skillLabel, titleCase } from '../../lib/format'
 import type { OpportunityCardData } from '../../types'
 
 export function OpportunityCard({ o, compare, onCompare, compareDisabled }: { o: OpportunityCardData; compare?: boolean; onCompare?: (id: string) => void; compareDisabled?: boolean }) {
@@ -42,8 +42,8 @@ export function OpportunityCard({ o, compare, onCompare, compareDisabled }: { o:
       {(o.requiredSkills.length > 0) && (
         <div className="flex flex-wrap gap-1.5" aria-label="Required skills">
           {o.requiredSkills.slice(0, 6).map((s) => (
-            <span key={s} className={clsx('text-[11px] px-2 py-0.5 rounded-full border capitalize', matched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-[var(--border)] text-muted')}
-              title={matched.has(s) ? 'You have this skill' : 'Required — not in your confirmed skills'}>{matched.has(s) ? '✓ ' : ''}{s}</span>
+            <span key={s} className={clsx('text-[11px] px-2 py-0.5 rounded-full border', matched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-[var(--border)] text-muted')}
+              title={matched.has(s) ? 'You have this skill' : 'Required — not in your confirmed skills'}>{matched.has(s) ? '✓ ' : ''}{skillLabel(s)}</span>
           ))}
         </div>
       )}

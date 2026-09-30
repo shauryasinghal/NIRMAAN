@@ -21,7 +21,7 @@ describe('OpportunityCard', () => {
   })
   it('shows the real fit, matched vs missing skills, urgency and the top reason', () => {
     renderApp(<OpportunityCard o={{ ...base, urgency: 'open', daysRemaining: 20 }} />)
-    expect(screen.getByText('82%')).toBeInTheDocument(); expect(screen.getByText('✓ python')).toBeInTheDocument(); expect(screen.getByText('docker')).toBeInTheDocument()
+    expect(screen.getByText('82%')).toBeInTheDocument(); expect(screen.getByText('✓ Python')).toBeInTheDocument(); expect(screen.getByText('Docker')).toBeInTheDocument()
     expect(screen.getByText('20 days left')).toBeInTheDocument(); expect(screen.getByText('1/2 required skills: python')).toBeInTheDocument(); expect(screen.getByText('Team of 2–4')).toBeInTheDocument()
   })
   it('leads with the concern instead of praise when the deadline is critical', () => {

@@ -11,7 +11,7 @@ test('resume upload → extraction → confirmation → profile (nothing is writ
   await dlg.getByLabel('Upload resume').setInputFiles(RESUME)
   await expect(dlg.getByText('Review before anything changes')).toBeVisible()
   await expect(dlg.getByText(/not an AI model/)).toBeVisible()
-  await expect(dlg.getByText('docker', { exact: true })).toBeVisible()
+  await expect(dlg.getByText('Docker', { exact: true })).toBeVisible()
   await expect(dlg.getByText(/Found in:.*Docker/i).first()).toBeVisible()                                     // evidence for each skill
   await expect(dlg.getByText('B.Tech CSE (AI/ML), GLA University, 2023-2027')).toBeVisible()
   // extraction alone changed nothing: profile behind the dialog still has no docker
@@ -24,7 +24,7 @@ test('resume upload → extraction → confirmation → profile (nothing is writ
   await dlg.getByRole('button', { name: /Apply \d+ selected/ }).click()
   await expect(page.getByText('Profile updated from your resume')).toBeVisible()
   await expect(page.getByRole('dialog')).toHaveCount(0)
-  await expect(page.getByRole('main').getByText('docker').first()).toBeVisible()
+  await expect(page.getByRole('main').getByText('Docker', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('heading', { name: 'From your resume' })).toBeVisible()
   await expect(page.getByText('Smart Attendance System')).toBeVisible()
   await expect(page.getByText('Suggested skills')).toBeVisible()                                     // the other found skills stay unconfirmed suggestions

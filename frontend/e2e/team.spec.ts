@@ -41,7 +41,7 @@ test.describe('team consent & safety', () => {
   test('manual skills work, an empty request is refused, and nobody appears without opting in', async ({ page }) => {
     await page.goto('/team-builder')
     await expect(page.getByRole('button', { name: 'Build my team' })).toBeDisabled()
-    await page.getByPlaceholder('Add a required skill…').fill('iot'); await page.getByRole('button', { name: 'iot', exact: true }).click()
+    await page.getByPlaceholder('Add a required skill…').fill('iot'); await page.getByRole('button', { name: 'IoT', exact: true }).click()
     await page.getByRole('button', { name: 'Build my team' }).click(); await expect(page.getByText('Coverage of required skills')).toBeVisible()
     await expect(page.getByText('Fresh Student')).toHaveCount(0)                                      // not opted in → never listed
   })

@@ -11,7 +11,7 @@ import { FitPanel, WhyNotPanel } from '../components/opportunities/FitPanels'
 import { SaveButton } from '../components/opportunities/SaveButton'
 import { useAuth } from '../context/AuthContext'
 import { applicationService, integrationService, opportunityService } from '../lib/services'
-import { deadlineLabel, formatDate, money, titleCase, urgencyTone } from '../lib/format'
+import { deadlineLabel, formatDate, money, skillLabel, titleCase, urgencyTone } from '../lib/format'
 import type { ApiError } from '../lib/api'
 import { APPLICATION_STATUSES, type ApplicationStatus } from '../types'
 
@@ -76,8 +76,8 @@ export function OpportunityDetailPage() {
 
           <Card className="p-5"><h2 className="text-sm font-semibold mb-3">Skills</h2>
             {(o.requiredSkills.length + o.preferredSkills.length) === 0 ? <p className="text-sm text-muted">This listing doesn't state any skills.</p> : (<div className="space-y-3">
-              {o.requiredSkills.length > 0 && <div><p className="text-xs text-muted mb-1.5">Required</p><div className="flex flex-wrap gap-1.5">{o.requiredSkills.map((s) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border capitalize ${matched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-danger-500/30 bg-danger-500/5 text-danger-500'}`}>{matched.has(s) ? '✓' : '✗'} {s}</span>)}</div></div>}
-              {o.preferredSkills.length > 0 && <div><p className="text-xs text-muted mb-1.5">Nice to have</p><div className="flex flex-wrap gap-1.5">{o.preferredSkills.map((s) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border capitalize ${pMatched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-[var(--border)] text-muted'}`}>{pMatched.has(s) ? '✓ ' : ''}{s}</span>)}</div></div>}
+              {o.requiredSkills.length > 0 && <div><p className="text-xs text-muted mb-1.5">Required</p><div className="flex flex-wrap gap-1.5">{o.requiredSkills.map((s) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border ${matched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-danger-500/30 bg-danger-500/5 text-danger-500'}`}>{matched.has(s) ? '✓' : '✗'} {skillLabel(s)}</span>)}</div></div>}
+              {o.preferredSkills.length > 0 && <div><p className="text-xs text-muted mb-1.5">Nice to have</p><div className="flex flex-wrap gap-1.5">{o.preferredSkills.map((s) => <span key={s} className={`text-xs px-2.5 py-1 rounded-full border ${pMatched.has(s) ? 'border-success-500/40 bg-success-500/10 text-success-500' : 'border-[var(--border)] text-muted'}`}>{pMatched.has(s) ? '✓ ' : ''}{skillLabel(s)}</span>)}</div></div>}
             </div>)}</Card>
         </div>
 

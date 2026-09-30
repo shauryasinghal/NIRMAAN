@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import dataclasses
 
+from .display import label
 from .recommender import score_fit
 from .roles import role_for_skill
 from .types import FitContext, OppSignals, StudentSignals
@@ -40,9 +41,9 @@ def compute_skill_gaps(s: StudentSignals, opps: list[OppSignals], ctx: FitContex
         g["inferred"] = g["skill"] in s.inferred_skills
         g["evidence"] = ev[:2]
         if g["inferred"]:
-            g["action"] = f"Confirm {g['skill']} on your profile if you really have it — a {ev[0]['source'] if ev else 'system'} signal suggested it."
+            g["action"] = f"Confirm {label(g['skill'])} on your profile if you really have it — a {ev[0]['source'] if ev else 'system'} signal suggested it."
         else:
-            g["action"] = f"Learn {g['skill']}, or recruit a {g['teamRole']} for the {g['unlocks']} opportunit{'y' if g['unlocks'] == 1 else 'ies'} it affects."
+            g["action"] = f"Learn {label(g['skill'])}, or recruit a {g['teamRole']} for the {g['unlocks']} opportunit{'y' if g['unlocks'] == 1 else 'ies'} it affects."
         out.append(g)
     out.sort(key=lambda g: (-g["highFitUnlocks"], -g["unlocks"], g["skill"]))
     return out[:limit]

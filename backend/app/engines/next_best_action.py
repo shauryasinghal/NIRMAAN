@@ -11,8 +11,7 @@ import datetime as dt
 EARLY = {"wishlist", "saved", "planning", "applying"}
 
 
-def _plural(n: int, w: str) -> str:
-    return f"{n} {w}{'' if n == 1 else 's'}"
+from .display import label, plural as _plural
 
 
 def _urgency(days: int | None) -> float:
@@ -78,7 +77,7 @@ def next_best_actions(state: dict, today: dt.date) -> dict:
 
     for gap in state.get("skill_gaps", [])[:1]:
         if gap["unlocks"] >= 2:
-            add("close_skill_gap", 50, f"Close a skill gap: {gap['skill']}", f"{gap['skill']} is missing from {_plural(gap['unlocks'], 'relevant opportunity')}"
+            add("close_skill_gap", 50, f"Close a skill gap: {label(gap['skill'])}", f"{label(gap['skill'])[:1].upper() + label(gap['skill'])[1:]} is missing from {_plural(gap['unlocks'], 'relevant opportunity')}"
                 + (f"; adding it lifts {gap['highFitUnlocks']} to 75%+ fit." if gap["highFitUnlocks"] else "."), "See skill gaps", "/dashboard#skills",
                 {"skill": gap["skill"], "unlocks": gap["unlocks"], "highFitUnlocks": gap["highFitUnlocks"]})
 
