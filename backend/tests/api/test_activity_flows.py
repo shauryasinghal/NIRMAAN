@@ -115,6 +115,7 @@ def test_activity_feed_and_transparent_signals(client, student, catalog):
     feed = client.get("/api/activity", headers=student.h).json()
     assert feed["total"] >= 2 and feed["items"][0]["createdAt"] >= feed["items"][-1]["createdAt"]
     sig = client.get("/api/activity/signals", headers=student.h).json()
+    assert all(set(e) == {"eventType", "n"} for e in sig["eventCounts"]) and sig["eventCounts"]        # camelCase contract (the UI reads eventType)
     assert sig["totalEvents"] >= 2 and sig["active"] is False and sig["minEvents"] == 5 and "13%" in sig["explanation"]
     assert client.delete("/api/activity/signals", headers=student.h).status_code == 204
     assert client.get("/api/activity/signals", headers=student.h).json()["totalEvents"] == 0

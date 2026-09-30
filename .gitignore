@@ -14,3 +14,9 @@ venv/
 .venv/
 .DS_Store
 .claude/
+
+# E2E artefacts (generated: sessions, fixture files, reports)
+frontend/e2e/.auth/
+frontend/e2e/.tmp/
+frontend/playwright-report/
+frontend/test-results/

@@ -54,7 +54,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { key: 'a:theme', label: `Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`, icon: Sun, run: () => { setMode(mode === 'dark' ? 'light' : 'dark'); onClose() }, group: 'Actions' },
       { key: 'a:out', label: 'Log out', icon: LogOut, run: () => { onClose(); void signOut().then(() => navigate('/login')) }, group: 'Actions' },
     ].filter((a) => !q || a.label.toLowerCase().includes(q))
-    return [...opps, ...pages, ...actions]
+    // Navigation words ('saved', 'profile') should land on the page first; free-text queries lead with opportunities.
+    const pageHit = q && pages.some((p) => p.label.toLowerCase().startsWith(q))
+    return pageHit ? [...pages, ...opps, ...actions] : [...opps, ...pages, ...actions]
   }, [query, search.data, mode, navigate, onClose, setMode, signOut])
 
   useEffect(() => { setActive(0) }, [items.length, debounced])
@@ -71,7 +73,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     <Dialog open={open} onClose={onClose} title="Search NIRMAAN" description="Jump to a page, an opportunity or an action.">
       <div className="relative">
         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
-        <input autoFocus role="combobox" aria-expanded aria-controls="palette-list" aria-activedescendant={items[active] ? `pal-${items[active].key}` : undefined} aria-label="Search"
+        <input data-autofocus role="combobox" aria-expanded aria-controls="palette-list" aria-activedescendant={items[active] ? `pal-${items[active].key}` : undefined} aria-label="Search"
           value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={onKey} placeholder="Search opportunities, pages, actions…"
           className="w-full rounded-lg border bg-transparent pl-9 pr-3 py-2.5 text-sm focus-ring" style={{ borderColor: 'var(--border)' }} />
       </div>

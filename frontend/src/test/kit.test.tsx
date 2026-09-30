@@ -14,10 +14,11 @@ describe('Dialog accessibility', () => {
     render(<Harness />)
     const opener = screen.getByText('open'); await userEvent.click(opener)
     const dlg = screen.getByRole('dialog', { name: 'Confirm thing' }); expect(dlg).toHaveAttribute('aria-modal', 'true'); expect(dlg).toHaveAccessibleDescription('Are you sure?')
-    expect(screen.getByLabelText('Close dialog')).toHaveFocus()
-    await userEvent.tab(); expect(screen.getByLabelText('note')).toHaveFocus(); await userEvent.tab(); expect(screen.getByText('Yes')).toHaveFocus()
+    expect(screen.getByLabelText('note')).toHaveFocus()                                          // lands on the form field, not the close button
+    await userEvent.tab(); expect(screen.getByText('Yes')).toHaveFocus()
     await userEvent.tab(); expect(screen.getByLabelText('Close dialog')).toHaveFocus()            // wraps: focus never escapes
     await userEvent.tab({ shift: true }); expect(screen.getByText('Yes')).toHaveFocus()
+    await userEvent.tab({ shift: true }); expect(screen.getByLabelText('note')).toHaveFocus()
     await userEvent.keyboard('{Escape}'); expect(screen.queryByRole('dialog')).toBeNull(); expect(opener).toHaveFocus()
   })
   it('closes on backdrop click but not on inner clicks', async () => {

@@ -36,7 +36,7 @@ def list_activity(page: int = Query(1, ge=1, le=1000), page_size: int = Query(30
 
 @router.get("/signals", summary="What shapes your recommendations (transparent personalisation)")
 def signals(user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
-    counts = db.all("select event_type, count(*)::int as n from public.user_events where student_id = cast(:u as uuid) group by 1 order by 2 desc", u=user.id)
+    counts = [{"eventType": r["event_type"], "n": r["n"]} for r in db.all("select event_type, count(*)::int as n from public.user_events where student_id = cast(:u as uuid) group by 1 order by 2 desc", u=user.id)]
     aff = fitsvc.load_affinity(db, user.id)
     top = lambda d: [{"name": k, "weight": round(v, 2)} for k, v in sorted(d.items(), key=lambda kv: -kv[1])[:5]]
     from ..engines.recommender import MIN_EVENTS_FOR_AFFINITY

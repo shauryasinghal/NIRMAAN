@@ -16,11 +16,14 @@ const PAGE_SIZE = 12
 export function OpportunitiesPage() {
   const [sp, setSp] = useSearchParams()
   const nav = useNavigate()
-  const filters = useMemo(() => filtersFromParams(sp), [sp])
-  const [q, setQ] = useState(filters.q ?? '')
+  const urlFilters = useMemo(() => filtersFromParams(sp), [sp])
+  // Optimistic copy: controls respond instantly while the URL (the source of truth) catches up asynchronously.
+  const [filters, setLocal] = useState<OpportunityFilters>(urlFilters)
+  useEffect(() => setLocal(urlFilters), [urlFilters])
+  const [q, setQ] = useState(urlFilters.q ?? '')
   const [sheet, setSheet] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
-  const setFilters = (f: OpportunityFilters) => setSp(filtersToParams(f), { replace: true })
+  const setFilters = (f: OpportunityFilters) => { setLocal(f); setSp(filtersToParams(f), { replace: true }) }
 
   useEffect(() => setQ(filters.q ?? ''), [filters.q])
   useEffect(() => { if (q.trim() === (filters.q ?? '')) return; const t = setTimeout(() => setFilters({ ...filters, q: q.trim() || undefined, page: 1, sort: filters.sort === 'relevance' || q.trim() ? filters.sort : filters.sort }), 350); return () => clearTimeout(t) }, [q]) // eslint-disable-line react-hooks/exhaustive-deps

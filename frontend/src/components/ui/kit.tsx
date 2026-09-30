@@ -58,7 +58,7 @@ export function FitBadge({ score, confidence, size = 'md' }: { score: number; co
   return (
     <span className={clsx('inline-flex flex-col items-center rounded-lg px-2.5 py-1 leading-none', colors, size === 'sm' && 'px-2 py-0.5')} title={confidence === 'low' ? 'Low confidence: several inputs are unknown' : `Fit score (${confidence ?? 'n/a'} confidence)`}>
       <span className={clsx('font-semibold tabular-nums', size === 'sm' ? 'text-sm' : 'text-lg')}>{Math.round(score)}%</span>
-      <span className="text-[9px] uppercase tracking-wide opacity-80 mt-0.5">{confidence === 'low' ? 'low conf.' : 'fit'}</span>
+      <span className="text-[10px] font-medium uppercase tracking-wide mt-0.5">{confidence === 'low' ? 'low conf.' : 'fit'}</span>
     </span>
   )
 }
@@ -157,7 +157,9 @@ export function Dialog({ open, onClose, title, description, children, footer, wi
     if (!open) return
     const prev = document.activeElement as HTMLElement | null
     const focusables = () => Array.from(ref.current?.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])') ?? [])
-    ;(focusables()[0] ?? ref.current)?.focus()
+    // Land on the field the user came to type in (explicit data-autofocus, else the first form control); otherwise the first control.
+    const field = ref.current?.querySelector<HTMLElement>('[data-autofocus], .dialog-body input:not([type="checkbox"]):not([type="radio"]), .dialog-body textarea, .dialog-body select')
+    ;(field ?? focusables()[0] ?? ref.current)?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.stopPropagation(); onClose(); return }
       if (e.key !== 'Tab') return
@@ -180,7 +182,7 @@ export function Dialog({ open, onClose, title, description, children, footer, wi
           <div className="min-w-0"><h2 id={titleId} className="text-base font-semibold">{title}</h2>{description && <p id={descId} className="text-xs text-muted mt-1">{description}</p>}</div>
           <button onClick={onClose} className="p-1.5 -m-1.5 rounded-lg text-muted hover:bg-black/[0.05] dark:hover:bg-white/[0.08] focus-ring" aria-label="Close dialog"><X size={16} /></button>
         </div>
-        <div className="px-5 pb-5 overflow-y-auto">{children}</div>
+        <div className="dialog-body px-5 pb-5 overflow-y-auto">{children}</div>
         {footer && <div className="px-5 py-3 border-t flex justify-end gap-2" style={{ borderColor: 'var(--border)' }}>{footer}</div>}
       </div>
     </div>, document.body)

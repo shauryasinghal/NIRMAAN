@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4's `dark:` follows the OS by default. NIRMAAN has an in-app theme switch that toggles the `.dark` class, so
+   `dark:` must follow that class — otherwise a manual Dark choice on a light OS mixes dark text with light surfaces. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
@@ -18,6 +22,7 @@
   --color-success-500: #1FA971;
   --color-warning-500: #D68A15;
   --color-danger-500: #D6455A;
+  --color-danger-600: #C0283F;
 
   --color-paper: #F6F7FB;
   --color-ink: #0F172A;
@@ -30,7 +35,11 @@
   --surface: #ffffff;
   --surface-2: #FBFBFD;
   --text: var(--color-ink);
-  --text-muted: #64748B;
+  --text-muted: #526078;                  /* 5.9:1 on the page background (WCAG AA) */
+  --accent-text: #2E55E0;                 /* text-safe tones: ≥ 4.8:1 on white and on their own 10% tint */
+  --success-text: #0B7A50;
+  --warning-text: #8A5A00;
+  --danger-text: #C0283F;
   --border: var(--color-line);
   --border-strong: #D4D9E4;
   --brand: var(--color-navy-900);
@@ -52,6 +61,10 @@
   --surface-2: #0E1626;
   --text: #E7EAF2;
   --text-muted: #9AA4BC;
+  --accent-text: #7C9BFF;
+  --success-text: #3DDC97;
+  --warning-text: #F2B444;
+  --danger-text: #FF7A8C;
   --border: #212C48;
   --border-strong: #2C3A63;
   --brand: #ffffff;
@@ -144,3 +157,13 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- Text colours ------------------------------------------------------------------------------------------
+   The brand tones (#3B6BFF, #1FA971, #D68A15, #D6455A) are for fills, borders and icons. As TEXT they fail WCAG AA
+   contrast on light backgrounds, so any `text-*-500` utility resolves to the text-safe token instead. Unlayered on purpose:
+   it must win over Tailwind's layered utilities. */
+.text-accent-500 { color: var(--accent-text); }
+.text-success-500 { color: var(--success-text); }
+.text-warning-500 { color: var(--warning-text); }
+.text-danger-500 { color: var(--danger-text); }
+.hover\:text-danger-500:hover { color: var(--danger-text); }

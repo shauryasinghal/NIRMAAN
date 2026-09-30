@@ -17,7 +17,7 @@ import type { TeamMemberSuggestion, TeamRecord, TeamSuggestion } from '../types'
 
 function MemberCard({ m, picked, onPick }: { m: TeamMemberSuggestion; picked?: boolean; onPick?: () => void }) {
   return (
-    <Card className="p-4" aria-label={m.name}>
+    <Card className="p-4" role="article" aria-label={m.name}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0"><p className="font-medium text-sm">{m.name}{m.isYou && <span className="text-muted font-normal"> (you)</span>}</p><p className="text-xs text-accent-500 font-medium">{m.role}</p></div>
         {onPick && <label className="inline-flex items-center gap-1.5 text-xs cursor-pointer min-h-[32px]"><input type="checkbox" checked={!!picked} onChange={onPick} className="h-4 w-4 accent-[var(--color-accent-500)]" /> Invite</label>}

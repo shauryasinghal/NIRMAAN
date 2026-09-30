@@ -14,7 +14,7 @@ const variantClasses: Record<Variant, string> = {
   primary: 'bg-navy-900 text-white hover:bg-navy-800 dark:bg-white dark:text-navy-900 dark:hover:bg-white/90',
   secondary: 'surface hover:bg-black/[0.03] dark:hover:bg-white/[0.06] text-[var(--text)]',
   ghost: 'text-[var(--text)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
-  danger: 'bg-danger-500 text-white hover:opacity-90',
+  danger: 'bg-danger-600 text-white hover:opacity-90',
 }
 const sizeClasses: Record<Size, string> = {
   sm: 'text-xs px-3 py-1.5 rounded-lg',

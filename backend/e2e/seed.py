@@ -40,9 +40,11 @@ def main() -> None:
             uid = db.val("select id::text from public.profiles where email = :e", e=email)
             if role != "student":
                 db.run("update public.profiles set role = cast(:r as public.app_role) where id = cast(:i as uuid)", r=role, i=uid)
+            if key == "other":   # a real, opted-in teammate the invitation flow can be exercised with
+                db.run("update public.profiles set open_to_team = true where id = cast(:i as uuid)", i=uid)
             if done:
                 db.run("update public.profiles set branch = 'CSE (AI/ML)', experience_level = 'intermediate', availability_hrs = 10, onboarding_completed = true, onboarding_completed_at = now(), location = 'Mathura' where id = cast(:i as uuid)", i=uid)
-                for s in ("python", "machine learning", "nlp"):
+                for s in (("react", "javascript", "css", "sql", "api design", "java") if key == "other" else ("python", "machine learning", "nlp")):
                     db.run("insert into public.profile_skills (profile_id, skill_id) select cast(:i as uuid), id from public.skills where name = :n on conflict do nothing", i=uid, n=s)
                 db.run("insert into public.profile_interests (profile_id, interest_id) select cast(:i as uuid), id from public.interests where name = 'AI/ML' on conflict do nothing", i=uid)
     # An idea that lands in the review queue (near-duplicate of a reference idea) so the reviewer flow has real work.

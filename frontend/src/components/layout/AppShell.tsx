@@ -130,14 +130,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="flex-1 space-y-5 overflow-y-auto">
           {sections.map((section) => (
             <div key={section.label}>
-              {!collapsed && <p className="text-[10px] uppercase tracking-wider text-white/30 px-3 mb-1.5">{section.label}</p>}
+              {!collapsed && <p className="text-[10px] uppercase tracking-wider text-white/55 px-3 mb-1.5">{section.label}</p>}
               <div className="space-y-1">
                 {section.items.map((item) => <NavItem key={item.to} {...item} />)}
               </div>
             </div>
           ))}
           <div>
-            {!collapsed && <p className="text-[10px] uppercase tracking-wider text-white/30 px-3 mb-1.5">Workspace</p>}
+            {!collapsed && <p className="text-[10px] uppercase tracking-wider text-white/55 px-3 mb-1.5">Workspace</p>}
             <div className="space-y-1">
               {workspaceNav.map((item) => <NavItem key={item.to} {...item} />)}
             </div>
@@ -178,7 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onClick={() => setProfileMenuOpen((o) => !o)}
                 className="flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
               >
-                <span className="h-6 w-6 rounded-full bg-accent-500 text-white text-[11px] flex items-center justify-center">
+                <span className="h-6 w-6 rounded-full bg-accent-600 text-white text-[11px] flex items-center justify-center">
                   {initial}
                 </span>
                 <span className="text-muted max-w-[140px] truncate">{me?.fullName || roleLabel}</span>
@@ -209,7 +209,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {mode === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             <div className="relative">
-              <button onClick={() => setProfileMenuOpen((o) => !o)} className="h-7 w-7 rounded-full bg-accent-500 text-white text-xs flex items-center justify-center">
+              <button onClick={() => setProfileMenuOpen((o) => !o)} className="h-7 w-7 rounded-full bg-accent-600 text-white text-xs flex items-center justify-center">
                 {initial}
               </button>
               {profileMenuOpen && (

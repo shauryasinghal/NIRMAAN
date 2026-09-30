@@ -42,7 +42,7 @@ export function ComparePage() {
           <tbody>
             <tr className="border-t" style={{ borderColor: 'var(--border)' }}><th scope="row" className="p-3 text-left text-xs text-muted font-medium">Your fit</th>{items.map((o) => <td key={o.id} className="p-3">{o.fit && <FitBadge score={o.fit.overall} confidence={o.fit.confidence} />}{strongest?.id === o.id && <span className="ml-2 text-[11px] text-success-500 font-medium">Best</span>}</td>)}</tr>
             {rows.map(([label, cell]) => <tr key={label} className="border-t" style={{ borderColor: 'var(--border)' }}><th scope="row" className="p-3 text-left text-xs text-muted font-medium align-top">{label}</th>{items.map((o) => <td key={o.id} className="p-3 align-top">{cell(o)}</td>)}</tr>)}
-            <tr className="border-t" style={{ borderColor: 'var(--border)' }}><th scope="row" className="p-3" /> {items.map((o) => <td key={o.id} className="p-3"><SaveButton id={o.id} saved={o.saved} /></td>)}</tr>
+            <tr className="border-t" style={{ borderColor: 'var(--border)' }}><th scope="row" className="p-3"><span className="sr-only">Actions</span></th>{items.map((o) => <td key={o.id} className="p-3"><SaveButton id={o.id} saved={o.saved} /></td>)}</tr>
           </tbody>
         </table>
       </Card>
