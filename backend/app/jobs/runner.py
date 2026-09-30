@@ -27,15 +27,15 @@ def job_alerts(db: Db, **_) -> dict:
 
 def job_ingest(db: Db, source: str = "dev-fixtures", **_) -> dict:
     from ..ingestion.pipeline import run_source
-    from ..ingestion.sources.fixture import FixtureSource
+    from ..ingestion.registry import get_source
     from ..services import alerts
-    if source != "dev-fixtures":
-        raise ValueError(f"Unknown source '{source}'. Register real sources in app/ingestion/registry.py after reviewing their terms.")
-    stats = run_source(db, FixtureSource())
+    stats = run_source(db, get_source(source))
     out = {"status": stats.status, "fetched": stats.fetched, "inserted": stats.inserted, "updated": stats.updated, "duplicates": stats.duplicates, "rejected": stats.rejected}
+    if stats.error:
+        out["error"] = stats.error
     if stats.new_ids:
-        out["alerts"] = alerts.evaluate_all(db, only_ids=stats.new_ids)
-        out["highFit"] = alerts.notify_high_fit(db, stats.new_ids)
+        out["alerts"] = alerts.evaluate_all(db, only_ids=stats.new_ids)     # new listings flow straight into smart alerts…
+        out["highFit"] = alerts.notify_high_fit(db, stats.new_ids)          # …and high-fit notifications
     return out
 
 

@@ -42,3 +42,7 @@ returns void language sql security definer set search_path = '' as $$
   insert into public.audit_log (actor_id, action, entity, entity_id, detail) values (p_actor, p_action, p_entity, p_entity_id, coalesce(p_detail, '{}'::jsonb)) $$;
 revoke execute on function private.write_audit(uuid, text, text, text, jsonb) from public;
 grant  execute on function private.write_audit(uuid, text, text, text, jsonb) to service_role;
+
+-- 6. The hosted project's activities_insert policy calls auth.uid() unwrapped, which Postgres re-evaluates per row
+--    (Supabase advisor: auth_rls_initplan). Same meaning, wrapped in a sub-select so it is evaluated once per statement.
+alter policy activities_insert on public.activities with check (student_id = (select auth.uid()));

@@ -1,55 +1,24 @@
-version: "3.9"
-
+# API + static frontend in containers, pointed at a Supabase project (hosted, or `supabase start` locally).
+# Supabase is BOTH the auth provider and the database, so there is deliberately no db service here.
+# NOT verified on the machine this was built on (no Docker daemon available) — see docs/DEPLOYMENT.md.
+#
+#   cp backend/.env.example .env   # then fill SUPABASE_URL, SUPABASE_ANON_KEY, DATABASE_URL
+#   docker compose up --build
 services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: nirmaan
-      POSTGRES_PASSWORD: nirmaan
-      POSTGRES_DB: nirmaan
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nirmaan"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  # Optional — the Team Builder works without this (falls back to an in-memory
-  # networkx graph). Start it with: docker compose --profile graph up
-  neo4j:
-    image: neo4j:5-community
-    profiles: ["graph"]
-    environment:
-      NEO4J_AUTH: neo4j/nirmaan_dev
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-    volumes:
-      - neo4j_data:/data
-
   backend:
     build: ./backend
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://nirmaan:nirmaan@postgres:5432/nirmaan
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
-      CORS_ORIGINS: http://localhost:5173,http://localhost:80
-      NEO4J_URI: ${NEO4J_URI:-}
-    ports:
-      - "8000:8000"
-
+      NIRMAAN_ENV: development
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL (Supabase connection string)}
+      SUPABASE_URL: ${SUPABASE_URL:?set SUPABASE_URL}
+      CORS_ORIGINS: http://localhost:5173
+      CRON_SECRET: ${CRON_SECRET:-}
+    ports: ["8000:8000"]
   frontend:
-    build: ./frontend
-    depends_on:
-      - backend
-    ports:
-      - "5173:80"
-
-volumes:
-  postgres_data:
-  neo4j_data:
+    build:
+      context: ./frontend
+      args:
+        VITE_SUPABASE_URL: ${SUPABASE_URL:?}
+        VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:?}
+    depends_on: [backend]
+    ports: ["5173:80"]

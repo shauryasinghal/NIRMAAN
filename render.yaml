@@ -1,0 +1,36 @@
+# Render blueprint for the API (Docker) + scheduled jobs. Secrets are declared with sync:false — set them in the
+# Render dashboard; they are never stored in this file or in git.
+services:
+  - type: web
+    name: nirmaan-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - { key: NIRMAAN_ENV, value: production }
+      - { key: DATABASE_URL, sync: false }          # Supabase → Database → Connection string (pooler, port 6543)
+      - { key: SUPABASE_URL, sync: false }
+      - { key: CORS_ORIGINS, sync: false }          # e.g. https://your-app.vercel.app
+      - { key: FRONTEND_URL, sync: false }
+      - { key: CRON_SECRET, generateValue: true }
+      - { key: TOKEN_ENCRYPTION_KEY, sync: false }  # only if enabling Google Calendar/Gmail
+      - { key: GOOGLE_CLIENT_ID, sync: false }
+      - { key: GOOGLE_CLIENT_SECRET, sync: false }
+      - { key: GOOGLE_REDIRECT_URI, sync: false }
+      - { key: PRELOAD_EMBEDDING_MODEL, value: "true" }
+      - { key: LOG_LEVEL, value: INFO }
+  # Alert evaluation + reminders. (Freshness/deadline/reminder SQL jobs also run via pg_cron inside Supabase every 30 min.)
+  - type: cron
+    name: nirmaan-alerts
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    schedule: "*/15 * * * *"
+    dockerCommand: python -m app.jobs alerts
+    envVars:
+      - { key: NIRMAAN_ENV, value: production }
+      - { key: DATABASE_URL, sync: false }
+      - { key: SUPABASE_URL, sync: false }
+      - { key: CORS_ORIGINS, sync: false }

@@ -9,6 +9,7 @@ const PY = '../backend/venv/bin/python'
 
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: /csp\.spec\.ts/,                      // runs under playwright.csp.config.ts (production build + real headers)
   globalSetup: './e2e/support/global-setup.ts',
   fullyParallel: false, workers: 1, retries: 0, timeout: 60_000, expect: { timeout: 10_000 },
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],

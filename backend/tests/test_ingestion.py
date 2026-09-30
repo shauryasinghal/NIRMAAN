@@ -160,3 +160,11 @@ def test_robots_forbidden_or_unreachable_means_do_not_fetch_and_run_fails_cleanl
         st = run_source(db, src)
         run = db.one("select status, error from public.ingestion_runs order by started_at desc limit 1")
     assert st.status == "failed" and run["status"] == "failed" and "robots" in run["error"].lower()
+
+
+def test_registry_lists_sources_and_rejects_unknown_ones():
+    from app.ingestion.registry import SOURCES, get_source
+    assert "dev-fixtures" in SOURCES and get_source("dev-fixtures").kind == "fixture"
+    with pytest.raises(ValueError) as e:
+        get_source("nope")
+    assert "dev-fixtures" in str(e.value) and "registry.py" in str(e.value)
