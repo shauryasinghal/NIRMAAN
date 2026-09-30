@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nirmaan
+      POSTGRES_PASSWORD: nirmaan
+      POSTGRES_DB: nirmaan
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nirmaan"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Optional — the Team Builder works without this (falls back to an in-memory
+  # networkx graph). Start it with: docker compose --profile graph up
+  neo4j:
+    image: neo4j:5-community
+    profiles: ["graph"]
+    environment:
+      NEO4J_AUTH: neo4j/nirmaan_dev
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
+  backend:
+    build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://nirmaan:nirmaan@postgres:5432/nirmaan
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:80
+      NEO4J_URI: ${NEO4J_URI:-}
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_data:
+  neo4j_data:

@@ -1,0 +1,7 @@
+__pycache__
+*.pyc
+.venv
+nirmaan.db
+.env
+tests
+smoke_test.py

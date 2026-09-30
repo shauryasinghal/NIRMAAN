@@ -1,0 +1,16 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+*.db
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.tmp/
+playwright-report/
+test-results/
+venv/
+.venv/
+.DS_Store
+.claude/

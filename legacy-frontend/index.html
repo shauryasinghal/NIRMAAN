@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIRMAAN — The AI Operating System for Student Innovation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.4.1/tailwind.min.js"></script>
+<style>
+  :root{
+    --navy:#0B1220; --navy2:#111A2E; --ink:#0F172A; --paper:#F5F6FA;
+    --accent:#3B6BFF; --cyan:#22C1D6; --violet:#8B7CF6;
+    --ok:#1FA971; --warn:#D68A15; --danger:#D6455A; --line:#E4E7EE;
+  }
+  body{background:var(--paper); color:var(--ink); font-family:'Segoe UI',ui-sans-serif,system-ui,sans-serif;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;}
+  .btn-primary{background:var(--navy);color:#fff;border-radius:8px;}
+  .btn-primary:hover{background:var(--navy2);}
+  .pill{border-radius:999px;font-size:.72rem;padding:.15rem .6rem;}
+  .ring{transition:stroke-dashoffset .6s ease;}
+  ::-webkit-scrollbar{width:8px;height:8px} ::-webkit-scrollbar-thumb{background:#CBD2E1;border-radius:8px}
+</style>
+</head>
+<body class="min-h-screen">
+
+<div id="app"></div>
+
+<script>
+const API = "http://localhost:8000";
+let TOKEN = localStorage.getItem("nirmaan_token") || null;
+let ROLE  = localStorage.getItem("nirmaan_role") || null;
+let VIEW  = TOKEN ? "dashboard" : "login";
+
+const $ = (sel) => document.querySelector(sel);
+const el = (html) => { const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; };
+
+async function api(path, opts = {}) {
+  const headers = opts.headers || {};
+  headers["Content-Type"] = "application/json";
+  if (TOKEN) headers["Authorization"] = "Bearer " + TOKEN;
+  const res = await fetch(API + path, { ...opts, headers });
+  let body;
+  try { body = await res.json(); } catch { body = {}; }
+  if (!res.ok) throw new Error(body?.detail?.message || body?.detail || "Request failed");
+  return body;
+}
+
+function setToken(t, role) {
+  TOKEN = t; ROLE = role;
+  localStorage.setItem("nirmaan_token", t);
+  localStorage.setItem("nirmaan_role", role);
+}
+function logout() {
+  TOKEN = null; ROLE = null;
+  localStorage.removeItem("nirmaan_token"); localStorage.removeItem("nirmaan_role");
+  VIEW = "login"; render();
+}
+
+// ---------------- Shell ----------------
+function shell(content) {
+  const nav = [
+    ["dashboard", "Dashboard"],
+    ["opportunities", "Opportunities"],
+    ["team", "Team Builder"],
+    ["originality", "Originality Checker"],
+    ["history", "History"],
+  ];
+  if (ROLE === "REVIEWER") nav.push(["review", "Review Queue"]);
+
+  return `
+  <div class="flex min-h-screen">
+    <aside class="w-60 shrink-0 text-white p-5 hidden md:flex md:flex-col" style="background:var(--navy)">
+      <div class="text-xl font-semibold tracking-tight mb-1">NIRMAAN</div>
+      <div class="text-xs text-slate-400 mb-8">AI Operating System for Student Innovation</div>
+      <nav class="space-y-1 flex-1">
+        ${nav.map(([k, label]) => `
+          <button data-nav="${k}" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-sm ${VIEW===k ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5'}">${label}</button>
+        `).join("")}
+      </nav>
+      <button id="logoutBtn" class="text-left text-sm text-slate-400 hover:text-white mt-6">Log out</button>
+    </aside>
+    <main class="flex-1 p-5 md:p-8 max-w-5xl mx-auto w-full">
+      <div class="md:hidden flex gap-2 overflow-x-auto pb-4 mb-4 border-b" style="border-color:var(--line)">
+        ${nav.map(([k, label]) => `<button data-nav="${k}" class="nav-btn shrink-0 px-3 py-1.5 rounded-full text-xs pill ${VIEW===k ? 'text-white' : 'bg-white border'}" style="${VIEW===k ? 'background:var(--navy)' : ''}">${label}</button>`).join("")}
+      </div>
+      ${content}
+    </main>
+  </div>`;
+}
+
+// ---------------- Login / Register ----------------
+function loginView() {
+  return `
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="card p-8 w-full max-w-sm">
+      <div class="text-2xl font-semibold mb-1" style="color:var(--navy)">NIRMAAN</div>
+      <div class="text-sm text-slate-500 mb-6">The AI Operating System for Student Innovation</div>
+      <div id="authError" class="hidden text-sm text-white pill mb-3 inline-block" style="background:var(--danger)"></div>
+      <form id="loginForm" class="space-y-3">
+        <input required name="email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)">
+        <input required name="password" type="password" placeholder="Password" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)">
+        <button class="btn-primary w-full py-2 text-sm font-medium">Log in</button>
+      </form>
+      <div class="text-xs text-slate-400 mt-4 leading-relaxed">
+        Demo student: <b>priya.nair@gla.demo</b> / demo1234<br>
+        Demo reviewer: <b>reviewer@gla.demo</b> / demo1234<br>
+        Or <a href="#" id="showRegister" class="underline">register a new student</a>.
+      </div>
+      <form id="registerForm" class="hidden space-y-3 mt-4 pt-4 border-t" style="border-color:var(--line)">
+        <input required name="name" placeholder="Full name" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)">
+        <input required name="email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)">
+        <input required name="password" type="password" placeholder="Password" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)">
+        <button class="w-full py-2 text-sm font-medium border rounded-lg" style="border-color:var(--navy);color:var(--navy)">Create account</button>
+      </form>
+    </div>
+  </div>`;
+}
+
+function bindLogin() {
+  $("#loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    try {
+      const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ email: f.get("email"), password: f.get("password") }) });
+      setToken(res.access_token, res.role);
+      VIEW = "dashboard"; render();
+    } catch (err) { showAuthError(err.message); }
+  });
+  $("#showRegister").addEventListener("click", (e) => { e.preventDefault(); $("#registerForm").classList.remove("hidden"); });
+  $("#registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    try {
+      await api("/api/auth/register", { method: "POST", body: JSON.stringify({ name: f.get("name"), email: f.get("email"), password: f.get("password") }) });
+      const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ email: f.get("email"), password: f.get("password") }) });
+      setToken(res.access_token, res.role);
+      VIEW = "dashboard"; render();
+    } catch (err) { showAuthError(err.message); }
+  });
+}
+function showAuthError(msg) {
+  const box = $("#authError");
+  box.textContent = msg; box.classList.remove("hidden");
+}
+
+// ---------------- Dashboard ----------------
+async function dashboardView() {
+  let profile, recs, history;
+  try {
+    [profile, recs, history] = await Promise.all([
+      api("/api/profile"),
+      api("/api/opportunities/recommend?topK=3"),
+      api("/api/idea/history"),
+    ]);
+  } catch (err) {
+    return `<div class="card p-6 text-sm text-red-600">Couldn't load dashboard: ${err.message}</div>`;
+  }
+
+  return `
+  <h1 class="text-2xl font-semibold" style="color:var(--navy)">Good day, ${profile.name.split(" ")[0]}</h1>
+  <p class="text-slate-500 text-sm mb-6">Here's what's relevant to you today.</p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+    ${kpi("Profile", profile.profile_complete ? "Complete" : "Incomplete")}
+    ${kpi("Top matches", recs.items.length)}
+    ${kpi("Ideas checked", history.items.length)}
+    ${kpi("Skills logged", (profile.skills||[]).length)}
+  </div>
+
+  <div class="card p-5 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-medium">Top matched opportunities</h2>
+      <button data-nav="opportunities" class="nav-btn text-xs underline text-slate-500">View all</button>
+    </div>
+    ${recs.items.length ? recs.items.map(oppCard).join("") : emptyState("No recommendations yet — add skills to your profile.")}
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-5">
+      <h2 class="font-medium mb-2">Build your ideal team</h2>
+      <p class="text-sm text-slate-500 mb-3">Skill-complementary teammates, not just your friend circle.</p>
+      <button data-nav="team" class="nav-btn btn-primary text-sm px-4 py-2">Find teammates</button>
+    </div>
+    <div class="card p-5">
+      <h2 class="font-medium mb-2">Have an idea?</h2>
+      <p class="text-sm text-slate-500 mb-3">Check it against prior work before investing weeks.</p>
+      <button data-nav="originality" class="nav-btn btn-primary text-sm px-4 py-2">Check originality</button>
+    </div>
+  </div>`;
+}
+function kpi(label, value) {
+  return `<div class="card p-4"><div class="text-xs text-slate-500">${label}</div><div class="text-xl font-semibold mt-1" style="color:var(--navy)">${value}</div></div>`;
+}
+function oppCard(o) {
+  const matched = (o.matchedSkills||[]).map(s => `<span class="pill" style="background:#ECFDF5;color:var(--ok)">✓ ${s}</span>`).join(" ");
+  const missing = (o.missingSkills||[]).slice(0,2).map(s => `<span class="pill" style="background:#FFF7ED;color:var(--warn)">△ ${s}</span>`).join(" ");
+  return `
+  <div class="border rounded-lg p-4 mb-3" style="border-color:var(--line)">
+    <div class="flex justify-between items-start gap-3">
+      <div>
+        <div class="font-medium">${o.title}</div>
+        <div class="text-xs text-slate-500">${o.organization} · ${o.domain} · deadline ${o.deadline||"TBD"}</div>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="text-lg font-semibold" style="color:var(--accent)">${o.fitScore}%</div>
+        <div class="text-[10px] text-slate-400">fit score</div>
+      </div>
+    </div>
+    <p class="text-xs text-slate-500 mt-2">${o.reason}</p>
+    <div class="flex flex-wrap gap-1 mt-2">${matched} ${missing}</div>
+  </div>`;
+}
+function emptyState(msg) { return `<div class="text-sm text-slate-400 py-6 text-center">${msg}</div>`; }
+
+// ---------------- Opportunities ----------------
+async function opportunitiesView() {
+  const recs = await api("/api/opportunities/recommend?topK=10");
+  return `
+  <h1 class="text-2xl font-semibold mb-1" style="color:var(--navy)">Opportunities</h1>
+  <p class="text-slate-500 text-sm mb-6">Ranked by fit to your profile — content-based match using skills and domain overlap, not recency.</p>
+  ${recs.items.map(oppCard).join("") || emptyState("No opportunities matched yet.")}`;
+}
+
+// ---------------- Team Builder ----------------
+function teamView() {
+  return `
+  <h1 class="text-2xl font-semibold mb-1" style="color:var(--navy)">AI Team Builder</h1>
+  <p class="text-slate-500 text-sm mb-6">Skill-complementarity graph matching — not just who shares the most skills with you.</p>
+  <div class="card p-5 mb-6">
+    <label class="text-xs text-slate-500">Target skills (comma-separated)</label>
+    <input id="targetSkills" class="w-full border rounded-lg px-3 py-2 text-sm mt-1 mb-3" style="border-color:var(--line)" value="react, python, machine learning, ui/ux">
+    <label class="text-xs text-slate-500">Team size</label>
+    <input id="teamSize" type="number" min="2" max="6" value="4" class="w-24 border rounded-lg px-3 py-2 text-sm mt-1 mb-3 block" style="border-color:var(--line)">
+    <button id="buildTeamBtn" class="btn-primary text-sm px-4 py-2">Build team</button>
+  </div>
+  <div id="teamResult"></div>`;
+}
+function bindTeam() {
+  $("#buildTeamBtn").addEventListener("click", async () => {
+    const skills = $("#targetSkills").value.split(",").map(s => s.trim()).filter(Boolean);
+    const size = parseInt($("#teamSize").value || "4", 10);
+    $("#teamResult").innerHTML = `<div class="text-sm text-slate-400">Searching the skill-complementarity graph…</div>`;
+    try {
+      const res = await api("/api/team/suggest", { method: "POST", body: JSON.stringify({ target_skills: skills, team_size: size }) });
+      const coverageRows = Object.entries(res.coverage).map(([sk, ok]) =>
+        `<div class="flex justify-between text-xs py-1"><span>${sk}</span><span style="color:${ok ? 'var(--ok)' : 'var(--danger)'}">${ok ? "✓ covered" : "not covered"}</span></div>`
+      ).join("");
+      $("#teamResult").innerHTML = `
+      <div class="card p-5">
+        <div class="flex gap-6 mb-4 text-sm">
+          <div><div class="text-xs text-slate-500">Diversity score</div><div class="text-lg font-semibold" style="color:var(--accent)">${res.diversityScore}</div></div>
+          <div><div class="text-xs text-slate-500">Coverage score</div><div class="text-lg font-semibold" style="color:var(--accent)">${Math.round(res.coverageScore*100)}%</div></div>
+        </div>
+        <div class="mb-4">${coverageRows}</div>
+        <div class="text-xs text-slate-500 mb-3">${res.reason}</div>
+        <div class="space-y-2">
+          ${res.members.map(m => `
+            <div class="border rounded-lg p-3 text-sm" style="border-color:var(--line)">
+              <div class="font-medium">${m.name}</div>
+              <div class="text-xs text-slate-500">${m.skills.join(", ")}</div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+    } catch (err) {
+      $("#teamResult").innerHTML = `<div class="text-sm" style="color:var(--danger)">${err.message}</div>`;
+    }
+  });
+}
+
+// ---------------- Originality Checker ----------------
+function originalityView() {
+  return `
+  <h1 class="text-2xl font-semibold mb-1" style="color:var(--navy)">Originality Checker</h1>
+  <p class="text-slate-500 text-sm mb-6">Semantic similarity against the indexed prior-idea corpus — a screening signal, not proof of plagiarism.</p>
+  <div class="card p-5 mb-6">
+    <input id="ideaTitle" placeholder="Idea title" class="w-full border rounded-lg px-3 py-2 text-sm mb-3" style="border-color:var(--line)">
+    <textarea id="ideaDesc" placeholder="Idea description" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm mb-3" style="border-color:var(--line)"></textarea>
+    <button id="checkIdeaBtn" class="btn-primary text-sm px-4 py-2">Check originality</button>
+  </div>
+  <div id="ideaResult"></div>`;
+}
+function bindOriginality() {
+  $("#checkIdeaBtn").addEventListener("click", async () => {
+    const title = $("#ideaTitle").value.trim();
+    const description = $("#ideaDesc").value.trim();
+    if (!title || !description) return;
+    $("#ideaResult").innerHTML = `<div class="text-sm text-slate-400">Generating semantic representation, searching prior ideas…</div>`;
+    try {
+      const res = await api("/api/idea/check", { method: "POST", body: JSON.stringify({ title, description }) });
+      const statusLabel = { novel: "High novelty", worth_reviewing: "Worth reviewing", needs_review: "Human review recommended" }[res.status] || res.status;
+      const statusColor = { novel: "var(--ok)", worth_reviewing: "var(--warn)", needs_review: "var(--danger)" }[res.status] || "var(--ink)";
+      $("#ideaResult").innerHTML = `
+      <div class="card p-5">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="text-3xl font-semibold" style="color:${statusColor}">${res.noveltyScore}</div>
+          <div>
+            <div class="text-sm font-medium" style="color:${statusColor}">${statusLabel}</div>
+            <div class="text-xs text-slate-400">novelty score · embedding: ${res.embeddingMode}</div>
+          </div>
+        </div>
+        <div class="text-sm font-medium mb-2">Closest matches</div>
+        ${res.matches.map(m => `
+          <div class="border rounded-lg p-3 mb-2 text-sm" style="border-color:var(--line)">
+            <div class="flex justify-between"><span class="font-medium">${m.title}</span><span style="color:var(--accent)">${m.similarity}%</span></div>
+            <div class="text-xs text-slate-500 mt-1">${m.description}</div>
+            <div class="text-[10px] text-slate-400 mt-1">${m.source}</div>
+          </div>`).join("") || emptyState("No similar prior ideas found.")}
+      </div>`;
+    } catch (err) {
+      $("#ideaResult").innerHTML = `<div class="text-sm" style="color:var(--danger)">${err.message}</div>`;
+    }
+  });
+}
+
+// ---------------- History ----------------
+async function historyView() {
+  const res = await api("/api/idea/history");
+  return `
+  <h1 class="text-2xl font-semibold mb-1" style="color:var(--navy)">Originality history</h1>
+  <p class="text-slate-500 text-sm mb-6">Every idea you've checked, with its outcome.</p>
+  ${res.items.length ? res.items.map(i => `
+    <div class="card p-4 mb-2 flex justify-between items-center">
+      <div>
+        <div class="font-medium text-sm">${i.title}</div>
+        <div class="text-xs text-slate-400">${new Date(i.date).toLocaleDateString()} · status: ${i.status}</div>
+      </div>
+      <div class="text-sm font-semibold" style="color:var(--accent)">${i.noveltyScore}</div>
+    </div>`).join("") : emptyState("No ideas checked yet.")}`;
+}
+
+// ---------------- Reviewer Queue ----------------
+async function reviewView() {
+  const res = await api("/api/reviewer/queue");
+  return `
+  <h1 class="text-2xl font-semibold mb-1" style="color:var(--navy)">Review queue</h1>
+  <p class="text-slate-500 text-sm mb-6">High-similarity ideas awaiting human confirmation before a flag reaches the student.</p>
+  ${res.items.length ? res.items.map(i => `
+    <div class="card p-4 mb-3" data-review-id="${i.reviewId}">
+      <div class="font-medium text-sm">${i.title}</div>
+      <div class="text-xs text-slate-500 mb-2">${i.description}</div>
+      <div class="text-xs text-slate-400 mb-3">Top similarity: ${i.topSimilarity}%</div>
+      <div class="flex gap-2">
+        <button data-decision="confirm_overlap" data-review="${i.reviewId}" class="decision-btn text-xs px-3 py-1.5 rounded-lg" style="background:#FEF2F2;color:var(--danger)">Confirm overlap</button>
+        <button data-decision="dismiss" data-review="${i.reviewId}" class="decision-btn text-xs px-3 py-1.5 rounded-lg" style="background:#ECFDF5;color:var(--ok)">Dismiss</button>
+        <button data-decision="needs_review" data-review="${i.reviewId}" class="decision-btn text-xs px-3 py-1.5 rounded-lg" style="background:#FFF7ED;color:var(--warn)">Needs more review</button>
+      </div>
+    </div>`).join("") : emptyState("Review queue is empty.")}`;
+}
+function bindReview() {
+  document.querySelectorAll(".decision-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.review, decision = btn.dataset.decision;
+      await api(`/api/reviewer/${id}/decision`, { method: "POST", body: JSON.stringify({ decision }) });
+      render();
+    });
+  });
+}
+
+// ---------------- Router ----------------
+async function render() {
+  const app = $("#app");
+  if (!TOKEN) { app.innerHTML = loginView(); bindLogin(); return; }
+
+  let content = `<div class="text-sm text-slate-400">Loading…</div>`;
+  app.innerHTML = shell(content);
+  bindNav();
+  $("#logoutBtn")?.addEventListener("click", logout);
+
+  try {
+    if (VIEW === "dashboard") content = await dashboardView();
+    else if (VIEW === "opportunities") content = await opportunitiesView();
+    else if (VIEW === "team") content = teamView();
+    else if (VIEW === "originality") content = originalityView();
+    else if (VIEW === "history") content = await historyView();
+    else if (VIEW === "review") content = await reviewView();
+  } catch (err) {
+    content = `<div class="card p-6 text-sm" style="color:var(--danger)">Error: ${err.message}. Is the backend running on ${API}?</div>`;
+  }
+
+  app.innerHTML = shell(content);
+  bindNav();
+  $("#logoutBtn")?.addEventListener("click", logout);
+  if (VIEW === "team") bindTeam();
+  if (VIEW === "originality") bindOriginality();
+  if (VIEW === "review") bindReview();
+}
+function bindNav() {
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => { VIEW = btn.dataset.nav; render(); });
+  });
+}
+
+render();
+</script>
+</body>
+</html>
