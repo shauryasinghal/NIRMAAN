@@ -1,78 +1,80 @@
-import os
-import logging
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from . import models, seed_data
-from .database import engine, SessionLocal
-from .routers import (
-    auth, profile, opportunities, team, idea, reviewer, saved, applications,
-    notifications, saved_searches, activity, organizations, intelligence,
-    google_auth, calendar, resume,
-)
-from .engines import originality
+from .core.config import get_settings
+from .core.errors import install_error_handlers
+from .core.logging import configure_logging, get_logger
+from .core.middleware import GlobalRateLimitMiddleware, RequestContextMiddleware
+from .db.session import dispose_engine, open_db
+from .routers import auth, opportunities, profile
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-logger = logging.getLogger("nirmaan")
-
-models.Base.metadata.create_all(bind=engine)
-
-with SessionLocal() as db:
-    seed_data.run(db)
-
-app = FastAPI(
-    title="NIRMAAN API",
-    description="The AI Operating System for Student Innovation — Opportunity Recommender, "
-                 "AI Team Builder and Originality Checker behind one API.",
-    version="0.2.0",
-)
-
-# CORS_ORIGINS is a comma-separated list, e.g. "https://nirmaan.app,https://staging.nirmaan.app".
-# Defaults to "*" for local development only — set this explicitly in any deployed environment.
-_cors_env = os.getenv("CORS_ORIGINS", "*")
-if _cors_env.strip() == "*":
-    logger.warning("CORS_ORIGINS not set — allowing all origins. Set CORS_ORIGINS in production.")
-    allow_origins = ["*"]
-else:
-    allow_origins = [o.strip() for o in _cors_env.split(",") if o.strip()]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allow_origins,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(auth.router)
-app.include_router(profile.router)
-app.include_router(opportunities.router)
-app.include_router(team.router)
-app.include_router(idea.router)
-app.include_router(reviewer.router)
-app.include_router(saved.router)
-app.include_router(applications.router)
-app.include_router(notifications.router)
-app.include_router(saved_searches.router)
-app.include_router(activity.router)
-app.include_router(organizations.router)
-app.include_router(intelligence.router)
-app.include_router(google_auth.router)
-app.include_router(calendar.router)
-app.include_router(resume.router)
+VERSION = "1.0.0"
+log = get_logger("app")
 
 
-@app.get("/health")
-def health():
-    from sqlalchemy import text
-    db_status = "ok"
-    try:
-        with SessionLocal() as db:
-            db.execute(text("SELECT 1"))
-    except Exception as e:
-        db_status = f"error: {e}"
-    return {
-        "status": "ok" if db_status == "ok" else "degraded",
-        "service": "nirmaan-api",
-        "database": db_status,
-        "embeddingMode": originality.EMBEDDING_MODE,
-    }
+def create_app() -> FastAPI:
+    s = get_settings()
+    configure_logging(s.log_level, s.log_json)
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        log.info("starting", extra={"event": "startup", "source": s.env})
+        if s.preload_embedding_model:
+            from .engines.originality import embedding_available
+            embedding_available()
+        yield
+        dispose_engine()
+
+    app = FastAPI(
+        title="NIRMAAN API", version=VERSION, lifespan=lifespan,
+        description="The AI Operating System for Student Innovation. Authentication is handled by Supabase Auth; "
+                    "send the Supabase access token as `Authorization: Bearer <jwt>`.",
+        docs_url=None if s.is_production else "/docs", redoc_url=None if s.is_production else "/redoc", openapi_url=None if s.is_production else "/openapi.json",
+    )
+    origins = s.cors_list or ([s.frontend_url, "http://localhost:5173", "http://127.0.0.1:5173"] if not s.is_production else [])
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=False, allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+                       allow_headers=["Authorization", "Content-Type", "X-Request-ID"], expose_headers=["X-Request-ID", "Retry-After"], max_age=600)
+    app.add_middleware(GlobalRateLimitMiddleware)
+    app.add_middleware(RequestContextMiddleware)
+    install_error_handlers(app)
+
+    for r in (auth.router, profile.router, opportunities.router):
+        app.include_router(r)
+
+    @app.get("/health", tags=["ops"], summary="Liveness — process is up (no dependencies)")
+    def health():
+        return {"status": "ok", "service": "nirmaan-api", "version": VERSION}
+
+    @app.get("/ready", tags=["ops"], summary="Readiness — dependencies the API needs to serve traffic")
+    def ready():
+        checks: dict[str, dict] = {}
+        ok = True
+        try:
+            with open_db("service_role") as db:
+                db.val("select 1")
+                checks["database"] = {"status": "ok"}
+                has_vector = bool(db.val("select 1 from pg_extension where extname = 'vector'"))
+                has_schema = bool(db.val("select to_regclass('public.profiles') is not null"))
+                checks["pgvector"] = {"status": "ok" if has_vector else "missing"}
+                checks["schema"] = {"status": "ok" if has_schema else "missing"}
+                ok = has_vector and has_schema
+        except Exception as exc:
+            checks["database"] = {"status": "error", "error": type(exc).__name__}
+            ok = False
+        checks["auth"] = {"status": "ok" if (s.supabase_url or s.supabase_jwt_secret) else "unconfigured"}
+        ok = ok and checks["auth"]["status"] == "ok"
+        from .engines.originality import MiniLMEmbedder, get_embedder
+        e = get_embedder()
+        checks["embeddingModel"] = {"status": "loaded" if getattr(e, "_model", True) is not None else "lazy", "name": e.name, "dim": e.dim}
+        checks["googleIntegrations"] = {"status": "enabled" if s.google_integrations_enabled else "disabled"}
+        return JSONResponse({"status": "ready" if ok else "not_ready", "checks": checks}, status_code=200 if ok else 503)
+
+    return app
+
+
+app = create_app()

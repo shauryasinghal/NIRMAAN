@@ -30,7 +30,7 @@ def get_engine() -> Engine:
             raise unavailable("The database is not configured")
         _engine = create_engine(
             s.sqlalchemy_url, pool_size=s.db_pool_size, max_overflow=s.db_pool_size, pool_pre_ping=True,
-            pool_recycle=1800, use_native_uuid=False, future=True,
+            pool_recycle=1800, future=True,
         )
     return _engine
 

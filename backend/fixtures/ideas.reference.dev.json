@@ -1,0 +1,202 @@
+[
+ {
+  "title": "Skill-based hackathon teammate finder",
+  "description": "A platform for finding teammates with matching or complementary technical skills for hackathons."
+ },
+ {
+  "title": "Recipe recommender using pantry items",
+  "description": "An app that suggests recipes based on ingredients already available at home."
+ },
+ {
+  "title": "Campus lost-and-found tracker",
+  "description": "A web app where students can report and search for lost items on campus."
+ },
+ {
+  "title": "AI resume screening tool",
+  "description": "A tool that scores resumes against a job description using keyword and semantic matching."
+ },
+ {
+  "title": "Peer-to-peer tutoring marketplace",
+  "description": "A platform connecting students who need help in a subject with peers who can tutor them."
+ },
+ {
+  "title": "Carbon footprint tracker for students",
+  "description": "An app that estimates a student's daily carbon footprint from commute and food choices."
+ },
+ {
+  "title": "Duplicate hackathon idea checker",
+  "description": "A system that checks a submitted hackathon idea against a database of past submissions for similarity."
+ },
+ {
+  "title": "Mental wellness check-in chatbot",
+  "description": "A chatbot that periodically checks in on student mental wellness and suggests resources."
+ },
+ {
+  "title": "Local event discovery app",
+  "description": "An app that aggregates and recommends local college events based on user interests."
+ },
+ {
+  "title": "Expense splitting app for roommates",
+  "description": "A mobile app to track and split shared expenses among roommates."
+ },
+ {
+  "title": "Attendance tracker with face recognition",
+  "description": "A classroom attendance system that identifies students automatically from a camera feed."
+ },
+ {
+  "title": "Second-hand textbook marketplace",
+  "description": "A campus marketplace for buying and selling used textbooks between students."
+ },
+ {
+  "title": "Smart timetable clash detector",
+  "description": "A tool that flags scheduling conflicts when students pick elective courses."
+ },
+ {
+  "title": "Placement preparation tracker",
+  "description": "An app that helps students track coding practice and interview preparation progress."
+ },
+ {
+  "title": "Hostel maintenance complaint portal",
+  "description": "A ticketing system for students to report and track hostel maintenance issues."
+ },
+ {
+  "title": "Carpooling app for campus commute",
+  "description": "An app matching students travelling similar routes to campus for shared rides."
+ },
+ {
+  "title": "Skill-swap platform for students",
+  "description": "A platform where students teach each other skills in exchange for learning a different skill."
+ },
+ {
+  "title": "Study group matcher by course and goals",
+  "description": "An app that groups students preparing for the same exam into study groups."
+ },
+ {
+  "title": "Campus event ticketing and check-in",
+  "description": "A QR-code based ticketing and check-in system for college fests and events."
+ },
+ {
+  "title": "Personal finance tracker for students",
+  "description": "A budgeting app tailored to student income and expense patterns."
+ },
+ {
+  "title": "Plagiarism checker for assignment submissions",
+  "description": "A tool that flags textual overlap between submitted assignments and existing sources."
+ },
+ {
+  "title": "Internship application tracker",
+  "description": "A dashboard for students to track internship applications, deadlines, and interview stages."
+ },
+ {
+  "title": "Campus noise complaint heatmap",
+  "description": "A crowdsourced map showing noise complaint hotspots across a college campus."
+ },
+ {
+  "title": "Volunteer hour tracking app",
+  "description": "An app that logs and verifies student volunteering hours for community service credit."
+ },
+ {
+  "title": "Lab equipment booking system",
+  "description": "A scheduling system for students to reserve shared lab equipment slots."
+ },
+ {
+  "title": "Anonymous campus feedback board",
+  "description": "A moderated board where students can post anonymous feedback about courses and facilities."
+ },
+ {
+  "title": "Cafeteria menu and crowd predictor",
+  "description": "An app predicting cafeteria crowd levels and today's menu based on past patterns."
+ },
+ {
+  "title": "Alumni mentorship matching platform",
+  "description": "A platform connecting current students with alumni mentors in similar career paths."
+ },
+ {
+  "title": "Group project task tracker",
+  "description": "A lightweight Kanban-style tracker built specifically for student group project deadlines."
+ },
+ {
+  "title": "Bike/cycle rental app for campus",
+  "description": "An app for renting shared bicycles across a large university campus."
+ },
+ {
+  "title": "Scholarship eligibility matcher",
+  "description": "A tool that matches a student's profile against scholarships they're eligible to apply for."
+ },
+ {
+  "title": "Language exchange partner finder",
+  "description": "An app pairing students who want to practice speaking each other's native languages."
+ },
+ {
+  "title": "Club and society discovery app",
+  "description": "An app helping new students discover and join campus clubs matching their interests."
+ },
+ {
+  "title": "Exam seating arrangement generator",
+  "description": "A tool that auto-generates non-adjacent seating charts for large exam halls."
+ },
+ {
+  "title": "Peer code review scheduler",
+  "description": "A tool matching students to review each other's code submissions before deadlines."
+ },
+ {
+  "title": "Campus WiFi dead-zone mapper",
+  "description": "A crowdsourced app mapping weak WiFi signal areas across a college campus."
+ },
+ {
+  "title": "Doubt-solving Q&A app for coursework",
+  "description": "A course-specific Q&A forum where students post and answer doubts."
+ },
+ {
+  "title": "Freelance gig board for students",
+  "description": "A campus-only marketplace for small freelance gigs between students."
+ },
+ {
+  "title": "Sustainable campus energy dashboard",
+  "description": "A dashboard visualizing real-time energy usage across campus buildings."
+ },
+ {
+  "title": "Roommate compatibility matcher",
+  "description": "A quiz-based app matching incoming students with compatible roommates."
+ },
+ {
+  "title": "Open-source contribution tracker for students",
+  "description": "A dashboard tracking a student's open-source contributions across GitHub repos."
+ },
+ {
+  "title": "Campus safety SOS app",
+  "description": "An app that lets students quickly alert campus security and nearby friends in an emergency."
+ },
+ {
+  "title": "Group expense settlement optimizer",
+  "description": "An app that minimizes the number of transactions needed to settle shared group expenses."
+ },
+ {
+  "title": "Course prerequisite visualizer",
+  "description": "A tool visualizing prerequisite chains across a degree program's course catalogue."
+ },
+ {
+  "title": "Hackathon idea brainstorm board",
+  "description": "A collaborative board for teams to brainstorm and vote on hackathon ideas before committing."
+ },
+ {
+  "title": "Student subletting board",
+  "description": "A board for students to list and find short-term room sublets during breaks."
+ },
+ {
+  "title": "Time-boxed focus session app",
+  "description": "A Pomodoro-style focus timer app with shared study room sessions for students."
+ },
+ {
+  "title": "Career fair booth navigator",
+  "description": "An app that maps career fair booths and helps students plan which companies to visit."
+ },
+ {
+  "title": "Peer skill endorsement network",
+  "description": "A LinkedIn-style network where students endorse each other's demonstrated project skills."
+ },
+ {
+  "title": "Lecture notes sharing and search",
+  "description": "A searchable repository of student-shared lecture notes organized by course."
+ }
+]

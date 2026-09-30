@@ -1,46 +1,55 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from __future__ import annotations
 
-from .. import models, schemas, security
-from ..database import get_db
-from ..activity import log_activity
+from fastapi import APIRouter, Depends, Response
 
-router = APIRouter(prefix="/api/profile", tags=["profile"])
+from ..core.errors import not_found
+from ..core.security import CurrentUser, get_db, require_student
+from ..db.session import Db
+from ..schemas.common import ApiModel
+from ..schemas.profile import ProfileOut, ProfileUpdate
+from ..services import profiles as svc
+from ..services.activity import log_activity
 
-
-def _completeness(student: models.Student) -> bool:
-    return bool(student.skills) and bool(student.interests) and bool(student.branch)
-
-
-@router.get("", response_model=schemas.ProfileOut)
-def get_profile(student: models.Student = Depends(security.get_current_student)):
-    return schemas.ProfileOut(
-        id=student.id, name=student.name, email=student.email,
-        year=student.year, branch=student.branch, skills=student.skills or [],
-        interests=student.interests or [], experience_level=student.experience_level,
-        availability_hrs=student.availability_hrs, profile_complete=student.profile_complete,
-    )
+router = APIRouter(prefix="/api", tags=["profile"])
 
 
-@router.put("", response_model=schemas.ProfileOut)
-def update_profile(
-    payload: schemas.ProfileIn,
-    student: models.Student = Depends(security.get_current_student),
-    db: Session = Depends(get_db),
-):
-    student.year = payload.year
-    student.branch = payload.branch
-    student.skills = payload.skills
-    student.interests = payload.interests
-    student.experience_level = payload.experience_level
-    student.availability_hrs = payload.availability_hrs
-    student.profile_complete = _completeness(student)
-    log_activity(db, student.id, "profile_updated", "Updated profile", link="/profile")
-    db.commit()
-    db.refresh(student)
-    return schemas.ProfileOut(
-        id=student.id, name=student.name, email=student.email,
-        year=student.year, branch=student.branch, skills=student.skills or [],
-        interests=student.interests or [], experience_level=student.experience_level,
-        availability_hrs=student.availability_hrs, profile_complete=student.profile_complete,
-    )
+@router.get("/profile", response_model=ProfileOut)
+def get_profile(user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    return svc.get_profile(db, user.id)
+
+
+@router.put("/profile", response_model=ProfileOut, summary="Update your own profile (role/email/id are not writable)")
+def update_profile(body: ProfileUpdate, user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    svc.update_profile(db, user.id, body.model_dump(exclude_unset=True))
+    log_activity(db, user.id, "profile_updated", "Updated profile", "/profile")
+    return svc.get_profile(db, user.id)
+
+
+@router.post("/profile/skills/{name}/confirm", response_model=ProfileOut, summary="Explicitly confirm an inferred skill")
+def confirm_skill(name: str, user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    if not svc.confirm_inferred_skill(db, user.id, name):
+        raise not_found("Inferred skill")
+    log_activity(db, user.id, "profile_updated", f"Confirmed skill: {name.lower()}", "/profile")
+    return svc.get_profile(db, user.id)
+
+
+@router.delete("/profile/skills/{name}", status_code=204, summary="Remove a skill (confirmed or inferred)")
+def delete_skill(name: str, user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    if not svc.remove_skill(db, user.id, name):
+        raise not_found("Skill")
+    return Response(status_code=204)
+
+
+class VocabItem(ApiModel):
+    slug: str
+    name: str
+
+
+@router.get("/skills", response_model=list[VocabItem], tags=["skills"])
+def skills(db: Db = Depends(get_db)):
+    return db.all("select slug, name from public.skills order by name")
+
+
+@router.get("/interests", response_model=list[VocabItem], tags=["skills"])
+def interests(db: Db = Depends(get_db)):
+    return db.all("select slug, name from public.interests order by name")

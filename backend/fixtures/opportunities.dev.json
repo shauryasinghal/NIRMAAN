@@ -1,0 +1,1291 @@
+[
+ {
+  "externalId": "demo-001",
+  "title": "Smart India Hackathon 2026",
+  "organization": "Ministry of Education, Govt. of India",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "system design"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 45,
+  "description": "Smart India Hackathon 2026 \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "New Delhi",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-002",
+  "title": "HackVerse 5.0",
+  "organization": "IIIT Allahabad",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "nlp",
+   "deep learning"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "intermediate",
+  "deadlineInDays": 35,
+  "description": "HackVerse 5.0 \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Prayagraj",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-003",
+  "title": "FinTech Innovate Challenge",
+  "organization": "Razorpay",
+  "domain": "FinTech",
+  "requiredSkills": [
+   "python",
+   "javascript",
+   "react"
+  ],
+  "preferredSkills": [
+   "api design"
+  ],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 60,
+  "description": "FinTech Innovate Challenge \u2014 a FinTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-004",
+  "title": "HealthTech Precision Challenge",
+  "organization": "GE HealthCare",
+  "domain": "HealthTech",
+  "requiredSkills": [
+   "machine learning",
+   "data science",
+   "python"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "advanced",
+  "deadlineInDays": 75,
+  "description": "HealthTech Precision Challenge \u2014 a HealthTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Bengaluru"
+ },
+ {
+  "externalId": "demo-005",
+  "title": "Open Source Contribution Sprint",
+  "organization": "GitHub Education",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "git",
+   "python",
+   "javascript"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 20,
+  "description": "Open Source Contribution Sprint \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-006",
+  "title": "ClimateTech Builders Cup",
+  "organization": "Unstop",
+  "domain": "ClimateTech",
+  "requiredSkills": [
+   "data science",
+   "python",
+   "iot"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 40,
+  "description": "ClimateTech Builders Cup \u2014 a ClimateTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-007",
+  "title": "EdTech Product Sprint",
+  "organization": "Unstop",
+  "domain": "EdTech",
+  "requiredSkills": [
+   "react",
+   "ui/ux",
+   "javascript"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 15,
+  "description": "EdTech Product Sprint \u2014 a EdTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-008",
+  "title": "CyberSecure CTF",
+  "organization": "HackerEarth",
+  "domain": "Cybersecurity",
+  "requiredSkills": [
+   "cybersecurity",
+   "networking",
+   "python"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "advanced",
+  "deadlineInDays": 30,
+  "description": "CyberSecure CTF \u2014 a Cybersecurity opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "CTF",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-009",
+  "title": "DevPost Global AI Buildathon",
+  "organization": "Devpost",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "cloud"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 55,
+  "description": "DevPost Global AI Buildathon \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-010",
+  "title": "Campus Innovation Challenge",
+  "organization": "GLA University",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "python",
+   "react",
+   "sql"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "beginner",
+  "deadlineInDays": 10,
+  "description": "Campus Innovation Challenge \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Mathura"
+ },
+ {
+  "externalId": "demo-011",
+  "title": "Kaggle Student Data Science Bowl",
+  "organization": "Kaggle",
+  "domain": "Data Science",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "advanced",
+  "deadlineInDays": 65,
+  "description": "Kaggle Student Data Science Bowl \u2014 a Data Science opportunity for students. Demo listing: the details on this card are sample data, not a live posting."
+ },
+ {
+  "externalId": "demo-012",
+  "title": "Flipkart GRiD Campus Challenge",
+  "organization": "Flipkart",
+  "domain": "Web Development",
+  "requiredSkills": [
+   "java",
+   "react",
+   "sql"
+  ],
+  "preferredSkills": [
+   "api design"
+  ],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 50,
+  "description": "Flipkart GRiD Campus Challenge \u2014 a Web Development opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Bengaluru"
+ },
+ {
+  "externalId": "demo-013",
+  "title": "Paytm FinTech Hackfest",
+  "organization": "Paytm",
+  "domain": "FinTech",
+  "requiredSkills": [
+   "python",
+   "sql",
+   "api design"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 25,
+  "description": "Paytm FinTech Hackfest \u2014 a FinTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-014",
+  "title": "Google Developer Groups Solution Challenge",
+  "organization": "Google Developer Groups",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "cloud",
+   "python",
+   "ui/ux"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 70,
+  "description": "Google Developer Groups Solution Challenge \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-015",
+  "title": "Microsoft Learn Student Ambassador Sprint",
+  "organization": "Microsoft Learn Student",
+  "domain": "Cloud",
+  "requiredSkills": [
+   "cloud",
+   "devops",
+   "python"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 18,
+  "description": "Microsoft Learn Student Ambassador Sprint \u2014 a Cloud opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-016",
+  "title": "AWS Educate Cloud Innovation Cup",
+  "organization": "AWS Educate",
+  "domain": "Cloud",
+  "requiredSkills": [
+   "cloud",
+   "python",
+   "devops"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "advanced",
+  "deadlineInDays": 80,
+  "description": "AWS Educate Cloud Innovation Cup \u2014 a Cloud opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-017",
+  "title": "NVIDIA Inception Student AI Challenge",
+  "organization": "NVIDIA Inception",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "deep learning",
+   "machine learning"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "advanced",
+  "deadlineInDays": 90,
+  "description": "NVIDIA Inception Student AI Challenge \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-018",
+  "title": "ISRO Bhartiya Antariksh Hackathon",
+  "organization": "ISRO",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "python",
+   "data science",
+   "iot"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "advanced",
+  "deadlineInDays": 100,
+  "description": "ISRO Bhartiya Antariksh Hackathon \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Bengaluru",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-019",
+  "title": "Zomato Product Design Jam",
+  "organization": "Zomato",
+  "domain": "Web Development",
+  "requiredSkills": [
+   "ui/ux",
+   "figma",
+   "react"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 22,
+  "description": "Zomato Product Design Jam \u2014 a Web Development opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-020",
+  "title": "Infosys Springboard InnovateX",
+  "organization": "Infosys Springboard",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "java",
+   "python",
+   "sql"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 42,
+  "description": "Infosys Springboard InnovateX \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "location": "Mysuru"
+ },
+ {
+  "externalId": "demo-021",
+  "title": "HackerEarth CodeSprint AI",
+  "organization": "HackerEarth",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "nlp"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 33,
+  "description": "HackerEarth CodeSprint AI \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-022",
+  "title": "Devfolio Web3 & AI Buildathon",
+  "organization": "Devfolio",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "javascript",
+   "python",
+   "api design"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 48,
+  "description": "Devfolio Web3 & AI Buildathon \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-023",
+  "title": "GLA University AI Research Symposium",
+  "organization": "GLA University",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "advanced",
+  "deadlineInDays": 58,
+  "description": "GLA University AI Research Symposium \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Conference",
+  "participation": "individual",
+  "location": "Mathura",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-024",
+  "title": "Unstop Campus Ambassador Design Sprint",
+  "organization": "Unstop",
+  "domain": "EdTech",
+  "requiredSkills": [
+   "ui/ux",
+   "figma"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 12,
+  "description": "Unstop Campus Ambassador Design Sprint \u2014 a EdTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-025",
+  "title": "HealthTech IoT Challenge",
+  "organization": "GE HealthCare",
+  "domain": "HealthTech",
+  "requiredSkills": [
+   "iot",
+   "python",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 68,
+  "description": "HealthTech IoT Challenge \u2014 a HealthTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Bengaluru"
+ },
+ {
+  "externalId": "demo-026",
+  "title": "Cybersecurity Capture the Flag \u2014 National Finals",
+  "organization": "HackerEarth",
+  "domain": "Cybersecurity",
+  "requiredSkills": [
+   "cybersecurity",
+   "networking",
+   "cloud"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "advanced",
+  "deadlineInDays": 85,
+  "description": "Cybersecurity Capture the Flag \u2014 National Finals \u2014 a Cybersecurity opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "CTF",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-027",
+  "title": "Devpost Climate Resilience Hack",
+  "organization": "Devpost",
+  "domain": "ClimateTech",
+  "requiredSkills": [
+   "python",
+   "data science",
+   "iot"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 38,
+  "description": "Devpost Climate Resilience Hack \u2014 a ClimateTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-028",
+  "title": "Razorpay Student Builder Sprint",
+  "organization": "Razorpay",
+  "domain": "FinTech",
+  "requiredSkills": [
+   "javascript",
+   "react",
+   "api design"
+  ],
+  "preferredSkills": [
+   "cloud"
+  ],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 16,
+  "description": "Razorpay Student Builder Sprint \u2014 a FinTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-029",
+  "title": "Smart India Hackathon \u2014 Software Edition",
+  "organization": "Ministry of Education, Govt. of India",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "python",
+   "react",
+   "sql"
+  ],
+  "preferredSkills": [
+   "cloud"
+  ],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 95,
+  "description": "Smart India Hackathon \u2014 Software Edition \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "New Delhi",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-030",
+  "title": "GitHub Copilot Student Challenge",
+  "organization": "GitHub Education",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "javascript",
+   "git"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 27,
+  "description": "GitHub Copilot Student Challenge \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-031",
+  "title": "Kaggle Playground Prediction Series",
+  "organization": "Kaggle",
+  "domain": "Data Science",
+  "requiredSkills": [
+   "python",
+   "data science",
+   "sql"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 14,
+  "description": "Kaggle Playground Prediction Series \u2014 a Data Science opportunity for students. Demo listing: the details on this card are sample data, not a live posting."
+ },
+ {
+  "externalId": "demo-032",
+  "title": "Flipkart Runway UX Design Challenge",
+  "organization": "Flipkart",
+  "domain": "EdTech",
+  "requiredSkills": [
+   "ui/ux",
+   "figma",
+   "css"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 21,
+  "description": "Flipkart Runway UX Design Challenge \u2014 a EdTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-033",
+  "title": "AWS Educate DevOps Bootcamp Challenge",
+  "organization": "AWS Educate",
+  "domain": "DevOps",
+  "requiredSkills": [
+   "devops",
+   "docker",
+   "cloud"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 44,
+  "description": "AWS Educate DevOps Bootcamp Challenge \u2014 a DevOps opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-034",
+  "title": "Google Cloud Arcade Facilitator Challenge",
+  "organization": "Google Developer Groups",
+  "domain": "Cloud",
+  "requiredSkills": [
+   "cloud",
+   "devops"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 9,
+  "description": "Google Cloud Arcade Facilitator Challenge \u2014 a Cloud opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-035",
+  "title": "Devfolio EdTech for Bharat Hack",
+  "organization": "Devfolio",
+  "domain": "EdTech",
+  "requiredSkills": [
+   "react",
+   "javascript",
+   "ui/ux"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 52,
+  "description": "Devfolio EdTech for Bharat Hack \u2014 a EdTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-036",
+  "title": "NVIDIA Deep Learning Institute Student Cup",
+  "organization": "NVIDIA Inception",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "deep learning",
+   "python",
+   "cloud"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "advanced",
+  "deadlineInDays": 78,
+  "description": "NVIDIA Deep Learning Institute Student Cup \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-037",
+  "title": "Paytm Payments Innovation Lab",
+  "organization": "Paytm",
+  "domain": "FinTech",
+  "requiredSkills": [
+   "java",
+   "sql",
+   "cybersecurity"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "advanced",
+  "deadlineInDays": 62,
+  "description": "Paytm Payments Innovation Lab \u2014 a FinTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "location": "Noida"
+ },
+ {
+  "externalId": "demo-038",
+  "title": "HackerEarth Cloud-Native Challenge",
+  "organization": "HackerEarth",
+  "domain": "DevOps",
+  "requiredSkills": [
+   "docker",
+   "cloud",
+   "devops"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 31,
+  "description": "HackerEarth Cloud-Native Challenge \u2014 a DevOps opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-039",
+  "title": "Devpost Accessibility-First Hack",
+  "organization": "Devpost",
+  "domain": "Web Development",
+  "requiredSkills": [
+   "react",
+   "ui/ux",
+   "javascript"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 19,
+  "description": "Devpost Accessibility-First Hack \u2014 a Web Development opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-040",
+  "title": "ISRO Student Satellite Data Challenge",
+  "organization": "ISRO",
+  "domain": "Data Science",
+  "requiredSkills": [
+   "python",
+   "data science",
+   "machine learning"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "advanced",
+  "deadlineInDays": 110,
+  "description": "ISRO Student Satellite Data Challenge \u2014 a Data Science opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Bengaluru"
+ },
+ {
+  "externalId": "demo-041",
+  "title": "GLA University Cybersecurity Week CTF",
+  "organization": "GLA University",
+  "domain": "Cybersecurity",
+  "requiredSkills": [
+   "cybersecurity",
+   "networking",
+   "python"
+  ],
+  "preferredSkills": [],
+  "format": "offline",
+  "difficulty": "intermediate",
+  "deadlineInDays": 24,
+  "description": "GLA University Cybersecurity Week CTF \u2014 a Cybersecurity opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "CTF",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "location": "Mathura"
+ },
+ {
+  "externalId": "demo-042",
+  "title": "Zomato Data Science Case Cup",
+  "organization": "Zomato",
+  "domain": "Data Science",
+  "requiredSkills": [
+   "python",
+   "data science",
+   "sql"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 36,
+  "description": "Zomato Data Science Case Cup \u2014 a Data Science opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-043",
+  "title": "Infosys Springboard Full-Stack Sprint",
+  "organization": "Infosys Springboard",
+  "domain": "Web Development",
+  "requiredSkills": [
+   "java",
+   "react",
+   "api design"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "intermediate",
+  "deadlineInDays": 47,
+  "description": "Infosys Springboard Full-Stack Sprint \u2014 a Web Development opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "location": "Mysuru",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-044",
+  "title": "Microsoft Imagine Cup India Qualifiers",
+  "organization": "Microsoft Learn Student",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "cloud"
+  ],
+  "preferredSkills": [],
+  "format": "hybrid",
+  "difficulty": "advanced",
+  "deadlineInDays": 88,
+  "description": "Microsoft Imagine Cup India Qualifiers \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-045",
+  "title": "Unstop ClimateTech Ideathon",
+  "organization": "Unstop",
+  "domain": "ClimateTech",
+  "requiredSkills": [
+   "iot",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 13,
+  "description": "Unstop ClimateTech Ideathon \u2014 a ClimateTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-046",
+  "title": "Kaggle NLP Getting Started Challenge",
+  "organization": "Kaggle",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "nlp",
+   "machine learning"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 17,
+  "description": "Kaggle NLP Getting Started Challenge \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-047",
+  "title": "Devfolio Fintech for Bharat Hack",
+  "organization": "Devfolio",
+  "domain": "FinTech",
+  "requiredSkills": [
+   "python",
+   "api design",
+   "sql"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 41,
+  "description": "Devfolio Fintech for Bharat Hack \u2014 a FinTech opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Hackathon",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4,
+  "certificate": true
+ },
+ {
+  "externalId": "demo-048",
+  "title": "Razorpay Security & Trust Challenge",
+  "organization": "Razorpay",
+  "domain": "Cybersecurity",
+  "requiredSkills": [
+   "cybersecurity",
+   "python",
+   "api design"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "advanced",
+  "deadlineInDays": 73,
+  "description": "Razorpay Security & Trust Challenge \u2014 a Cybersecurity opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Competition",
+  "participation": "team",
+  "minTeamSize": 2,
+  "maxTeamSize": 4
+ },
+ {
+  "externalId": "demo-049",
+  "title": "GitHub Education Open Source Day",
+  "organization": "GitHub Education",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "git",
+   "python",
+   "javascript"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "beginner",
+  "deadlineInDays": 8,
+  "description": "GitHub Education Open Source Day \u2014 a Open Innovation opportunity for students. Demo listing: the details on this card are sample data, not a live posting."
+ },
+ {
+  "externalId": "demo-050",
+  "title": "Kaggle Computer Vision Sprint",
+  "organization": "Kaggle",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "deep learning",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "format": "online",
+  "difficulty": "intermediate",
+  "deadlineInDays": 29,
+  "description": "Kaggle Computer Vision Sprint \u2014 a AI/ML opportunity for students. Demo listing: the details on this card are sample data, not a live posting.",
+  "category": "Workshop",
+  "participation": "individual",
+  "certificate": true
+ },
+ {
+  "externalId": "demo-051",
+  "title": "Backend Engineering Intern",
+  "organization": "Northwind Labs",
+  "domain": "Cloud",
+  "requiredSkills": [
+   "python",
+   "sql",
+   "api design"
+  ],
+  "preferredSkills": [
+   "docker"
+  ],
+  "category": "Internship",
+  "difficulty": "intermediate",
+  "deadlineInDays": 26,
+  "description": "Summer internship on internal developer tooling. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "onsite",
+  "location": "Bengaluru",
+  "educationRequirements": "Undergraduate students (demo)",
+  "experienceRequirements": "Academic projects are enough (demo)",
+  "stipendAmount": 30000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-052",
+  "title": "Frontend Engineering Intern",
+  "organization": "Lumen Robotics",
+  "domain": "Web Development",
+  "requiredSkills": [
+   "react",
+   "javascript",
+   "css"
+  ],
+  "preferredSkills": [
+   "typescript"
+  ],
+  "category": "Internship",
+  "difficulty": "beginner",
+  "deadlineInDays": 19,
+  "description": "Remote internship building operator dashboards. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "remote",
+  "educationRequirements": "Undergraduate students (demo)",
+  "experienceRequirements": "Academic projects are enough (demo)",
+  "stipendAmount": 20000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-053",
+  "title": "ML Research Intern",
+  "organization": "Helix Health Systems",
+  "domain": "HealthTech",
+  "requiredSkills": [
+   "python",
+   "machine learning",
+   "deep learning"
+  ],
+  "preferredSkills": [
+   "nlp"
+  ],
+  "category": "Internship",
+  "difficulty": "advanced",
+  "deadlineInDays": 44,
+  "description": "Clinical NLP research internship. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "hybrid",
+  "location": "Hyderabad",
+  "educationRequirements": "Undergraduate students (demo)",
+  "experienceRequirements": "Academic projects are enough (demo)",
+  "stipendAmount": 45000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-054",
+  "title": "Data Analyst Intern",
+  "organization": "Orbit Cloud",
+  "domain": "Data Science",
+  "requiredSkills": [
+   "python",
+   "sql",
+   "data science"
+  ],
+  "preferredSkills": [],
+  "category": "Internship",
+  "difficulty": "beginner",
+  "deadlineInDays": 33,
+  "description": "Product analytics internship. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "remote",
+  "educationRequirements": "Undergraduate students (demo)",
+  "experienceRequirements": "Academic projects are enough (demo)",
+  "stipendAmount": 18000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-055",
+  "title": "Security Engineering Intern",
+  "organization": "Cedar Payments",
+  "domain": "Cybersecurity",
+  "requiredSkills": [
+   "cybersecurity",
+   "networking",
+   "python"
+  ],
+  "preferredSkills": [],
+  "category": "Internship",
+  "difficulty": "intermediate",
+  "deadlineInDays": 52,
+  "description": "Application security internship. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "onsite",
+  "location": "Pune",
+  "educationRequirements": "Undergraduate students (demo)",
+  "experienceRequirements": "Academic projects are enough (demo)",
+  "stipendAmount": 35000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-056",
+  "title": "Women in Technology Scholarship",
+  "organization": "Cedar Foundation",
+  "domain": "Open Innovation",
+  "requiredSkills": [],
+  "preferredSkills": [],
+  "category": "Scholarship",
+  "difficulty": "beginner",
+  "deadlineInDays": 61,
+  "description": "Merit scholarship for undergraduate students in technology programs. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "eligibility": "Enrolled undergraduate students (demo)",
+  "prizeText": "Tuition support (demo)"
+ },
+ {
+  "externalId": "demo-057",
+  "title": "Undergraduate Research Scholarship",
+  "organization": "Quill Education Trust",
+  "domain": "EdTech",
+  "requiredSkills": [],
+  "preferredSkills": [],
+  "category": "Scholarship",
+  "difficulty": "intermediate",
+  "deadlineInDays": 74,
+  "description": "Funds a semester-long research project. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "eligibility": "Enrolled undergraduate students (demo)",
+  "prizeText": "Research grant (demo)"
+ },
+ {
+  "externalId": "demo-058",
+  "title": "Open Source Fellowship",
+  "organization": "Aster Foundation",
+  "domain": "Open Innovation",
+  "requiredSkills": [
+   "git",
+   "python"
+  ],
+  "preferredSkills": [
+   "javascript"
+  ],
+  "category": "Fellowship",
+  "difficulty": "intermediate",
+  "deadlineInDays": 58,
+  "description": "Twelve-week mentored open-source fellowship. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "remote",
+  "stipendAmount": 25000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-059",
+  "title": "Climate Data Fellowship",
+  "organization": "Cedar Foundation",
+  "domain": "ClimateTech",
+  "requiredSkills": [
+   "python",
+   "data science"
+  ],
+  "preferredSkills": [
+   "iot"
+  ],
+  "category": "Fellowship",
+  "difficulty": "advanced",
+  "deadlineInDays": 83,
+  "description": "Fellowship for climate analytics projects. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "hybrid",
+  "location": "Delhi",
+  "stipendAmount": 40000,
+  "stipendCurrency": "INR"
+ },
+ {
+  "externalId": "demo-060",
+  "title": "Kubernetes for Students Workshop",
+  "organization": "Orbit Cloud",
+  "domain": "DevOps",
+  "requiredSkills": [
+   "docker"
+  ],
+  "preferredSkills": [
+   "devops"
+  ],
+  "category": "Workshop",
+  "difficulty": "beginner",
+  "deadlineInDays": 11,
+  "description": "Two-day hands-on workshop on containers and orchestration. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "format": "online"
+ },
+ {
+  "externalId": "demo-061",
+  "title": "Intro to Applied NLP Workshop",
+  "organization": "Quill Education Trust",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python"
+  ],
+  "preferredSkills": [
+   "nlp"
+  ],
+  "category": "Workshop",
+  "difficulty": "beginner",
+  "deadlineInDays": 15,
+  "description": "Weekend workshop on practical NLP pipelines. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "format": "offline",
+  "location": "Mathura"
+ },
+ {
+  "externalId": "demo-062",
+  "title": "National Student Cloud Summit",
+  "organization": "Aster Foundation",
+  "domain": "Cloud",
+  "requiredSkills": [],
+  "preferredSkills": [
+   "cloud"
+  ],
+  "category": "Conference",
+  "difficulty": "beginner",
+  "deadlineInDays": 47,
+  "description": "Talks and demos on cloud-native engineering. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "format": "offline",
+  "location": "Chennai"
+ },
+ {
+  "externalId": "demo-063",
+  "title": "Responsible AI Research Symposium",
+  "organization": "Helix Health Systems",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "machine learning"
+  ],
+  "preferredSkills": [
+   "nlp"
+  ],
+  "category": "Conference",
+  "difficulty": "intermediate",
+  "deadlineInDays": 64,
+  "description": "Student track on fairness and interpretability. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "format": "hybrid",
+  "location": "Bengaluru"
+ },
+ {
+  "externalId": "demo-064",
+  "title": "Edge AI Research Track",
+  "organization": "Lumen Robotics",
+  "domain": "AI/ML",
+  "requiredSkills": [
+   "python",
+   "deep learning",
+   "iot"
+  ],
+  "preferredSkills": [],
+  "category": "Research",
+  "difficulty": "advanced",
+  "deadlineInDays": 90,
+  "description": "Research collaboration on efficient on-device models. Demo listing: sample data, not a live posting.",
+  "participation": "individual",
+  "workMode": "onsite",
+  "location": "Bengaluru"
+ }
+]

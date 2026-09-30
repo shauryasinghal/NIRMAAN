@@ -45,6 +45,8 @@ def test_unknown_inputs_are_excluded_not_guessed():
     unknown = {c.key for c in r.components if c.score is None}
     assert {"format", "deadline", "participation", "behavior"} <= unknown
     assert r.confidence in ("medium", "low")
+    blank = score_fit(student(skills=frozenset(), interests=frozenset()), opp(), CTX)
+    assert next(c for c in blank.components if c.key == "skill").score is None and blank.confidence == "low" and blank.overall < 45
     # renormalised over known weights only: with everything known == 1.0 the max is 100
     perfect = score_fit(student(skills=frozenset({"python", "machine learning", "docker", "nlp"})), opp(), replace(CTX, affinity=Affinity(n_events=10, category={"Hackathon": 1}, domain={"ai/ml": 1}, skill={"python": 1, "machine learning": 1, "docker": 1, "nlp": 1})))
     assert 95 <= perfect.overall <= 100

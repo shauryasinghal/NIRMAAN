@@ -50,7 +50,7 @@ def explain_blockers(s: StudentSignals, o: OppSignals, fit: FitResult, ctx: FitC
             blockers.append({"kind": "deadline", "severity": "warning", "title": f"Deadline in {days} day(s)",
                              "detail": "Very little time left to prepare and register.", "fix": "Decide today whether to go for it.", "impact": 0.0})
 
-    gap = LEVELS.get(o.difficulty, 1) - LEVELS.get(s.level, 0)
+    gap = (LEVELS[o.difficulty] - LEVELS.get(s.level, 0)) if o.difficulty in LEVELS else 0
     if gap >= 1:
         blockers.append({"kind": "difficulty", "severity": "blocker" if gap >= 2 else "warning", "title": f"{o.difficulty.capitalize()} difficulty",
                          "detail": f"Marked {o.difficulty}; your profile says {s.level}.",

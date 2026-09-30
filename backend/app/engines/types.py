@@ -33,7 +33,7 @@ class OppSignals:
     tags: tuple[str, ...] = ()
     required: frozenset[str] = frozenset()
     preferred: frozenset[str] = frozenset()
-    difficulty: str = "intermediate"
+    difficulty: str | None = None
     format: str | None = None
     work_mode: str | None = None
     participation: str | None = None

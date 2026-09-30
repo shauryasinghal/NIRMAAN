@@ -10,6 +10,8 @@ case "$DB" in nirmaan_dev|nirmaan_test|nirmaan_e2e|nirmaan_*) ;; *) echo "refusi
 HERE="$(cd "$(dirname "$0")" && pwd)"
 PSQL=(psql -X -v ON_ERROR_STOP=1 -q)
 "${PSQL[@]}" -d postgres -c "drop database if exists $DB with (force)" -c "create database $DB"
+# Supabase's default search_path includes `extensions` (pgvector operators, pg_trgm functions live there).
+"${PSQL[@]}" -d postgres -c "alter database $DB set search_path = \"\$user\", public, extensions"
 "${PSQL[@]}" -d "$DB" -f "$HERE/00_supabase_stub.sql" >/dev/null
 for f in "$HERE"/../migrations/*.sql; do
   echo "apply $(basename "$f")"

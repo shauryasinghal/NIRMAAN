@@ -1,9 +1,11 @@
 """Explainable fit engine.
 
-overall = 100 × Σ(wᵢ·sᵢ) / Σ(wᵢ) over the signals we actually KNOW. An unknown input (no deadline listed,
-no format preference, too little activity for behavioural affinity …) is excluded and the remaining
-weights are renormalised — it is never replaced by a made-up neutral value. `confidence` reports how much
-of the total weight was known.
+overall = 100 × Σ(wᵢ·sᵢ) / max(Σ(wᵢ over KNOWN signals), 0.5). An unknown input (no deadline listed, no
+format preference, no confirmed skills, too little activity for behavioural affinity …) is excluded — it is
+never replaced by a made-up neutral value — and the remaining weights are renormalised, but the denominator
+never drops below 0.5, and if skills, interests and domain are ALL unknown the score is capped at 40, so a profile we
+know almost nothing about cannot score high by accident.
+`confidence` reports how much of the total weight was known.
 
 Signals and weights (sum = 1.00):
   skill match ............ 0.30  confirmed skills vs required (80%) / preferred (20%)
@@ -28,6 +30,8 @@ WEIGHTS = {
     "participation": 0.06, "format": 0.05, "deadline": 0.12, "behavior": 0.13,
 }
 MIN_EVENTS_FOR_AFFINITY = 5
+NO_CORE_CAP = 40.0          # skills, interests and domain all unknown → we know nothing about *fit*, only logistics
+MIN_KNOWN_WEIGHT = 0.5      # denominator floor: with little known information the score is held down, never inflated
 LEAD_DAYS = {"beginner": 5, "intermediate": 10, "advanced": 18}
 EXPIRED_CAP = 30.0
 
@@ -45,6 +49,8 @@ def skill_component(s: StudentSignals, o: OppSignals) -> Component:
     m_req, m_pref = sorted(req & s.skills), sorted(pref & s.skills)
     if not req and not pref:
         return Component("skill", "Skill match", WEIGHTS["skill"], None, "This listing doesn't state required skills.")
+    if not s.skills:
+        return Component("skill", "Skill match", WEIGHTS["skill"], None, "You haven't confirmed any skills yet.")
     if req and pref:
         score = 0.8 * len(m_req) / len(req) + 0.2 * len(m_pref) / len(pref)
     elif req:
@@ -86,6 +92,8 @@ def domain_component(s: StudentSignals, o: OppSignals, ctx: FitContext) -> Compo
 
 
 def experience_component(s: StudentSignals, o: OppSignals) -> Component:
+    if o.difficulty not in LEVELS:
+        return Component("experience", "Experience alignment", WEIGHTS["experience"], None, "Difficulty isn't listed.")
     diff = LEVELS.get(s.level, 0) - LEVELS.get(o.difficulty, 1)
     score = {0: 1.0, 1: 0.85, 2: 0.7, -1: 0.5, -2: 0.15}[diff]
     detail = ("Difficulty matches your experience" if diff == 0 else
@@ -131,7 +139,7 @@ def deadline_component(s: StudentSignals, o: OppSignals, ctx: FitContext) -> Com
     days = (o.deadline - ctx.today).days
     if days < 0:
         return Component("deadline", "Deadline feasibility", w, 0.0, "The registration deadline has passed")
-    lead = LEAD_DAYS.get(o.difficulty, 10) * _clamp(10 / max(s.availability_hrs, 1), 0.5, 2.0)
+    lead = LEAD_DAYS.get(o.difficulty or "", 10) * _clamp(10 / max(s.availability_hrs, 1), 0.5, 2.0)
     score = _clamp(days / lead)
     detail = f"{_plural(days, 'day')} left; ~{round(lead)} days of lead time suggested at {s.availability_hrs} h/week"
     return Component("deadline", "Deadline feasibility", w, score, detail)
@@ -166,7 +174,9 @@ def score_fit(s: StudentSignals, o: OppSignals, ctx: FitContext) -> FitResult:
     ]
     known = [c for c in comps if c.score is not None]
     total_w = sum(c.weight for c in known)
-    overall = 100.0 * sum(c.weight * c.score for c in known) / total_w if total_w else 0.0
+    overall = 100.0 * sum(c.weight * c.score for c in known) / max(total_w, MIN_KNOWN_WEIGHT)
+    if not any(c.score is not None for c in comps if c.key in ("skill", "interest", "domain")):
+        overall = min(overall, NO_CORE_CAP)
     expired = bool(o.deadline and o.deadline < ctx.today)
     if expired:
         overall = min(overall, EXPIRED_CAP)
