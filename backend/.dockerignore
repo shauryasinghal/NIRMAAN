@@ -1,7 +1,10 @@
+venv
+.venv
 __pycache__
 *.pyc
-.venv
-nirmaan.db
-.env
+.pytest_cache
 tests
-smoke_test.py
+.env
+.env.*
+!.env.example
+*.db
