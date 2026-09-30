@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query, Response
+from fastapi.responses import PlainTextResponse
 
 from ..core.errors import bad_request, not_found
 from ..core.middleware import rate_limit
@@ -134,6 +135,18 @@ def get_opportunity(opportunity_id: str, user: CurrentUser = Depends(require_stu
         "fitDetail": presenters.fit_detail(fit), "whyNot": explain_blockers(s, sig, fit, ctx),
     })
     return out
+
+
+@router.get("/{opportunity_id}/calendar.ics", summary="Add the deadline to any calendar app (no OAuth)")
+def calendar_ics(opportunity_id: str, user: CurrentUser = Depends(require_student), db: Db = Depends(get_db)):
+    from ..ics import build_ics
+    oid = parse_uuid(opportunity_id, "opportunity")
+    r = catalog.get_one(db, oid)
+    if not r or not r["deadline"]:
+        raise not_found("Opportunity deadline")
+    url = "" if r["source_type"] == "dev_seed" else (r["external_url"] or "")
+    return PlainTextResponse(build_ics(oid, r["title"], f"{r['title']} · {r['organization']}", r["deadline"], url), media_type="text/calendar",
+                             headers={"Content-Disposition": 'attachment; filename="nirmaan-deadline.ics"'})
 
 
 @router.post("/{opportunity_id}/events", status_code=204, summary="Record a view / dismiss / compare signal")
