@@ -54,7 +54,7 @@ export function OpportunityDetailPage() {
           <Link to={`/organizations/${o.organizationSlug}`} className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-[var(--text)] mt-1 focus-ring rounded"><Building2 size={14} aria-hidden /> {o.organization}</Link>
         </div>
         <div className="flex flex-wrap items-center gap-2"><SaveButton id={o.id} saved={o.saved} />
-          {external && !o.isExpired && <a href={external} target="_blank" rel="noopener noreferrer nofollow"><Button variant="secondary"><ExternalLink size={14} /> Official page</Button></a>}</div>
+          {external && !o.isExpired && <a href={external} target="_blank" rel="noopener noreferrer nofollow"><Button variant="secondary"><ExternalLink size={14} /> {o.sourceType === 'aggregator' ? `View on ${o.source}` : 'Official page'}</Button></a>}</div>
       </header>
 
       {o.isDemo && <div className="mb-6"><Notice title="Demo listing">This is sample data for demonstrating NIRMAAN — the event, deadline and organization details are illustrative and there is no live posting to apply to.</Notice></div>}
@@ -105,6 +105,7 @@ export function OpportunityDetailPage() {
           <Card className="p-5"><h2 className="text-sm font-semibold mb-2">Source</h2><dl className="space-y-2">
             <Fact label="Listed by">{o.isDemo ? 'Demo data (not a live source)' : o.source}</Fact>
             {!o.isDemo && <><Fact label="Verification">{o.verificationStatus === 'verified' ? `Verified ${formatDate(o.lastVerifiedAt)}` : 'Not verified'}</Fact><Fact label="Freshness">{titleCase(o.freshnessStatus)}{o.lastSeenAt ? ` · last seen ${formatDate(o.lastSeenAt)}` : ''}</Fact></>}</dl>
+            {!o.isDemo && o.sourceType === 'aggregator' && <p className="text-[11px] text-muted mt-2">Found on {o.source}, a listing platform. Confirm the deadline and eligibility on the original organiser’s page before applying.</p>}
             {me?.isAdmin && o.sources.length > 0 && <p className="text-[11px] text-muted mt-2">Ingested from: {o.sources.map((s) => s.name).join(', ')}</p>}</Card>
         </aside>
       </div>
