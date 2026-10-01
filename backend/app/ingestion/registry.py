@@ -19,9 +19,11 @@ from typing import Callable
 
 from .sources.base import OpportunitySource
 from .sources.fixture import FixtureSource
+from .sources.unstop_manifest import UnstopManifestSource
 
 SOURCES: dict[str, Callable[[], OpportunitySource]] = {
     "dev-fixtures": FixtureSource,      # demo data only — stored as source_type='dev_seed', shown with a "Demo data" badge
+    "unstop": UnstopManifestSource,     # TEMPORARY reviewed facts-only manifest of public Unstop pages (aggregator, unverified); needs enabling in opportunity_sources
 }
 
 
