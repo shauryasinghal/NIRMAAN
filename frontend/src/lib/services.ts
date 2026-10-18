@@ -1,7 +1,7 @@
 import { apiClient } from './api'
 import type {
   Alert, AlertEvaluation, AlertHit, AlertInput, ActivityItem, AdminUser, Application, ApplicationInsight, ApplicationList, ApplicationStatus, AuditEntry,
-  AuthConfig, CompareResult, Dashboard, Facets, IdeaHistoryItem, IdeaResult, IngestionOverview, IntegrationStatus, Me, NotificationItem, NotificationPage,
+  AuthConfig, ChatStatus, CompareResult, Dashboard, Facets, IdeaHistoryItem, IdeaResult, IngestionOverview, IntegrationStatus, Me, NotificationItem, NotificationPage,
   NotificationPrefs, OpportunityDetailData, OpportunityFilters, OpportunityPage, OrganizationDetail, OrganizationSummary, Page, Profile, ProfileUpdate,
   Recommendations, ResumeExtraction, ReviewDecisionKind, ReviewDetail, ReviewQueue, Signals, SkillGap, TeamRecord, TeamSuggestion, VocabItem,
 } from '../types'
@@ -151,4 +151,9 @@ export const integrationService = {
   disconnect: (provider: 'calendar' | 'gmail') => del(`/api/integrations/google/${provider}`),
   addToCalendar: (opportunityId: string) => post<{ eventId: string; htmlLink: string }>('/api/integrations/google/calendar/events', { opportunityId, confirm: true }),
   emailReminder: (opportunityId: string) => post<{ messageId: string }>('/api/integrations/google/gmail/send-reminder', { opportunityId, confirm: true }),
+}
+
+/** The conversation itself is streamed by lib/chatStream.ts (Axios cannot read a response while it arrives). */
+export const chatService = {
+  status: () => get<ChatStatus>('/api/chat/status'),
 }

@@ -5,7 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -50,6 +50,18 @@ class Settings(BaseSettings):
     similarity_related_threshold: float = 0.45  # cosine ≥ this → "related work" flag (calibrated: docs/EVALUATION.md)
     preload_embedding_model: bool = False
 
+    # ── Chat assistant (Anthropic Claude, called from the backend only). Off unless CHAT_ENABLED=true AND a key is set. ──
+    chat_enabled: bool = False
+    chat_provider: Literal["anthropic", "gemini"] = "anthropic"   # which model vendor answers; anthropic stays the default so nothing changes unless this is set
+    anthropic_api_key: SecretStr = SecretStr("")      # SecretStr: never shows up in a repr / traceback of the settings object
+    chat_model: str = "claude-sonnet-5-5"             # the Anthropic model
+    gemini_api_key: SecretStr = SecretStr("")
+    gemini_model: str = "gemini-3.5-flash-lite"       # stable, free tier available (ai.google.dev/gemini-api/docs/models); Gemini 2.5 models are restricted for new users
+    chat_max_output_tokens: int = Field(1024, ge=64, le=4096)
+    chat_timeout_seconds: int = Field(60, ge=5, le=300)           # provider read timeout AND the wall-clock cap on one streamed answer
+    chat_rate_limit_per_minute: int = Field(8, ge=1)
+    chat_daily_limit: int = Field(200, ge=1)
+
     log_level: str = "INFO"
     log_json: bool = True
 
@@ -64,6 +76,29 @@ class Settings(BaseSettings):
     @property
     def google_integrations_enabled(self) -> bool:
         return bool(self.google_client_id and self.google_client_secret and self.google_redirect_uri and self.token_encryption_key)
+
+    @property
+    def secret_values(self) -> list[str]:
+        """Every configured secret, longest first, for EXACT-match log redaction: it catches a key in any format (including formats nobody has
+        written a pattern for) whether or not it is labelled. Under 8 characters is skipped: too short to be a real secret, and replacing it
+        would mangle ordinary text."""
+        values = [self.anthropic_api_key.get_secret_value(), self.gemini_api_key.get_secret_value(), self.supabase_jwt_secret,
+                  self.cron_secret, self.token_encryption_key, self.google_client_secret]
+        return sorted({v.strip() for v in values if v and len(v.strip()) >= 8}, key=len, reverse=True)
+
+    @property
+    def chat_api_key(self) -> SecretStr:
+        """The key of the SELECTED provider (the other provider's key, if present, is ignored)."""
+        return self.gemini_api_key if self.chat_provider == "gemini" else self.anthropic_api_key
+
+    @property
+    def chat_provider_name(self) -> str:
+        return {"anthropic": "Anthropic", "gemini": "Google Gemini"}[self.chat_provider]
+
+    @property
+    def chat_available(self) -> bool:
+        """The assistant exists only when it was switched on AND the selected provider has a key — never half-enabled."""
+        return self.chat_enabled and bool(self.chat_api_key.get_secret_value().strip())
 
     @property
     def sqlalchemy_url(self) -> str:
@@ -86,6 +121,8 @@ class Settings(BaseSettings):
                 problems.append("CORS_ORIGINS must list the real frontend origin(s); '*' is not allowed")
             if self.supabase_jwt_secret and len(self.supabase_jwt_secret) < 32:
                 problems.append("SUPABASE_JWT_SECRET looks too short")
+            if self.chat_enabled and not self.chat_api_key.get_secret_value().strip():
+                problems.append(f"{'GEMINI_API_KEY' if self.chat_provider == 'gemini' else 'ANTHROPIC_API_KEY'} is required when CHAT_ENABLED=true and CHAT_PROVIDER={self.chat_provider}")
             if problems:
                 raise ValueError("Unsafe production configuration: " + "; ".join(problems))
         return self

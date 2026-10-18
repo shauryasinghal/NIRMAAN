@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { notificationService } from '../../lib/services'
 import { CommandPalette, recordRecentPage } from '../common/CommandPalette'
 import { NirmaanLogo } from '../common/NirmaanMark'
+import { ChatGate } from '../chat/ChatGate'
 import clsx from 'clsx'
 
 const NAV_SECTIONS = [
@@ -266,6 +267,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </Dialog>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <ChatGate />
     </div>
   )
 }
