@@ -1,4 +1,6 @@
 """Chat configuration: off unless explicitly switched on AND keyed, the key never prints, production refuses a half-configured assistant."""
+import os
+
 import pytest
 from pydantic import ValidationError
 
@@ -127,6 +129,7 @@ def test_the_suite_never_reads_a_developers_dotenv():
     try:
         s = get_settings()
         assert s.chat_enabled is False and s.chat_provider == "anthropic" and s.gemini_api_key.get_secret_value() == "" and s.anthropic_api_key.get_secret_value() == ""
-        assert s.database_url.endswith("nirmaan_test") and s.supabase_url == ""
+        # the harness DB name (CI sets NIRMAAN_TEST_DB=nirmaan_ci); a developer's .env database URL would never match it
+        assert s.database_url.endswith(os.environ.get("NIRMAAN_TEST_DB", "nirmaan_test")) and s.supabase_url == ""
     finally:
         reset_settings_cache()
