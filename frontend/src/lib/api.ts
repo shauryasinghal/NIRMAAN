@@ -29,9 +29,15 @@ apiClient.interceptors.request.use(async (config) => {
 })
 
 let refreshing: Promise<boolean> | null = null
-async function refreshOnce(): Promise<boolean> {
+export async function refreshOnce(): Promise<boolean> {
   refreshing ??= supabase.auth.refreshSession().then(({ data, error }) => !error && !!data.session).finally(() => { refreshing = null })
   return refreshing
+}
+
+/** The session could not be refreshed: sign out and send the user to the login page. Shared by the Axios interceptor and the chat stream. */
+export async function expireSession(): Promise<void> {
+  await supabase.auth.signOut()
+  if (!window.location.pathname.startsWith('/login')) window.location.assign('/login?expired=1')
 }
 
 export function toApiError(error: unknown): ApiError {
@@ -52,8 +58,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && cfg && !cfg._retried) {
       cfg._retried = true
       if (await refreshOnce()) return apiClient(cfg)
-      await supabase.auth.signOut()
-      if (!window.location.pathname.startsWith('/login')) window.location.assign('/login?expired=1')
+      await expireSession()
     }
     return Promise.reject(toApiError(error))
   },

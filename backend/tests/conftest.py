@@ -22,6 +22,11 @@ os.environ.update({
     "TOKEN_ENCRYPTION_KEY": "", "GOOGLE_CLIENT_ID": "", "GOOGLE_CLIENT_SECRET": "", "GOOGLE_REDIRECT_URI": "",
 })
 
+# Hermetic settings: the suite must NEVER read a developer's real backend/.env (it can hold real API keys, a hosted database URL, a hosted
+# Supabase project, CHAT_PROVIDER=gemini ...). Everything a test needs is set above or per test; anything else gets the code default.
+from app.core.config import Settings   # noqa: E402  (after the environment above, so nothing is cached early)
+Settings.model_config["env_file"] = None
+
 
 @pytest.fixture(scope="session", autouse=True)
 def _database():
