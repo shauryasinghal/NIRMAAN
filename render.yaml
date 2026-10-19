@@ -20,6 +20,8 @@ services:
       - { key: GOOGLE_CLIENT_SECRET, sync: false }
       - { key: GOOGLE_REDIRECT_URI, sync: false }
       - { key: PRELOAD_EMBEDDING_MODEL, value: "true" }
+      - { key: CHAT_ENABLED, value: "false" }       # AI chat assistant: flip to "true" only after setting ANTHROPIC_API_KEY
+      - { key: ANTHROPIC_API_KEY, sync: false }
       - { key: LOG_LEVEL, value: INFO }
   # Alert evaluation + reminders. (Freshness/deadline/reminder SQL jobs also run via pg_cron inside Supabase every 30 min.)
   - type: cron

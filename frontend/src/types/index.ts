@@ -14,6 +14,9 @@ export interface Me {
   isReviewer: boolean; isAdmin: boolean; onboardingCompleted: boolean
 }
 
+/** GET /api/chat/status — the assistant is shown only when the server has it switched on and keyed. */
+export interface ChatStatus { enabled: boolean; provider?: 'anthropic' | 'gemini'; providerName?: string }
+
 export interface AuthConfig { emailPassword: boolean; google: boolean; emailConfirmationRequired: boolean; verified: boolean }
 
 export interface Completeness { complete: boolean; missing: string[]; optionalMissing: string[]; percent: number }
