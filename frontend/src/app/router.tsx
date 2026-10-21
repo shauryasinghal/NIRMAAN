@@ -6,6 +6,7 @@ import { RouteError } from '../components/RouteError'
 const page = <T extends object>(loader: () => Promise<T>, name: keyof T) => lazy(() => loader().then((m) => ({ default: m[name] as React.ComponentType })))
 
 const LandingPage = page(() => import('../pages/LandingPage'), 'LandingPage')
+const PricingPage = page(() => import('../pages/PricingPage'), 'PricingPage')
 const LoginPage = page(() => import('../pages/auth/LoginPage'), 'LoginPage')
 const RegisterPage = page(() => import('../pages/auth/RegisterPage'), 'RegisterPage')
 const ForgotPasswordPage = page(() => import('../pages/auth/PasswordPages'), 'ForgotPasswordPage')
@@ -41,6 +42,7 @@ const P = (C: React.ComponentType) => ({ element: S(<C />), errorElement: <Route
 export const router = createBrowserRouter([
   { errorElement: <RouteError />, element: <Suspense fallback={<FullPageLoading />}><Outlet /></Suspense>, children: [
     { path: '/', element: S(<LandingPage />) },
+    { path: '/pricing', element: S(<PricingPage />) },
     { path: '/auth/callback', element: S(<AuthCallbackPage />) },
     { path: '/auth/reset', element: S(<ResetPasswordPage />) },
     { element: <PublicOnlyRoute />, children: [

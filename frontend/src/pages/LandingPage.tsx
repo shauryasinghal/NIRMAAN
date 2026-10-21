@@ -55,6 +55,7 @@ function FloatingNav() {
           <a href="#intelligence" className="hover:text-[var(--text)] transition-colors">Intelligence</a>
           <a href="#how-it-works" className="hover:text-[var(--text)] transition-colors">How it works</a>
           <a href="#technology" className="hover:text-[var(--text)] transition-colors">Technology</a>
+          <Link to="/pricing" className="hover:text-[var(--text)] transition-colors">Pricing</Link>
         </nav>
         <div className="flex gap-2">
           <Link to="/login"><Button variant="ghost" size="sm">Log in</Button></Link>
