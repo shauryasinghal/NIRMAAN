@@ -22,7 +22,8 @@ const ready = async (page: Page) => {
 }
 
 test.describe('public pages', () => {
-  for (const path of ['/', '/login', '/register', '/forgot-password']) test(`axe: ${path}`, async ({ page }) => { await page.goto(path); await ready(page); await scan(page, path) })
+  for (const path of ['/', '/pricing', '/login', '/register', '/forgot-password']) test(`axe: ${path}`, async ({ page }) => { await page.goto(path); await ready(page); await scan(page, path) })
+  test('axe: pricing in dark mode', async ({ page }) => { await page.addInitScript(() => localStorage.setItem('nirmaan_theme', 'dark')); await page.goto('/pricing'); await ready(page); await scan(page, '/pricing (dark)') })
   test('axe: landing in dark mode', async ({ page }) => { await page.addInitScript(() => localStorage.setItem('nirmaan_theme', 'dark')); await page.goto('/'); await ready(page); await scan(page, '/ (dark)') })
   test('keyboard: skip link is reachable and login is operable without a mouse', async ({ page }) => {
     await page.goto('/login'); await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()

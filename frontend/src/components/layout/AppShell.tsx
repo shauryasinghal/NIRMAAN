@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard, Compass, Users, ShieldCheck, History, User, Settings, LogOut,
-  ClipboardList, ChevronsLeft, ChevronsRight, Search, ChevronDown, Sun, Moon, Bookmark, Activity, Bell, Building2, Menu, ShieldAlert,
+  ClipboardList, ChevronsLeft, ChevronsRight, Search, ChevronDown, Sun, Moon, Bookmark, Activity, Bell, Building2, Menu, ShieldAlert, CreditCard,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { Dialog } from '../ui/kit'
@@ -38,6 +38,7 @@ const NAV_SECTIONS = [
 const workspaceNav = [
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/pricing', label: 'Subscription', icon: CreditCard },
 ]
 const reviewerSection = { label: 'Review', items: [{ to: '/review', label: 'Review Queue', icon: ClipboardList }] }
 const adminSection = { label: 'Admin', items: [{ to: '/admin', label: 'Admin', icon: ShieldAlert }] }
