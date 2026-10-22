@@ -1,7 +1,7 @@
 import { test, expect, auth } from './support/fixtures'
 
 const WIDTHS = [320, 375, 414, 768, 1024, 1280, 1440, 1920]
-const PUBLIC = ['/', '/login', '/register']
+const PUBLIC = ['/', '/pricing', '/login', '/register']
 const AUTHED = ['/dashboard', '/opportunities', '/team-builder', '/applications', '/originality', '/smart-alerts', '/profile', '/settings', '/notifications', '/organizations']
 
 async function noOverflow(page: import('@playwright/test').Page, label: string) {
