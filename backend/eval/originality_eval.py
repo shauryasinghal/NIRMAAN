@@ -62,10 +62,38 @@ def run() -> dict:
     hard_report = {"n": len(hard), "recall_at_1": {"minilm_pgvector": float(np.mean([int(np.argmax(s)) == i for i, s, _ in hard])), "keyword_baseline": float(np.mean([int(np.argmax(j)) == i for i, _, j in hard]))},
                    "flagged_as_related_or_above": {"threshold": get_settings().similarity_related_threshold, "minilm_pgvector": float((hs >= get_settings().similarity_related_threshold).mean()), "keyword_baseline_at_best_threshold": float((hj >= best_j["threshold"]).mean())},
                    "mean_top_similarity": float(hs.mean()), "keyword_mean_top_jaccard": float(hj.mean()), "shared_word_note": "hard paraphrases deliberately avoid the source's vocabulary"}
-    return {"hard": hard_report, "n_positive": len(pos), "n_negative": len(neg), "recall_at_1": {"minilm_pgvector": r1_emb, "keyword_baseline": r1_jac},
+    wording = wording_report(ref, ev, ref_vecs, emb)
+    return {"hard": hard_report, "wording": wording, "n_positive": len(pos), "n_negative": len(neg), "recall_at_1": {"minilm_pgvector": r1_emb, "keyword_baseline": r1_jac},
             "similarity": {"paraphrase_mean": float(top_pos.mean()), "paraphrase_min": float(top_pos.min()), "unrelated_mean": float(top_neg.mean()), "unrelated_max": float(top_neg.max())},
             "thresholds": table, "shipped": {"related": prf(top_pos, top_neg, get_settings().similarity_related_threshold), "review": prf(top_pos, top_neg, get_settings().similarity_review_threshold)}, "keyword_baseline_best": best_j,
             "separation_gap": float(top_pos.min() - top_neg.max())}
+
+
+def wording_report(ref, ev, ref_vecs, emb) -> dict:
+    """Wording (word-3-gram) signal as production uses it: over the top-5 semantic matches, counted only where the match is also semantically related.
+    `lexical_only_*` shows what the wording signal alone would have flagged — the reason it never decides anything by itself."""
+    thr = get_settings().similarity_related_threshold
+    review = get_settings().similarity_review_threshold
+
+    def probe(title, desc):
+        v = np.array(emb.encode([eng.idea_text(title, desc)])[0]); sims = ref_vecs @ v
+        top = np.argsort(-sims)[:5]
+        pairs = [(float(sims[i]), eng.best_wording(title, desc, ref[i]["title"], ref[i]["description"])["signal"]) for i in top]
+        lexical_only = eng.duplicate_signal([(1.0, sig) for _, sig in pairs], 0.0)
+        gated = eng.duplicate_signal(pairs, thr)
+        verdict = eng.classify(float(sims[top[0]]), len(ref), review, thr, gated)
+        return {"gated": gated, "lexical_only": lexical_only, "top": float(sims[top[0]]), "level": verdict["level"]}
+
+    sets = {"exact_duplicates": [(t, d) for _, t, d in ev["exact_duplicates"]], "minor_edits": [(t, d) for _, t, d in ev["minor_edits"]],
+            "paraphrases": [(t, d) for _, t, d in ev["paraphrases"]], "hard_paraphrases": [(t, d) for _, t, d in ev["hard_paraphrases"]],
+            "unrelated": [tuple(x) for x in ev["unrelated"]], "common_terms_unrelated": [tuple(x) for x in ev["common_terms_unrelated"]]}
+    out = {}
+    for name, items in sets.items():
+        res = [probe(t, d) for t, d in items]
+        out[name] = {"n": len(res), "wording_flagged": sum(r["gated"] is not None for r in res), "lexical_only_flagged": sum(r["lexical_only"] is not None for r in res),
+                     "exact": sum(r["gated"] == "exact" for r in res), "queued_for_review": sum(r["level"] == "high_overlap" for r in res),
+                     "related_or_above": sum(r["level"] in ("related_work", "high_overlap") for r in res), "max_top_similarity": round(max(r["top"] for r in res), 3)}
+    return out
 
 
 if __name__ == "__main__":

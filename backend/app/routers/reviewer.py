@@ -60,7 +60,7 @@ def detail(review_id: str, user: CurrentUser = Depends(require_reviewer), db: Db
                      "opportunity": r["opp_title"]},
             "similarity": {"top": r["top"], "confidence": r["confidence"], "level": a.get("level"), "message": a.get("message"), "method": a.get("method"),
                            "corpusSize": a.get("corpusSize"), "thresholds": a.get("thresholds"), "disclaimer": a.get("disclaimer")},
-            "matches": [{"id": m["id"], "kind": "reference" if m["kind"] == "reference" else "peer submission", "title": m["title"], "description": m["description"], "source": m["source"],
+            "matches": [{"id": m["id"], "kind": "reference" if m["kind"] == "reference" else ("owner's earlier check" if (m["overlap"] or {}).get("relation") == "own_previous" else "peer submission"), "title": m["title"], "description": m["description"], "source": m["source"],
                          "similarity": m["similarity"], "overlap": m["overlap"], "shownToSubmitter": m["visible_to_owner"]} for m in matches],
             "submitterHistory": {row["status"]: row["n"] for row in history},
             "decisions": [{"decision": d["decision"], "note": d["note"], "at": d["created_at"], "reviewer": d["reviewer"]} for d in decisions],
