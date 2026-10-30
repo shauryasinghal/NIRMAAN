@@ -280,5 +280,93 @@
    "Learners teaching one another abilities",
    "Learners teaching one another different abilities in a mutual exchange."
   ]
+ ],
+ "exact_duplicates": [
+  [
+   "Campus lost-and-found tracker",
+   "Campus lost-and-found tracker",
+   "A web app where students can report and search for lost items on campus."
+  ],
+  [
+   "Expense splitting app for roommates",
+   "Expense splitting app for roommates",
+   "A mobile app to track and split shared expenses among roommates."
+  ],
+  [
+   "Lab equipment booking system",
+   "Lab equipment booking system",
+   "A scheduling system for students to reserve shared lab equipment slots."
+  ],
+  [
+   "Skill-based hackathon teammate finder",
+   "SKILL-BASED HACKATHON TEAMMATE FINDER",
+   "a platform for finding teammates with matching or complementary technical skills, for hackathons!!"
+  ]
+ ],
+ "minor_edits": [
+  [
+   "Campus lost-and-found tracker",
+   "Campus lost-and-found tracker",
+   "A web app where students can report and look up lost items on campus."
+  ],
+  [
+   "Recipe recommender using pantry items",
+   "Recipe recommender using pantry items",
+   "An app that suggests recipes based on ingredients already available in the kitchen."
+  ],
+  [
+   "Expense splitting app for roommates",
+   "Expense splitting app for flatmates",
+   "A mobile app to track and split shared expenses among flatmates."
+  ],
+  [
+   "Lab equipment booking system",
+   "Lab equipment booking system",
+   "A scheduling system for students to reserve shared lab equipment slots. Built with React and Node."
+  ],
+  [
+   "Hostel maintenance complaint portal",
+   "Hostel maintenance complaint portal",
+   "A ticketing system for students to report and track hostel maintenance issues quickly."
+  ],
+  [
+   "Volunteer hour tracking app",
+   "Volunteer hour tracking app",
+   "An app that logs and verifies student volunteering hours for community service credit, with email reminders every week."
+  ]
+ ],
+ "common_terms_unrelated": [
+  [
+   "Campus beekeeping club hive log",
+   "An app where students log hive inspections, honey yields and queen health on campus."
+  ],
+  [
+   "Wildfire risk scorer",
+   "A tool that scores satellite images against burn history using keyword and semantic matching."
+  ],
+  [
+   "Student drone racing league",
+   "A platform connecting students who build racing drones with sponsors and track owners."
+  ],
+  [
+   "Campus solar panel output dashboard",
+   "A web app where students can monitor rooftop solar output across campus buildings."
+  ],
+  [
+   "Tracker for stray animal vaccinations",
+   "An app that helps students track vaccination drives for stray dogs and cats near campus."
+  ],
+  [
+   "Students' sleep pattern analyser",
+   "An app that tracks student sleep from phone usage and suggests schedules for better rest."
+  ],
+  [
+   "Marketplace for handmade jewellery",
+   "A platform where artisans sell handmade jewellery directly to buyers without middlemen."
+  ],
+  [
+   "Interview question bank for civil engineers",
+   "A platform with structured practice questions and model answers for civil engineering interviews."
+  ]
  ]
 }

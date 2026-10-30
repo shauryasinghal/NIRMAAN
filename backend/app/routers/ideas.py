@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+import re
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Response
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, field_validator
 
 from ..core.errors import not_found
 from ..core.middleware import rate_limit
 from ..core.security import CurrentUser, get_db, require_student
 from ..db.session import Db
+from ..engines.originality import word_count
 from ..schemas.common import ApiModel
 from ..services import ideas as svc
 from ..services.common import parse_uuid
@@ -22,6 +24,23 @@ class CheckIn(ApiModel):
     description: str = Field(min_length=20, max_length=5000)
     domain: Optional[str] = Field(None, max_length=80)
     opportunity_id: Optional[str] = None
+
+    @field_validator("title", "description", "domain", mode="before")
+    @classmethod
+    def _clean(cls, v, info):
+        """Trim and drop control characters (NUL would make Postgres reject the row) BEFORE the length rules run, so whitespace-only text is rejected."""
+        if not isinstance(v, str):
+            return v
+        v = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", v).strip()
+        return v or (None if info.field_name == "domain" else "")
+
+    @field_validator("title", "description")
+    @classmethod
+    def _has_words(cls, v: str, info):
+        need = 1 if info.field_name == "title" else 3
+        if word_count(v) < need:     # Unicode-aware: a Chinese or Japanese sentence is many tokens, emoji/zero-width/punctuation-only text is none
+            raise ValueError("Please describe the idea in words." if need > 1 else "The title needs at least one letter or digit.")
+        return v
 
 
 @router.post("/originality/check", status_code=201, summary="Analyse an idea against the comparison corpus (pgvector)",

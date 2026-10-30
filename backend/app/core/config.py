@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     embedding_dim: int = 384
     similarity_review_threshold: float = 0.75   # cosine ≥ this → queued for human review
     similarity_related_threshold: float = 0.45  # cosine ≥ this → "related work" flag (calibrated: docs/EVALUATION.md)
+    similarity_display_floor: float = 0.30      # matches below this are stored for reviewers but hidden from the submitter (except the single closest)
     preload_embedding_model: bool = False
 
     # ── Chat assistant (Anthropic Claude, called from the backend only). Off unless CHAT_ENABLED=true AND a key is set. ──

@@ -138,13 +138,17 @@ export interface TeamRecord {
 }
 
 // ── Originality / review ────────────────────────────────────────────────────────────────────
-export interface OverlapDims { semantic: number; title: number | null; sameDomain: boolean | null; sharedTerms: string[] }
+export interface WordingOverlap { jaccard: number; containment: number; signal: 'exact' | 'near_duplicate' | null; scope?: string }
+export interface OverlapDims { semantic: number; title: number | null; sameDomain: boolean | null; sharedTerms: string[]; sharedPhrases?: string[]; wording?: WordingOverlap }
+export interface PreviousCheck { id: string; title: string; status: string; checkedAt: string; similarity: number; wording: 'exact' | 'near_duplicate' | null }
 export interface IdeaMatch { id: string; title: string; description: string; source: string | null; similarity: number; overlap: OverlapDims }
 export interface IdeaResult {
   id: string; title: string; description: string; domain: string | null; status: string; createdAt: string; topSimilarity: number | null; confidence: Confidence | null
   verdict: { level: 'no_significant_match' | 'related_work' | 'high_overlap' | 'no_corpus'; label: string; message: string; needsReview: boolean }
   method: { description: string; model: string; search: string; corpusSize: number; thresholds: { review: number; related: number } }
   disclaimer: string; peerOverlapsExist: boolean; matches: IdeaMatch[]; opportunity: { id: string; title: string } | null
+  coverage?: { words: number; sections: number; complete: boolean; tokens?: number; limit?: number; verified?: 'tokenizer' | 'estimate'; sectionsNeeded?: number } | null; duplicateSignal?: 'exact' | 'near_duplicate' | null
+  display?: { floor: number | null; hiddenWeakMatches: number }; previousChecks?: PreviousCheck[]
   review: { state: string; decidedAt: string | null; decisions: { decision: string; note: string | null; at: string }[] } | null
 }
 export interface IdeaHistoryItem { id: string; title: string; status: string; topSimilarity: number | null; level: string | null; createdAt: string; reviewState: string | null }
