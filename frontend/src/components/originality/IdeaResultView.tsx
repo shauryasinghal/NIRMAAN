@@ -5,6 +5,7 @@ import { Badge } from '../ui/primitives'
 import { Card } from '../ui/Card'
 import { Meter, Notice } from '../ui/kit'
 import { formatDate, titleCase } from '../../lib/format'
+import { AiAnalysisView } from './AiAnalysisView'
 import type { IdeaResult, WordingOverlap } from '../../types'
 
 const LEVEL = {
@@ -15,11 +16,13 @@ const LEVEL = {
 } as const
 
 const WORDING = { exact: 'Identical wording', near_duplicate: 'Very similar wording' } as const
+const SECTION_LABEL: Record<string, string> = { problem_statement: 'Problem statement', objectives: 'Objectives', proposed_solution: 'Proposed solution', technologies: 'Technologies', additional_context: 'Additional context' }
 const wordingNote = (w: WordingOverlap) => `${Math.round(w.jaccard * 100)}% of 3-word sequences are shared (${w.scope ?? 'title and description'}). Shared wording is a prompt to compare the two ideas, not proof of copying.`
 
-export function IdeaResultView({ r }: { r: IdeaResult }) {
+export function IdeaResultView({ r, onRunAi, aiRunning }: { r: IdeaResult; onRunAi?: (force: boolean) => void; aiRunning?: boolean }) {
   const L = LEVEL[r.verdict.level] ?? LEVEL.no_corpus
   const Icon = L.icon
+  const sections = r.sections ? Object.entries(r.sections).filter(([, v]) => v) : []
   return (
     <div className="space-y-5">
       <Card variant="elevated" className="p-5">
@@ -63,7 +66,12 @@ export function IdeaResultView({ r }: { r: IdeaResult }) {
           <p className="text-xs text-muted mt-2">Only you can see this. Your earlier result is unchanged and is not counted as a match against other work.</p>
         </section>)}
 
-      <section aria-label="Closest matches"><h3 className="text-sm font-semibold mb-3">Closest matches in the comparison corpus</h3>
+      {sections.length > 0 && (
+        <Card className="p-4"><h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">Structured detail you provided</h3>
+          <dl className="space-y-2 text-sm">{sections.map(([k, v]) => <div key={k}><dt className="text-xs text-muted">{SECTION_LABEL[k] ?? k}</dt><dd className="whitespace-pre-line leading-relaxed">{v}</dd></div>)}</dl>
+          <p className="text-xs text-muted mt-3">These sections were compared together with your description.</p></Card>)}
+
+      <section aria-label="Closest matches"><h3 className="text-sm font-semibold mb-3">Closest matches in the comparison corpus <span className="text-muted font-normal">· semantic similarity (measured)</span></h3>
         {r.matches.length === 0 ? <p className="text-sm text-muted">No comparable ideas were found.</p> : (
           <ol className="space-y-3">{r.matches.map((m) => (
             <li key={m.id}><Card className="p-4">
@@ -77,9 +85,12 @@ export function IdeaResultView({ r }: { r: IdeaResult }) {
         {!!r.display?.hiddenWeakMatches && <p className="text-xs text-muted mt-3">{r.display.hiddenWeakMatches} weaker {r.display.hiddenWeakMatches === 1 ? 'match' : 'matches'} {r.display.floor !== null && r.display.floor !== undefined ? `(below ${Math.round(r.display.floor * 100)}% similarity) ` : ''}{r.display.hiddenWeakMatches === 1 ? 'is' : 'are'} not shown. {r.review ? 'Reviewers can see them.' : ''}</p>}
       </section>
 
+      {r.aiAnalysis && <AiAnalysisView a={r.aiAnalysis} mine={{ title: r.title, description: r.description, sections: r.sections }} onRun={onRunAi} running={aiRunning} />}
+
       <Card className="p-4"><h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">How this was analysed</h3>
         <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs"><div><dt className="text-muted inline">Method: </dt><dd className="inline">{r.method.description}</dd></div><div><dt className="text-muted inline">Comparison corpus: </dt><dd className="inline">{r.method.corpusSize} ideas</dd></div>
-          {r.method.thresholds && <div><dt className="text-muted inline">Review threshold: </dt><dd className="inline">{Math.round(r.method.thresholds.review * 100)}% similarity · related ≥ {Math.round(r.method.thresholds.related * 100)}%</dd></div>}<div><dt className="text-muted inline">Checked: </dt><dd className="inline">{formatDate(r.createdAt)}</dd></div></dl>
+          {r.method.thresholds && <div><dt className="text-muted inline">Review threshold: </dt><dd className="inline">{Math.round(r.method.thresholds.review * 100)}% similarity · related ≥ {Math.round(r.method.thresholds.related * 100)}%</dd></div>}<div><dt className="text-muted inline">Checked: </dt><dd className="inline">{formatDate(r.createdAt)}</dd></div>
+          {r.aiAnalysis && r.aiAnalysis.status !== 'disabled' && <div><dt className="text-muted inline">AI deep analysis: </dt><dd className="inline">{r.aiAnalysis.status === 'completed' ? `${r.aiAnalysis.provider}${r.aiAnalysis.model ? ` (${r.aiAnalysis.model})` : ''}, qualitative only` : r.aiAnalysis.status === 'pending' ? 'not run yet' : r.aiAnalysis.status === 'skipped' ? 'skipped' : 'could not be completed'}</dd></div>}</dl>
         <p className="text-xs text-muted mt-3 flex gap-1.5"><Info size={13} className="shrink-0 mt-0.5" aria-hidden /> {r.disclaimer} A “no match” only means nothing similar exists in the corpus above, not on the wider internet.</p></Card>
     </div>
   )

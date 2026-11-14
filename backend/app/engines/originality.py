@@ -370,6 +370,19 @@ def classify(top: float | None, corpus_size: int, review_thr: float, related_thr
     return {"level": level, "needsReview": needs, "confidence": confidence, "label": label, "message": f"{msg} {DISCLAIMER}"}
 
 
+BANDS = {"low": "Low semantic similarity", "moderate": "Moderate semantic similarity", "high": "High semantic similarity"}
+
+
+def similarity_band(similarity: float | None, review_thr: float, related_thr: float) -> dict | None:
+    """Screening band for one cosine similarity (0–1): below the related threshold = low, from there to the review threshold = moderate,
+    at or above the review threshold = high (human review). Bands describe the measured embedding similarity only — they are not a verdict,
+    and the Gemini stage never changes them."""
+    if similarity is None:
+        return None
+    band = "high" if similarity >= review_thr else ("moderate" if similarity >= related_thr else "low")
+    return {"band": band, "label": BANDS[band], "similarity": round(similarity, 3)}
+
+
 def overlap_dimensions(title: str, description: str, domain: str | None, match: dict, title_similarity: float | None) -> dict:
     mine, theirs = f"{title} {description}", f"{match['title']} {match['description']}"
     phrases = shared_phrases(mine, theirs)

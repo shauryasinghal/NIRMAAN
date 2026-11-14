@@ -1,8 +1,8 @@
 import { apiClient } from './api'
 import type {
-  Alert, AlertEvaluation, AlertHit, AlertInput, ActivityItem, AdminUser, Application, ApplicationInsight, ApplicationList, ApplicationStatus, AuditEntry,
-  AuthConfig, ChatStatus, CompareResult, Dashboard, Facets, IdeaHistoryItem, IdeaResult, IngestionOverview, IntegrationStatus, Me, NotificationItem, NotificationPage,
-  NotificationPrefs, OpportunityDetailData, OpportunityFilters, OpportunityPage, OrganizationDetail, OrganizationSummary, Page, Profile, ProfileUpdate,
+  AiAnalysis, Alert, AlertEvaluation, AlertHit, AlertInput, ActivityItem, AdminUser, Application, ApplicationInsight, ApplicationList, ApplicationStatus, AuditEntry,
+  AuthConfig, ChatStatus, CompareResult, Dashboard, Facets, IdeaCheckInput, IdeaHistoryItem, IdeaResult, IngestionOverview, IntegrationStatus, Me, NotificationItem, NotificationPage,
+  NotificationPrefs, OpportunityDetailData, OpportunityFilters, OpportunityPage, OrganizationDetail, OrganizationSummary, OriginalityStatus, Page, Profile, ProfileUpdate,
   Recommendations, ResumeExtraction, ReviewDecisionKind, ReviewDetail, ReviewQueue, Signals, SkillGap, TeamRecord, TeamSuggestion, VocabItem,
 } from '../types'
 
@@ -124,7 +124,10 @@ export const teamService = {
 }
 
 export const ideaService = {
-  check: (d: { title: string; description: string; domain?: string | null; opportunityId?: string | null }) => post<IdeaResult>('/api/originality/check', d),
+  status: () => get<OriginalityStatus>('/api/originality/status'),
+  check: (d: IdeaCheckInput) => post<IdeaResult>('/api/originality/check', d),
+  /** Stage 3: Gemini deep analysis of an idea already checked. Idempotent once completed; `force` re-runs it. */
+  aiAnalysis: (id: string, force = false) => post<AiAnalysis>(`/api/ideas/${id}/ai-analysis${force ? '?force=true' : ''}`),
   list: () => get<{ items: IdeaHistoryItem[] }>('/api/ideas'),
   get: (id: string) => get<IdeaResult>(`/api/ideas/${id}`),
   remove: (id: string) => del(`/api/ideas/${id}`),

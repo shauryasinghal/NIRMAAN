@@ -13,7 +13,8 @@ React (Vite)  ──JWT──▶  FastAPI  ──RLS-scoped connection──▶ 
 - `app/core` — settings (fail-fast in production), structured logging with redaction, one error contract, JWT verification, middleware (request id, security headers, rate limits).
 - `app/db/session.py` — one transaction per request; `SET LOCAL role` + `request.jwt.claims`; `db.service()` for explicit elevation.
 - `app/engines` — **pure, deterministic** functions: `recommender` (8 signals, unknown inputs excluded), `why_not` (blockers with counterfactual impact), `next_best_action`, `skill_intelligence`, `team_builder`, `originality` (decision logic + embedder). No DB, no clock, no globals — hence testable and reproducible.
-- `app/services` — SQL + orchestration per domain (catalog search/facets, applications, alerts, teams, ideas, dashboard …).
+- `app/services` — SQL + orchestration per domain (catalog search/facets, applications, alerts, teams, ideas, dashboard …). `ideas` is stages 1–2 of the originality pipeline (embed → pgvector → verdict); `originality_ai` is the optional stage 3 (Gemini deep analysis, see docs/ORIGINALITY_AI.md), which only ever adds to `ideas.analysis` and never changes a verdict.
+- `app/integrations` — thin vendor clients (Google OAuth, Anthropic/Gemini chat, `gemini_originality` for schema-constrained JSON analysis). Keys come from settings only; vendor error text never reaches logs or clients.
 - `app/routers` — thin FastAPI routers with Pydantic request/response models (camelCase on the wire).
 - `app/ingestion` — `OpportunitySource → fetch → normalise → validate → classify → dedupe → verify → store → index`; sources registered in `registry.py`; `PoliteFetcher` enforces robots.txt, rate limits, size caps.
 - `app/jobs` — `sql` (reminders/freshness), `alerts` (evaluate new/updated opportunities), `ingest`; run by cron, `POST /api/internal/jobs/{name}` (secret header), or `python -m app.jobs`; guarded by a Postgres advisory lock.
