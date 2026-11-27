@@ -1,0 +1,3 @@
+[220/221] [chromium] › e2e/team.spec.ts:3:1 › opportunity → build team → invite → the invitee accepts
+[221/221] [chromium] › e2e/team.spec.ts:41:3 › team consent & safety › manual skills work, an empty request is refused, and nobody appears without opting in
+  221 passed (6.7m)

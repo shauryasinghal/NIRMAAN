@@ -1,0 +1,33 @@
+{
+ "n_pos": 36,
+ "n_neg": 24,
+ "minilm@0.45": {
+  "thr": 0.45,
+  "tp": 34,
+  "fp": 1,
+  "fn": 2,
+  "precision": 0.971,
+  "recall": 0.944,
+  "f1": 0.958
+ },
+ "keyword@0.10": {
+  "thr": 0.1,
+  "tp": 28,
+  "fp": 1,
+  "fn": 8,
+  "precision": 0.966,
+  "recall": 0.778,
+  "f1": 0.862
+ },
+ "keyword@arange_thr": {
+  "thr": 0.10000000000000002,
+  "tp": 27,
+  "fp": 0,
+  "fn": 9,
+  "precision": 1.0,
+  "recall": 0.75,
+  "f1": 0.857
+ },
+ "arange_thr_repr": "0.10000000000000002",
+ "keyword_scores_exactly_0.1": 2
+}

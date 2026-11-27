@@ -1,0 +1,52 @@
+OK: nirmaan_test rebuilt from zero
+PASS  admin promotion is audited 
+PASS  anon cannot read opportunities 
+PASS  anon has no privilege on any public table 
+PASS  audit_log rows cannot be deleted 
+PASS  audit_log rows cannot be updated 
+PASS  authenticated cannot touch oauth_connections 
+PASS  B cannot delete A application (0 rows) 
+PASS  B cannot insert row owned by A 
+PASS  B cannot see A applications 
+PASS  B cannot see A idea 
+PASS  B cannot see A notifications 
+PASS  B cannot see A profile 
+PASS  B cannot see A saved items 
+PASS  B cannot see any review 
+PASS  B cannot see application events of A 
+PASS  B cannot update A application (0 rows) 
+PASS  B cannot update A profile (0 rows) 
+PASS  B sees only own profile 
+PASS  B sees own application 
+PASS  candidates include only opted-in students 
+PASS  candidates never include self 
+PASS  cannot decide twice 
+PASS  cannot demote the last admin 
+PASS  decision is audited 
+PASS  decision recorded 
+PASS  escalate keeps review pending-like 
+PASS  every SECURITY DEFINER function pins search_path 
+PASS  idea status updated 
+PASS  invited member can see the team 
+PASS  invited member sees own membership 
+PASS  reject requires a note 
+PASS  review state decided 
+PASS  reviewer cannot decide escalated review 
+PASS  reviewer cannot decide own idea 
+PASS  reviewer cannot edit decisions 
+PASS  reviewer cannot read the audit log directly 
+PASS  reviewer sees review queue 
+PASS  RLS enabled on every public table (<NULL>)
+PASS  signup ignores role in user metadata 
+PASS  stranger cannot see memberships 
+PASS  stranger cannot see the team 
+PASS  student can read audit_log rows (must be 0) 
+PASS  student cannot call admin_set_role 
+PASS  student cannot decide a review 
+PASS  student cannot forge notifications 
+PASS  student cannot read oauth_connections 
+PASS  student cannot rewrite own email column 
+PASS  student cannot UPDATE own role 
+PASS  student cannot write ideas directly (must go through API) 
+----
+49 passed, 0 failed

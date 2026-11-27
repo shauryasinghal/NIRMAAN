@@ -1,0 +1,2 @@
+   security checks: 49 passed, 0 failed
+UPGRADE PATH OK: data preserved, constraints valid, security suite green

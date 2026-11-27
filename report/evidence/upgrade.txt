@@ -1,0 +1,30 @@
+psql:/Users/shauryasinghal/Downloads/nirmaan-phase8/supabase/local/00_supabase_stub.sql:10: NOTICE:  role "shauryasinghal" has already been granted membership in role "anon" by role "shauryasinghal"
+psql:/Users/shauryasinghal/Downloads/nirmaan-phase8/supabase/local/00_supabase_stub.sql:10: NOTICE:  role "shauryasinghal" has already been granted membership in role "authenticated" by role "shauryasinghal"
+psql:/Users/shauryasinghal/Downloads/nirmaan-phase8/supabase/local/00_supabase_stub.sql:10: NOTICE:  role "shauryasinghal" has already been granted membership in role "service_role" by role "shauryasinghal"
+== 1. build the hosted project's CURRENT state (migrations <= 20260920163217)
+== 2. insert existing data (what real users would already have)
+== 3. apply every NEWER migration on top
+   apply 20260930090000_hardening.sql
+   apply 20260930090100_catalog_v2.sql
+   apply 20260930090200_events_skill_evidence.sql
+   apply 20260930090300_alerts_notifications_v2.sql
+   apply 20260930090400_teams_v2.sql
+   apply 20260930090500_originality_review_v2.sql
+   apply 20260930090600_oauth_connections.sql
+   apply 20260930090700_profile_preferences.sql
+   apply 20260930090800_opportunity_unknowns.sql
+   apply 20260930090900_privacy_and_preferences.sql
+   apply 20260930091000_application_timeline_order.sql
+   apply 20260930091100_append_only_cascade.sql
+   apply 20260930091200_profile_items.sql
+== 4. verify no data was lost and new columns carry sane values
+legacy skills stay confirmed: true
+legacy opportunity: difficulty kept, unknowns are NULL: true
+legacy notification kinds still allowed: true
+all constraints validated: true
+new tables exist: true
+RLS on every table: true
+== 5. the security suite must pass on the UPGRADED database too
+   security checks: 49 passed, 0 failed
+UPGRADE PATH OK: data preserved, constraints valid, security suite green
+exit 0

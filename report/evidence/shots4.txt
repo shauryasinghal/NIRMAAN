@@ -1,0 +1,22 @@
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 21734.33it/s]
+
+[WebServer] INFO:     Started server process [49116]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 20922.77it/s]
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e/zz-report-shots.spec.ts:21:1 › report screenshots
+  1 passed (1.3m)
+exit 0
