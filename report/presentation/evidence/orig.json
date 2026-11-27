@@ -1,0 +1,132 @@
+{
+  "hard": {
+    "n": 12,
+    "recall_at_1": {
+      "minilm_pgvector": 0.8333333333333334,
+      "keyword_baseline": 0.25
+    },
+    "flagged_as_related_or_above": {
+      "threshold": 0.45,
+      "minilm_pgvector": 0.8333333333333334,
+      "keyword_baseline_at_best_threshold": 0.3333333333333333
+    },
+    "mean_top_similarity": 0.5070755278393371,
+    "keyword_mean_top_jaccard": 0.0806163181646928,
+    "shared_word_note": "hard paraphrases deliberately avoid the source's vocabulary"
+  },
+  "n_positive": 24,
+  "n_negative": 24,
+  "recall_at_1": {
+    "minilm_pgvector": 1.0,
+    "keyword_baseline": 1.0
+  },
+  "similarity": {
+    "paraphrase_mean": 0.7770214408173342,
+    "paraphrase_min": 0.5504555014710617,
+    "unrelated_mean": 0.29668958802857204,
+    "unrelated_max": 0.48292339075557017
+  },
+  "thresholds": [
+    {
+      "threshold": 0.35,
+      "precision": 0.828,
+      "recall": 1.0,
+      "f1": 0.906,
+      "falsePositiveRate": 0.208
+    },
+    {
+      "threshold": 0.4,
+      "precision": 0.889,
+      "recall": 1.0,
+      "f1": 0.941,
+      "falsePositiveRate": 0.125
+    },
+    {
+      "threshold": 0.45,
+      "precision": 0.96,
+      "recall": 1.0,
+      "f1": 0.98,
+      "falsePositiveRate": 0.042
+    },
+    {
+      "threshold": 0.5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.55,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.6,
+      "precision": 1.0,
+      "recall": 0.958,
+      "f1": 0.979,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.65,
+      "precision": 1.0,
+      "recall": 0.917,
+      "f1": 0.957,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.7,
+      "precision": 1.0,
+      "recall": 0.833,
+      "f1": 0.909,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.75,
+      "precision": 1.0,
+      "recall": 0.667,
+      "f1": 0.8,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.8,
+      "precision": 1.0,
+      "recall": 0.333,
+      "f1": 0.5,
+      "falsePositiveRate": 0.0
+    },
+    {
+      "threshold": 0.85,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "falsePositiveRate": 0.0
+    }
+  ],
+  "shipped": {
+    "related": {
+      "threshold": 0.45,
+      "precision": 0.96,
+      "recall": 1.0,
+      "f1": 0.98,
+      "falsePositiveRate": 0.042
+    },
+    "review": {
+      "threshold": 0.75,
+      "precision": 1.0,
+      "recall": 0.667,
+      "f1": 0.8,
+      "falsePositiveRate": 0.0
+    }
+  },
+  "keyword_baseline_best": {
+    "threshold": 0.1,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "falsePositiveRate": 0.0
+  },
+  "separation_gap": 0.06753211071549153
+}

@@ -1,0 +1,151 @@
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 23808.95it/s]
+
+[WebServer] INFO:     Started server process [48133]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e/zz-report-shots.spec.ts:21:1 › report screenshots
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 23108.49it/s]
+
+[WebServer] /bin/sh: line 1: 48133 Segmentation fault: 11  ./venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+[WebServer] /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/resource_tracker.py:276: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/loky-48133-h71ef19w'}
+[WebServer]   warnings.warn(
+
+[WebServer] 10:33:39 PM [vite] http proxy error: /api/originality/check
+[WebServer] Error: socket hang up
+[WebServer]     at Socket.socketOnEnd (node:_http_client:792:25)
+[WebServer]     at Socket.emit (node:events:526:24)
+[WebServer]     at endReadableNT (node:internal/streams/readable:1966:12)
+[WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+[WebServer] 10:33:45 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:33:46 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:33:46 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:33:47 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:33:48 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:33:49 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[chromium] › e2e/zz-report-shots.spec.ts:21:1 › report screenshots
+SHOT-FAIL applications: locator.click: Timeout 20000ms exceeded.
+
+[WebServer] 10:34:09 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:10 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:10 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:11 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:12 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:13 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:14 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:15 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:15 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:16 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:17 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:18 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:20 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:21 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+SHOT-FAIL review: locator.click: Timeout 20000ms exceeded.
+
+[WebServer] 10:34:42 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+[WebServer] 10:34:43 PM [vite] http proxy error: /api/auth/me
+[WebServer] AggregateError [ECONNREFUSED]: 
+[WebServer]     at internalConnectMultiple (node:net:1430:18)
+[WebServer]     at afterConnectMultiple (node:net:2099:7)
+
+SHOT-FAIL admin: locator.click: Timeout 20000ms exceeded.
+
+  1 passed (2.0m)
+exit 0

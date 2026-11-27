@@ -1,0 +1,6 @@
+../../../../../tmp/nrep/ev/dist/assets/vendor-forms-DpE5Bl94.js             114.22 kB │ gzip: 34.72 kB
+../../../../../tmp/nrep/ev/dist/assets/vendor-motion-CmD0aOuV.js            125.06 kB │ gzip: 40.85 kB
+../../../../../tmp/nrep/ev/dist/assets/vendor-supabase-BCPLnydU.js          214.17 kB │ gzip: 55.01 kB
+../../../../../tmp/nrep/ev/dist/assets/vendor-react-BazNqmda.js             275.37 kB │ gzip: 87.59 kB
+
+✓ built in 338ms

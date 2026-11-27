@@ -1,0 +1,23 @@
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 25635.73it/s]
+
+[WebServer] INFO:     Started server process [48907]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › e2e/originality.spec.ts:8:1 › opportunity → validate idea → originality result → history → detail → delete
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 20140.48it/s]
+
+[2/2] [chromium] › e2e/originality.spec.ts:39:1 › a near-duplicate is flagged, queued for human review and notified
+  2 passed (28.8s)
+exit 0

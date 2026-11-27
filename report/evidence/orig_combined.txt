@@ -1,0 +1,31 @@
+{
+ "n_pos": 36,
+ "n_neg": 24,
+ "minilm@0.45": {
+  "thr": 0.45,
+  "tp": 34,
+  "fp": 1,
+  "fn": 2,
+  "precision": 0.971,
+  "recall": 0.944,
+  "f1": 0.958
+ },
+ "minilm@0.75": {
+  "thr": 0.75,
+  "tp": 16,
+  "fp": 0,
+  "fn": 20,
+  "precision": 1.0,
+  "recall": 0.444,
+  "f1": 0.615
+ },
+ "keyword@0.10(best on easy set)": {
+  "thr": 0.10000000000000002,
+  "tp": 27,
+  "fp": 0,
+  "fn": 9,
+  "precision": 1.0,
+  "recall": 0.75,
+  "f1": 0.857
+ }
+}

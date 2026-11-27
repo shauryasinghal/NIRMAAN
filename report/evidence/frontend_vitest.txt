@@ -1,0 +1,13 @@
+
+ RUN  v5.0.0 /Users/shauryasinghal/Downloads/nirmaan-phase8/frontend
+
+
+ Test Files  12 passed (12)
+      Tests  85 passed (85)
+   Start at  22:17:29
+   Duration  2.33s (environment 48%, tests 27%, import 12%, setup 7%, transform 6%)
+
+Environment  jsdom was created 12 times · 6.61s total, 48% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+

@@ -1,0 +1,3 @@
+PASS  student cannot write ideas directly (must go through API) 
+----
+49 passed, 0 failed

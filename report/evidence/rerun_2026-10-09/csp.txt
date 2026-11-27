@@ -1,0 +1,2 @@
+[1/1] [chromium] › e2e/csp.spec.ts:8:1 › the production build runs under the strict CSP with zero violations
+  1 passed (24.8s)

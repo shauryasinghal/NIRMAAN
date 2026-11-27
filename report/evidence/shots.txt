@@ -1,0 +1,80 @@
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 29015.60it/s]
+
+[WebServer] INFO:     Started server process [47716]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e/zz-report-shots.spec.ts:20:1 › report screenshots
+[chromium] › e2e/zz-report-shots.spec.ts:20:1 › report screenshots
+SHOT-FAIL compare: locator.click: Test ended.
+
+SHOT-FAIL team: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL originality: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL profile: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL applications: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL saved: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL alerts: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL notifications: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL activity: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL settings: page.goto: Target page, context or browser has been closed
+
+SHOT-FAIL organizations: page.goto: Target page, context or browser has been closed
+
+  1) [chromium] › e2e/zz-report-shots.spec.ts:20:1 › report screenshots ────────────────────────────
+
+    Test timeout of 180000ms exceeded.
+
+    Error: browser.newContext: Target page, context or browser has been closed
+
+      89 |   await c.close()
+      90 |
+    > 91 |   const r = await ctx(browser, 'reviewer'); const pr = await r.newPage()
+         |             ^
+      92 |   await safe('review', async () => {
+      93 |     await pr.goto('/review'); await pr.waitForLoadState('networkidle'); await shot(pr, '26-review-queue', false)
+      94 |     await pr.getByRole('link').filter({ hasText: /hackathon/i }).first().click(); await pr.waitForLoadState('networkidle'); await shot(pr, '27-review-detail')
+        at /Users/shauryasinghal/Downloads/nirmaan-phase8/frontend/e2e/zz-report-shots.spec.ts:91:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/zz-report-shots-report-screenshots-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/zz-report-shots-report-screenshots-chromium/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/zz-report-shots-report-screenshots-chromium/test-failed-3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/zz-report-shots-report-screenshots-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/zz-report-shots-report-screenshots-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/zz-report-shots-report-screenshots-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › e2e/zz-report-shots.spec.ts:20:1 › report screenshots ─────────────────────────────
+exit 1

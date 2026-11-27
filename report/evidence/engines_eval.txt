@@ -1,0 +1,104 @@
+{
+  "team_builder": {
+    "opportunities": 34,
+    "team_size_max": 4,
+    "random_draws_each": 300,
+    "coverage": {
+      "nirmaan": 0.9706176470588235,
+      "random": 0.6861613725490197
+    },
+    "balance_score": {
+      "nirmaan": 0.9090588235294117,
+      "random": 0.7144937254901961
+    },
+    "fully_covered_share": {
+      "nirmaan": 0.9117647058823529,
+      "random": 0.39823529411764713
+    },
+    "avg_team_size": 2.235294117647059
+  },
+  "recommender": {
+    "catalog_size": 64,
+    "personas": {
+      "ML student": {
+        "relevant_in_catalog": 13,
+        "P@10": {
+          "nirmaan": 0.8,
+          "recency": 0.0,
+          "random": 0.3
+        },
+        "NDCG@10": {
+          "nirmaan": 0.7951657524814091,
+          "recency": 0.0,
+          "random": 0.26462022272743835
+        }
+      },
+      "Frontend dev": {
+        "relevant_in_catalog": 6,
+        "P@10": {
+          "nirmaan": 0.6,
+          "recency": 0.1,
+          "random": 0.0
+        },
+        "NDCG@10": {
+          "nirmaan": 1.0,
+          "recency": 0.09546043308946735,
+          "random": 0.0
+        }
+      },
+      "Security student": {
+        "relevant_in_catalog": 5,
+        "P@10": {
+          "nirmaan": 0.5,
+          "recency": 0.0,
+          "random": 0.0
+        },
+        "NDCG@10": {
+          "nirmaan": 1.0,
+          "recency": 0.0,
+          "random": 0.0
+        }
+      },
+      "Cloud/DevOps": {
+        "relevant_in_catalog": 5,
+        "P@10": {
+          "nirmaan": 0.5,
+          "recency": 0.1,
+          "random": 0.0
+        },
+        "NDCG@10": {
+          "nirmaan": 0.9330795243082164,
+          "recency": 0.21398626473452756,
+          "random": 0.0
+        }
+      },
+      "Data analyst": {
+        "relevant_in_catalog": 7,
+        "P@10": {
+          "nirmaan": 0.5,
+          "recency": 0.1,
+          "random": 0.1
+        },
+        "NDCG@10": {
+          "nirmaan": 0.8104616303452686,
+          "recency": 0.09162544430476362,
+          "random": 0.08274602130532004
+        }
+      }
+    },
+    "mean": {
+      "P@10": {
+        "nirmaan": 0.58,
+        "recency": 0.06000000000000001,
+        "random": 0.08
+      },
+      "NDCG@10": {
+        "nirmaan": 0.9077413814269788,
+        "recency": 0.0802144284257517,
+        "random": 0.06947324880655167
+      }
+    }
+  },
+  "recommender_deterministic": true
+}
+exit 0

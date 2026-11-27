@@ -1,0 +1,271 @@
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 21356.14it/s]
+
+[WebServer] INFO:     Started server process [59429]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+
+Running 248 tests using 1 worker
+
+[1/248] [chromium] › e2e/a11y.spec.ts:25:84 › public pages › axe: /
+[2/248] [chromium] › e2e/a11y.spec.ts:25:84 › public pages › axe: /pricing
+[3/248] [chromium] › e2e/a11y.spec.ts:25:84 › public pages › axe: /login
+[4/248] [chromium] › e2e/a11y.spec.ts:25:84 › public pages › axe: /register
+[5/248] [chromium] › e2e/a11y.spec.ts:25:84 › public pages › axe: /forgot-password
+[6/248] [chromium] › e2e/a11y.spec.ts:26:3 › public pages › axe: pricing in dark mode
+[7/248] [chromium] › e2e/a11y.spec.ts:27:3 › public pages › axe: landing in dark mode
+[8/248] [chromium] › e2e/a11y.spec.ts:28:3 › public pages › keyboard: skip link is reachable and login is operable without a mouse
+[9/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /dashboard
+[10/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /opportunities
+[11/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /saved
+[12/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /organizations
+[13/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /applications
+[14/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /smart-alerts
+[15/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /notifications
+[16/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /activity
+[17/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /team-builder
+[18/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /originality
+[19/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /originality/history
+[20/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /profile
+[21/248] [chromium] › e2e/a11y.spec.ts:42:5 › student pages › axe: /settings
+[22/248] [chromium] › e2e/a11y.spec.ts:44:3 › student pages › axe: opportunity detail, compare, organization
+[23/248] [chromium] › e2e/a11y.spec.ts:53:3 › student pages › axe: open dialogs (new alert, command palette, mobile menu)
+[24/248] [chromium] › e2e/a11y.spec.ts:58:3 › student pages › axe: dark mode dashboard and opportunities
+[25/248] [chromium] › e2e/a11y.spec.ts:65:3 › staff pages › axe: reviewer queue, review detail
+[26/248] [chromium] › e2e/a11y.spec.ts:72:3 › staff pages › axe: admin
+[27/248] [chromium] › e2e/applications-alerts.spec.ts:5:1 › application: track → status → notes/reminder → real timeline → remove
+[28/248] [chromium] › e2e/applications-alerts.spec.ts:34:1 › smart alert: create → check now → notification → read state → preferences
+[29/248] [chromium] › e2e/auth.spec.ts:7:3 › sign up → onboarding → dashboard › a new student signs up, finishes onboarding and lands on a personalised dashboard
+[30/248] [chromium] › e2e/auth.spec.ts:39:3 › sign up → onboarding → dashboard › signup with an already-registered email says so
+[31/248] [chromium] › e2e/auth.spec.ts:47:3 › sign up → onboarding → dashboard › email verification: an unconfirmed signup is told to check their inbox, and cannot log in yet
+[32/248] [chromium] › e2e/auth.spec.ts:60:3 › login, sessions, logout › wrong password shows a friendly error; correct one lands on the dashboard and survives a reload
+[33/248] [chromium] › e2e/auth.spec.ts:68:3 › login, sessions, logout › form validation happens before any request
+[34/248] [chromium] › e2e/auth.spec.ts:72:3 › login, sessions, logout › protected pages redirect to login and return you after signing in (deep link)
+[35/248] [chromium] › e2e/auth.spec.ts:78:3 › login, sessions, logout › logging out ends the session everywhere (server-side revocation)
+[36/248] [chromium] › e2e/auth.spec.ts:89:3 › login, sessions, logout › a session whose tokens are both dead is sent back to login; a bad access token alone is silently refreshed
+[37/248] [chromium] › e2e/auth.spec.ts:105:3 › Google sign-in › is disabled — never faked — when the Supabase project has no Google provider
+[38/248] [chromium] › e2e/auth.spec.ts:110:3 › Google sign-in › when the provider is enabled, the button starts the real OAuth redirect (no password is ever requested)
+[39/248] [chromium] › e2e/auth.spec.ts:120:3 › Google sign-in › the OAuth callback surfaces a provider error instead of hanging
+[40/248] [chromium] › e2e/auth.spec.ts:126:1 › forgot password never reveals whether an account exists
+[41/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /favicon.svg is served as a valid SVG
+[42/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /brand/nirmaan-logo.svg is served as a valid SVG
+[43/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /brand/nirmaan-logo-light.svg is served as a valid SVG
+[44/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /brand/nirmaan-logo-compact.svg is served as a valid SVG
+[45/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /brand/nirmaan-logo-compact-light.svg is served as a valid SVG
+[46/248] [chromium] › e2e/brand.spec.ts:41:26 › assets & metadata › /brand/nirmaan-mark.svg is served as a valid SVG
+[47/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /favicon-16.png is a 16x16 PNG
+[48/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /favicon-32.png is a 32x32 PNG
+[49/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /apple-touch-icon.png is a 180x180 PNG
+[50/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /icon-192.png is a 192x192 PNG
+[51/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /icon-512.png is a 512x512 PNG
+[52/248] [chromium] › e2e/brand.spec.ts:45:34 › assets & metadata › /brand/og-image.png is a 1200x630 PNG
+[53/248] [chromium] › e2e/brand.spec.ts:49:3 › assets & metadata › the web manifest names the app and points at real icons
+[54/248] [chromium] › e2e/brand.spec.ts:54:3 › assets & metadata › title, description, icons and social tags all say NIRMAAN — Discover, Validate, Build
+[55/248] [chromium] › e2e/brand.spec.ts:67:3 › assets & metadata › no old branding survives: no competing tagline, no Vite starter icon
+[56/248] [chromium] › e2e/brand.spec.ts:76:5 › public pages › landing + login + register at 1440px: logos undistorted, inside the viewport, no horizontal scroll
+[57/248] [chromium] › e2e/brand.spec.ts:76:5 › public pages › landing + login + register at 1280px: logos undistorted, inside the viewport, no horizontal scroll
+[58/248] [chromium] › e2e/brand.spec.ts:76:5 › public pages › landing + login + register at 1024px: logos undistorted, inside the viewport, no horizontal scroll
+[59/248] [chromium] › e2e/brand.spec.ts:76:5 › public pages › landing + login + register at 768px: logos undistorted, inside the viewport, no horizontal scroll
+[60/248] [chromium] › e2e/brand.spec.ts:76:5 › public pages › landing + login + register at 375px: logos undistorted, inside the viewport, no horizontal scroll
+[61/248] [chromium] › e2e/brand.spec.ts:92:3 › public pages › the landing navbar shows the compact lockup and the footer the full one
+[62/248] [chromium] › e2e/brand.spec.ts:101:5 › public pages › the wordmark stays legible in the light theme (contrast >= 4.5:1 on the landing page, login and hero)
+[63/248] [chromium] › e2e/brand.spec.ts:101:5 › public pages › the wordmark stays legible in the dark theme (contrast >= 4.5:1 on the landing page, login and hero)
+[64/248] [chromium] › e2e/brand.spec.ts:116:3 › signed-in app shell › desktop sidebar: compact lockup linking to the dashboard; collapsing swaps it for the mark alone
+[65/248] [chromium] › e2e/brand.spec.ts:132:5 › signed-in app shell › dashboard at 1440px: shell logo undistorted, no horizontal scroll
+[66/248] [chromium] › e2e/brand.spec.ts:132:5 › signed-in app shell › dashboard at 1280px: shell logo undistorted, no horizontal scroll
+[67/248] [chromium] › e2e/brand.spec.ts:132:5 › signed-in app shell › dashboard at 1024px: shell logo undistorted, no horizontal scroll
+[68/248] [chromium] › e2e/brand.spec.ts:132:5 › signed-in app shell › dashboard at 768px: shell logo undistorted, no horizontal scroll
+[69/248] [chromium] › e2e/brand.spec.ts:132:5 › signed-in app shell › dashboard at 375px: shell logo undistorted, no horizontal scroll
+[70/248] [chromium] › e2e/brand.spec.ts:145:5 › onboarding › onboarding at 1440px: compact lockup above the progress bar, nothing overflows
+[71/248] [chromium] › e2e/brand.spec.ts:145:5 › onboarding › onboarding at 768px: compact lockup above the progress bar, nothing overflows
+[72/248] [chromium] › e2e/brand.spec.ts:145:5 › onboarding › onboarding at 375px: compact lockup above the progress bar, nothing overflows
+[73/248] [chromium] › e2e/brand.spec.ts:155:1 › the 404 page carries the full lockup
+[74/248] [chromium] › e2e/chat.spec.ts:39:1 › the disclosure names Google Gemini and explains the free-tier data use, and the panel is still accessible
+[75/248] [chromium] › e2e/chat.spec.ts:48:1 › the launcher is absent when the API says the assistant is off
+[76/248] [chromium] › e2e/chat.spec.ts:54:1 › ask → streamed answer; the request carries the bearer token and only the conversation
+[77/248] [chromium] › e2e/chat.spec.ts:67:1 › a server error event and a failed request each show a safe message, and Retry recovers
+[78/248] [chromium] › e2e/chat.spec.ts:83:1 › model output is shown as text, never as HTML
+[79/248] [chromium] › e2e/chat.spec.ts:93:1 › keyboard: open from the launcher, focus stays in the dialog, Escape closes and returns focus
+[80/248] [chromium] › e2e/chat.spec.ts:102:1 › the conversation lives in memory only: no chat keys or content in storage or cookies, gone after a reload
+[81/248] [chromium] › e2e/chat.spec.ts:123:3 › accessibility (axe) › panel: empty, conversation and error states
+[82/248] [chromium] › e2e/chat.spec.ts:131:3 › accessibility (axe) › panel in dark mode
+[83/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 320px › launcher clears the bottom nav, and the panel fits with the composer reachable (anthropic)
+[84/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 320px › launcher clears the bottom nav, and the panel fits with the composer reachable (gemini)
+[85/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 375px › launcher clears the bottom nav, and the panel fits with the composer reachable (anthropic)
+[86/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 375px › launcher clears the bottom nav, and the panel fits with the composer reachable (gemini)
+[87/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 414px › launcher clears the bottom nav, and the panel fits with the composer reachable (anthropic)
+[88/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 414px › launcher clears the bottom nav, and the panel fits with the composer reachable (gemini)
+[89/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 768px › launcher clears the bottom nav, and the panel fits with the composer reachable (anthropic)
+[90/248] [chromium] › e2e/chat.spec.ts:142:62 › viewport 768px › launcher clears the bottom nav, and the panel fits with the composer reachable (gemini)
+[91/248] [chromium] › e2e/discovery.spec.ts:6:3 › opportunity discovery › search → filter → detail → save, with filters living in the URL
+[92/248] [chromium] › e2e/discovery.spec.ts:41:3 › opportunity discovery › back button restores the previous filter state; Clear all resets it
+[93/248] [chromium] › e2e/discovery.spec.ts:49:3 › opportunity discovery › empty results explain themselves and offer a way out
+[94/248] [chromium] › e2e/discovery.spec.ts:55:3 › opportunity discovery › sorting by fit is monotone and every score is explained
+[95/248] [chromium] › e2e/discovery.spec.ts:65:3 › opportunity discovery › detail shows the transparent fit breakdown and a why-not panel
+[96/248] [chromium] › e2e/discovery.spec.ts:74:3 › opportunity discovery › unknown opportunity id is a clear 404 state, not a crash
+[97/248] [chromium] › e2e/discovery.spec.ts:80:3 › opportunity discovery › compare 2–4: strongest match is computed from real fit
+[98/248] [chromium] › e2e/discovery.spec.ts:92:3 › opportunity discovery › pagination keeps the page in the URL
+[99/248] [chromium] › e2e/originality.spec.ts:8:1 › opportunity → validate idea → originality result → history → detail → delete
+[WebServer] Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+
+[WebServer] Loading weights: 100%|██████████| 103/103 [00:00<00:00, 23094.91it/s]
+
+[100/248] [chromium] › e2e/originality.spec.ts:39:1 › a near-duplicate is flagged, queued for human review and notified
+[101/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 320px › public /
+[102/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 320px › public /pricing
+[103/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 320px › public /login
+[104/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 320px › public /register
+[105/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /dashboard
+[106/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /opportunities
+[107/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /team-builder
+[108/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /applications
+[109/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /originality
+[110/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /smart-alerts
+[111/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /profile
+[112/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /settings
+[113/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /notifications
+[114/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 320px › signed in › /organizations
+[115/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 320px › signed in › detail + compare + dialogs fit
+[116/248] [chromium] › e2e/responsive.spec.ts:29:20 › viewport 320px › signed in › mobile navigation reaches every area and targets are ≥ 44px
+[117/248] [chromium] › e2e/responsive.spec.ts:37:21 › viewport 320px › signed in › mobile filters open in a dialog and apply
+[118/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 375px › public /
+[119/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 375px › public /pricing
+[120/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 375px › public /login
+[121/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 375px › public /register
+[122/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /dashboard
+[123/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /opportunities
+[124/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /team-builder
+[125/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /applications
+[126/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /originality
+[127/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /smart-alerts
+[128/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /profile
+[129/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /settings
+[130/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /notifications
+[131/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 375px › signed in › /organizations
+[132/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 375px › signed in › detail + compare + dialogs fit
+[133/248] [chromium] › e2e/responsive.spec.ts:29:20 › viewport 375px › signed in › mobile navigation reaches every area and targets are ≥ 44px
+[134/248] [chromium] › e2e/responsive.spec.ts:37:21 › viewport 375px › signed in › mobile filters open in a dialog and apply
+[135/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 414px › public /
+[136/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 414px › public /pricing
+[137/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 414px › public /login
+[138/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 414px › public /register
+[139/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /dashboard
+[140/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /opportunities
+[141/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /team-builder
+[142/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /applications
+[143/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /originality
+[144/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /smart-alerts
+[145/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /profile
+[146/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /settings
+[147/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /notifications
+[148/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 414px › signed in › /organizations
+[149/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 414px › signed in › detail + compare + dialogs fit
+[150/248] [chromium] › e2e/responsive.spec.ts:29:20 › viewport 414px › signed in › mobile navigation reaches every area and targets are ≥ 44px
+[151/248] [chromium] › e2e/responsive.spec.ts:37:21 › viewport 414px › signed in › mobile filters open in a dialog and apply
+[152/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 768px › public /
+[153/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 768px › public /pricing
+[154/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 768px › public /login
+[155/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 768px › public /register
+[156/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /dashboard
+[157/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /opportunities
+[158/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /team-builder
+[159/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /applications
+[160/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /originality
+[161/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /smart-alerts
+[162/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /profile
+[163/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /settings
+[164/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /notifications
+[165/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 768px › signed in › /organizations
+[166/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 768px › signed in › detail + compare + dialogs fit
+[167/248] [chromium] › e2e/responsive.spec.ts:37:21 › viewport 768px › signed in › mobile filters open in a dialog and apply
+[168/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1024px › public /
+[169/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1024px › public /pricing
+[170/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1024px › public /login
+[171/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1024px › public /register
+[172/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /dashboard
+[173/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /opportunities
+[174/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /team-builder
+[175/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /applications
+[176/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /originality
+[177/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /smart-alerts
+[178/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /profile
+[179/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /settings
+[180/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /notifications
+[181/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1024px › signed in › /organizations
+[182/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 1024px › signed in › detail + compare + dialogs fit
+[183/248] [chromium] › e2e/responsive.spec.ts:36:22 › viewport 1024px › signed in › desktop shows the sidebar and filters
+[184/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1280px › public /
+[185/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1280px › public /pricing
+[186/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1280px › public /login
+[187/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1280px › public /register
+[188/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /dashboard
+[189/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /opportunities
+[190/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /team-builder
+[191/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /applications
+[192/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /originality
+[193/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /smart-alerts
+[194/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /profile
+[195/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /settings
+[196/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /notifications
+[197/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1280px › signed in › /organizations
+[198/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 1280px › signed in › detail + compare + dialogs fit
+[199/248] [chromium] › e2e/responsive.spec.ts:36:22 › viewport 1280px › signed in › desktop shows the sidebar and filters
+[200/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1440px › public /
+[201/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1440px › public /pricing
+[202/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1440px › public /login
+[203/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1440px › public /register
+[204/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /dashboard
+[205/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /opportunities
+[206/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /team-builder
+[207/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /applications
+[208/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /originality
+[209/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /smart-alerts
+[210/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /profile
+[211/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /settings
+[212/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /notifications
+[213/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1440px › signed in › /organizations
+[214/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 1440px › signed in › detail + compare + dialogs fit
+[215/248] [chromium] › e2e/responsive.spec.ts:36:22 › viewport 1440px › signed in › desktop shows the sidebar and filters
+[216/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1920px › public /
+[217/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1920px › public /pricing
+[218/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1920px › public /login
+[219/248] [chromium] › e2e/responsive.spec.ts:17:29 › viewport 1920px › public /register
+[220/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /dashboard
+[221/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /opportunities
+[222/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /team-builder
+[223/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /applications
+[224/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /originality
+[225/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /smart-alerts
+[226/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /profile
+[227/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /settings
+[228/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /notifications
+[229/248] [chromium] › e2e/responsive.spec.ts:20:31 › viewport 1920px › signed in › /organizations
+[230/248] [chromium] › e2e/responsive.spec.ts:21:7 › viewport 1920px › signed in › detail + compare + dialogs fit
+[231/248] [chromium] › e2e/responsive.spec.ts:36:22 › viewport 1920px › signed in › desktop shows the sidebar and filters
+[232/248] [chromium] › e2e/resume-layout.spec.ts:72:5 › resume review layout — profile dialog › fits at 1440px: nothing escapes, footer stays reachable
+[233/248] [chromium] › e2e/resume-layout.spec.ts:72:5 › resume review layout — profile dialog › fits at 1280px: nothing escapes, footer stays reachable
+[234/248] [chromium] › e2e/resume-layout.spec.ts:72:5 › resume review layout — profile dialog › fits at 1024px: nothing escapes, footer stays reachable
+[235/248] [chromium] › e2e/resume-layout.spec.ts:72:5 › resume review layout — profile dialog › fits at 768px: nothing escapes, footer stays reachable
+[236/248] [chromium] › e2e/resume-layout.spec.ts:72:5 › resume review layout — profile dialog › fits at 390px: nothing escapes, footer stays reachable
+[237/248] [chromium] › e2e/resume-layout.spec.ts:97:3 › resume review layout — profile dialog › the active choice and the footer summary always agree
+[238/248] [chromium] › e2e/resume-layout.spec.ts:113:3 › resume review layout — profile dialog › keyboard: every choice is reachable and shows a visible focus ring
+[239/248] [chromium] › e2e/resume-layout.spec.ts:126:5 › resume review layout — onboarding step › fits at 1440px inside the onboarding card
+[240/248] [chromium] › e2e/resume-layout.spec.ts:126:5 › resume review layout — onboarding step › fits at 1024px inside the onboarding card
+[241/248] [chromium] › e2e/resume-layout.spec.ts:126:5 › resume review layout — onboarding step › fits at 390px inside the onboarding card
+[242/248] [chromium] › e2e/resume.spec.ts:7:1 › resume upload → extraction → confirmation → profile (nothing is written before confirming)
+[243/248] [chromium] › e2e/resume.spec.ts:33:1 › a disguised executable is rejected with a clear message
+[244/248] [chromium] › e2e/review-admin.spec.ts:3:1 › reviewer: queue → evidence → decision (note required) → student sees it → admin sees the audit record
+[245/248] [chromium] › e2e/review-admin.spec.ts:31:1 › students cannot reach reviewer or admin areas — and neither can reviewers reach admin
+[246/248] [chromium] › e2e/review-admin.spec.ts:44:1 › admin: role changes are confirmed, applied by the server and audited
+[247/248] [chromium] › e2e/team.spec.ts:3:1 › opportunity → build team → invite → the invitee accepts
+[248/248] [chromium] › e2e/team.spec.ts:41:3 › team consent & safety › manual skills work, an empty request is refused, and nobody appears without opting in
+  Slow test file: [chromium] › e2e/responsive.spec.ts (5.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  248 passed (10.3m)
+e2e exit=0
