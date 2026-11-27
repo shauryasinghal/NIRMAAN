@@ -33,6 +33,10 @@ export function friendlyAuthError(message: string): string {
   if (m.includes('already registered') || m.includes('already been registered')) return 'An account with this email already exists. Try logging in instead.'
   if (m.includes('rate limit') || m.includes('too many')) return 'Too many attempts. Please wait a minute and try again.'
   if (m.includes('password') && (m.includes('weak') || m.includes('at least') || m.includes('pwned') || m.includes('compromised'))) return message
+  if (m.includes('provider is not enabled') || m.includes('unsupported provider')) return "Google sign-in isn't enabled for this project yet. Please use email and password."
+  if (m.includes('access_denied') || m.includes('denied access') || m.includes('user denied')) return 'Google sign-in was cancelled, so nothing was changed. You can try again or use email and password.'
+  if (m.includes('flow state') || m.includes('code verifier') || m.includes('bad_oauth') || m.includes('invalid_grant') || m.includes('exchange')) return 'That Google sign-in link expired or was already used. Please start again from the log in page.'
+  if (m.includes('redirect') && m.includes('not allowed')) return "This address isn't an allowed sign-in redirect for the project. Ask the site owner to add it in Supabase."
   if (m.includes('fetch') || m.includes('network')) return "We couldn't reach the sign-in service. Check your connection and try again."
   return message
 }

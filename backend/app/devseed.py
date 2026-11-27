@@ -4,12 +4,22 @@
     python -m app.devseed catalog           # demo opportunities via the real ingestion pipeline
     python -m app.devseed students          # demo students (LOCAL stub auth only — refuses to touch a real Supabase project)
     python -m app.devseed all
+
+SAFETY: demo data may only be written to a LOCAL database. If DATABASE_URL or SUPABASE_URL points anywhere else (e.g. the hosted
+Supabase project in backend/.env) every command refuses unless you explicitly opt in on the command line:
+
+    SEED_DEMO_DATA=true python -m app.devseed catalog
+
+The opt-in is read from the process environment only — it is deliberately not a setting, so it can never be persisted in .env.
+Seeding is idempotent (same source + external id => update in place), and everything written is labelled demo data.
 """
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from .core.config import get_settings
 from .db.session import Db, get_engine, open_db, vector_literal
@@ -19,8 +29,32 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 CORPUS_SOURCE = "Demo data (reference corpus)"
 
 
+LOCAL_HOSTS = {"", "localhost", "127.0.0.1", "::1"}
+
+
+def _is_local(host: str | None) -> bool:
+    return (host or "") in LOCAL_HOSTS or (host or "").startswith("/")      # unix-socket paths are local too
+
+
+def assert_demo_seed_allowed() -> str:
+    """Refuse to write demo data to anything that is not clearly local unless SEED_DEMO_DATA=true was passed explicitly.
+    Returns a short, secret-free description of the target (host only — never credentials)."""
+    s = get_settings()
+    if s.is_production:
+        raise SystemExit("devseed never runs in production")
+    db_host = urlsplit(s.sqlalchemy_url).hostname
+    auth_host = urlsplit(s.supabase_url).hostname if s.supabase_url else None
+    remote = [h for h in (db_host, auth_host) if h and not _is_local(h)]
+    target = f"database host '{db_host or 'local socket'}'" + (f", auth host '{auth_host}'" if auth_host else "")
+    if remote and os.environ.get("SEED_DEMO_DATA", "").lower() != "true":
+        raise SystemExit(f"Refusing to seed demo data: {target} is not local (this looks like a real Supabase project). "
+                         "If you really intend to add clearly-labelled DEMO rows there, re-run with SEED_DEMO_DATA=true on the command line.")
+    return target
+
+
 def seed_reference_ideas(db: Db, embedder=None) -> int:
     """Idempotent: skips titles already present."""
+    assert_demo_seed_allowed()
     embedder = embedder or eng.get_embedder()
     items = json.loads((FIXTURES / "ideas.reference.dev.json").read_text())
     with db.service():
@@ -36,6 +70,7 @@ def seed_reference_ideas(db: Db, embedder=None) -> int:
 
 
 def seed_catalog(db: Db) -> dict:
+    assert_demo_seed_allowed()
     from .ingestion.pipeline import run_source
     from .ingestion.sources.fixture import FixtureSource
     s = run_source(db, FixtureSource())
@@ -79,9 +114,8 @@ def seed_students(n: int = 24) -> int:
 
 
 if __name__ == "__main__":
-    if get_settings().is_production:
-        raise SystemExit("devseed never runs in production")
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
+    print("devseed target:", assert_demo_seed_allowed())
     if what in ("catalog", "all"):
         with open_db("service_role") as db: print("catalog", seed_catalog(db))
     if what in ("corpus", "all"):

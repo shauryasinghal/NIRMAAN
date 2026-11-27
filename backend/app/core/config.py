@@ -63,6 +63,17 @@ class Settings(BaseSettings):
     chat_rate_limit_per_minute: int = Field(8, ge=1)
     chat_daily_limit: int = Field(200, ge=1)
 
+    # ── Originality: Gemini deep analysis (stage 3 of the originality pipeline; backend only). OFF unless ORIGINALITY_AI_ENABLED=true AND GEMINI_API_KEY is set. ──
+    # The MiniLM + pgvector check never depends on this: when Gemini is off or fails, the semantic result stands and the AI stage reports itself unavailable.
+    originality_ai_enabled: bool = False
+    originality_ai_model: str = "gemini-3.5-flash-lite"              # stable, "recommended for new projects" on the Gemini models page (checked 2026-11-14); independent of the chat model
+    originality_ai_timeout_seconds: int = Field(45, ge=5, le=180)    # one Gemini request (the SDK gets it in milliseconds)
+    originality_ai_attempts: int = Field(3, ge=1, le=5)              # total tries: 429 / 5xx / timeouts / malformed JSON are retried with exponential backoff, 4xx key errors are not
+    originality_ai_max_output_tokens: int = Field(4096, ge=512, le=16384)
+    originality_ai_max_matches: int = Field(5, ge=1, le=5)           # reference matches sent to Gemini (never peer submissions)
+    originality_ai_rate_limit_per_minute: int = Field(4, ge=1)       # per student
+    originality_ai_daily_limit: int = Field(40, ge=1)
+
     log_level: str = "INFO"
     log_json: bool = True
 
@@ -97,6 +108,11 @@ class Settings(BaseSettings):
         return {"anthropic": "Anthropic", "gemini": "Google Gemini"}[self.chat_provider]
 
     @property
+    def originality_ai_available(self) -> bool:
+        """Gemini deep analysis exists only when it was switched on AND a key is set — never half-enabled."""
+        return self.originality_ai_enabled and bool(self.gemini_api_key.get_secret_value().strip())
+
+    @property
     def chat_available(self) -> bool:
         """The assistant exists only when it was switched on AND the selected provider has a key — never half-enabled."""
         return self.chat_enabled and bool(self.chat_api_key.get_secret_value().strip())
@@ -124,6 +140,8 @@ class Settings(BaseSettings):
                 problems.append("SUPABASE_JWT_SECRET looks too short")
             if self.chat_enabled and not self.chat_api_key.get_secret_value().strip():
                 problems.append(f"{'GEMINI_API_KEY' if self.chat_provider == 'gemini' else 'ANTHROPIC_API_KEY'} is required when CHAT_ENABLED=true and CHAT_PROVIDER={self.chat_provider}")
+            if self.originality_ai_enabled and not self.gemini_api_key.get_secret_value().strip():
+                problems.append("GEMINI_API_KEY is required when ORIGINALITY_AI_ENABLED=true")
             if problems:
                 raise ValueError("Unsafe production configuration: " + "; ".join(problems))
         return self

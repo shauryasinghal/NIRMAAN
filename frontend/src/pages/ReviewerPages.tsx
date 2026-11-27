@@ -8,6 +8,7 @@ import { Textarea } from '../components/ui/Input'
 import { Card } from '../components/ui/Card'
 import { Badge, EmptyState, ErrorState, Skeleton } from '../components/ui/primitives'
 import { Dialog, Meter, Notice, PageHeader, Tabs } from '../components/ui/kit'
+import { AiAnalysisView } from '../components/originality/AiAnalysisView'
 import { reviewerService } from '../lib/services'
 import { formatDate, timeAgo, titleCase } from '../lib/format'
 import type { ApiError } from '../lib/api'
@@ -66,6 +67,9 @@ export function ReviewerDetailPage() {
           {m.overlap.sharedPhrases && m.overlap.sharedPhrases.length > 0 && <p className="text-xs mt-2 text-muted">Shared phrases: {m.overlap.sharedPhrases.join(' · ')}</p>}
           {m.overlap.sharedTerms && m.overlap.sharedTerms.length > 0 && <p className="text-xs mt-2 text-muted">Shared terms: {m.overlap.sharedTerms.join(', ')}</p>}
           {!m.shownToSubmitter && <p className="text-[11px] text-warning-500 mt-1.5">Hidden from the submitter (another student's work).</p>}</li>))}</ol></Card>
+      {r.aiAnalysis && r.aiAnalysis.status !== 'disabled' && r.aiAnalysis.status !== 'pending' && (
+        <div className="mb-5"><AiAnalysisView a={r.aiAnalysis} mine={{ title: r.idea.title, description: r.idea.description, sections: r.sections }} compact />
+          <p className="text-xs text-muted mt-2">The AI assessment is additional evidence requested by the submitter. It is advisory only and never decides a review.</p></div>)}
       <Card className="p-5 mb-5"><h2 className="text-sm font-semibold mb-2">Submitter's history</h2>{Object.keys(r.submitterHistory).length === 0 ? <p className="text-sm text-muted">No other ideas.</p> : <div className="flex flex-wrap gap-2">{Object.entries(r.submitterHistory).map(([s, n]) => <Badge key={s}>{titleCase(s)}: {n}</Badge>)}</div>}</Card>
       <Card className="p-5 mb-5"><h2 className="text-sm font-semibold mb-3">Decision history</h2>{r.decisions.length === 0 ? <p className="text-sm text-muted">No decisions yet.</p> : <ol className="space-y-3">{r.decisions.map((d, i) => <li key={i} className="text-sm"><Badge>{titleCase(d.decision)}</Badge> <span className="text-xs text-muted ml-2">{d.reviewer} · {formatDate(d.at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>{d.note && <p className="mt-1 italic text-muted">“{d.note}”</p>}</li>)}</ol>}</Card>
 

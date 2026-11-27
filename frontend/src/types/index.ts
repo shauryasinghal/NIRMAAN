@@ -150,8 +150,36 @@ export interface IdeaResult {
   coverage?: { words: number; sections: number; complete: boolean; tokens?: number; limit?: number; verified?: 'tokenizer' | 'estimate'; sectionsNeeded?: number } | null; duplicateSignal?: 'exact' | 'near_duplicate' | null
   display?: { floor: number | null; hiddenWeakMatches: number }; previousChecks?: PreviousCheck[]
   review: { state: string; decidedAt: string | null; decisions: { decision: string; note: string | null; at: string }[] } | null
+  sections?: IdeaSections | null; aiAnalysis?: AiAnalysis
 }
-export interface IdeaHistoryItem { id: string; title: string; status: string; topSimilarity: number | null; level: string | null; createdAt: string; reviewState: string | null }
+export interface IdeaHistoryItem { id: string; title: string; status: string; topSimilarity: number | null; level: string | null; createdAt: string; reviewState: string | null; aiStatus?: AiStatus | null }
+
+// ── Originality: structured input (stage 1) and the Gemini deep-analysis envelope (stages 3–5) ──
+export type IdeaSectionKey = 'problem_statement' | 'objectives' | 'proposed_solution' | 'technologies' | 'additional_context'
+export type IdeaSections = Partial<Record<IdeaSectionKey, string>>
+export interface IdeaCheckInput { title: string; description: string; domain?: string | null; opportunityId?: string | null; problemStatement?: string | null; objectives?: string | null; proposedSolution?: string | null; technologies?: string | null; additionalContext?: string | null }
+export type AiLevel = 'low' | 'moderate' | 'high'
+export type AiRelationship = 'similar_problem_different_solution' | 'similar_solution_different_implementation' | 'similar_functionality_and_approach' | 'potentially_substantial_overlap' | 'largely_unrelated'
+export interface AiDimension { level: AiLevel; explanation: string }
+export interface AiMatchAssessment {
+  id: string; title: string; similarity: number; relationship: AiRelationship; relationshipLabel: string
+  problemSimilarity: AiDimension; solutionSimilarity: AiDimension; functionalSimilarity: AiDimension; targetUserSimilarity: AiDimension; technicalApproachSimilarity: AiDimension
+  commonFeatures: string[]; uniqueToSubmission: string[]; meaningfulDifferences: string[]; potentiallyReusedConcepts: string[]; summary: string
+}
+export type AiSuggestionKind = 'new_feature' | 'technical_approach' | 'target_users' | 'implementation' | 'use_case' | 'problem_approach'
+export interface AiSuggestion { kind: AiSuggestionKind; suggestion: string; rationale: string }
+export interface AiReport {
+  overallSummary: string; matches: AiMatchAssessment[]; uniqueContributions: string[]; potentialOverlapAreas: string[]; missingDifferentiators: string[]
+  suggestions: AiSuggestion[]; confidence: Confidence; limitations: string[]; matchesNotAssessed: string[]
+}
+export type AiStatus = 'pending' | 'completed' | 'unavailable' | 'skipped' | 'disabled'
+export interface AiAnalysis {
+  status: AiStatus; provider: string; model: string | null; disclaimer: string; generatedAt?: string; attempts?: number; durationMs?: number
+  error?: { code: string; message: string }; report?: AiReport
+  embedding?: { topSimilarity: number | null; band: { band: AiLevel; label: string; similarity: number } | null; thresholds: { review: number; related: number }; method: string }
+  inputs?: { matchesSent: number; matchIds: string[]; sections: string[]; peerSubmissionsSent: number }
+}
+export interface OriginalityStatus { semantic: { enabled: boolean; model: string; search: string; thresholds: { review: number; related: number } }; ai: { enabled: boolean; provider: string; model: string | null; disclaimer: string } }
 export type ReviewDecisionKind = 'approve' | 'request_changes' | 'escalate' | 'reject'
 export interface ReviewQueueItem { reviewId: string; state: 'pending' | 'escalated'; queuedAt: string; ideaId: string; title: string; description: string; topSimilarity: number | null; level: string | null; confidence: Confidence | null; isMine: boolean; decisions: number }
 export interface ReviewQueue { items: ReviewQueueItem[]; total: number; counts: Record<string, number>; page: number; pageSize: number }
@@ -161,6 +189,7 @@ export interface ReviewDetail {
   similarity: { top: number | null; confidence: Confidence | null; level: string | null; message: string | null; method: string | null; corpusSize: number | null; thresholds: { review: number; related: number } | null; disclaimer: string | null }
   matches: { id: string; kind: string; title: string; description: string; source: string | null; similarity: number; overlap: Partial<OverlapDims>; shownToSubmitter: boolean }[]
   submitterHistory: Record<string, number>; decisions: { decision: string; note: string | null; at: string; reviewer: string }[]
+  sections?: IdeaSections | null; aiAnalysis?: AiAnalysis
 }
 
 // ── Integrations / resume / admin ───────────────────────────────────────────────────────────

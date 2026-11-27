@@ -71,3 +71,44 @@ def install(monkeypatch, script=(), fail_on_call: BaseException | None = None) -
         return SimpleNamespace(aio=SimpleNamespace(models=models))
     monkeypatch.setattr(genai, "Client", fake_client)
     return inst
+
+
+# ── Synchronous `models.generate_content` (used by the originality deep-analysis client) ──────────────────────────────────────────────
+def json_response(payload, finish: str = "STOP", usage: tuple[int, int, int] | None = (120, 300, 0)) -> types.GenerateContentResponse:
+    """One complete (non-streamed) JSON answer, exactly as the SDK would build it: `.text` is the serialised document."""
+    import json as _json
+    text = payload if isinstance(payload, str) else _json.dumps(payload)
+    return chunk(text, finish=finish, usage=usage)
+
+
+class FakeSyncModels:
+    """`script` items are returned in order: a GenerateContentResponse is returned, a BaseException is raised. Runs out → the last item repeats."""
+    def __init__(self, script):
+        self.script, self.calls = list(script), []
+
+    def generate_content(self, *, model, contents, config):
+        self.calls.append({"model": model, "contents": contents, "config": config})
+        item = self.script.pop(0) if len(self.script) > 1 else self.script[0]
+        if isinstance(item, BaseException):
+            raise item
+        return item
+
+
+class InstalledSync:
+    def __init__(self, models: FakeSyncModels):
+        self.models, self.client_kwargs = models, {}
+
+    @property
+    def last(self) -> dict:
+        return self.models.calls[-1]
+
+
+def install_sync(monkeypatch, script) -> InstalledSync:
+    models = FakeSyncModels(script)
+    inst = InstalledSync(models)
+
+    def fake_client(**kwargs):
+        inst.client_kwargs = kwargs
+        return SimpleNamespace(models=models)
+    monkeypatch.setattr(genai, "Client", fake_client)
+    return inst

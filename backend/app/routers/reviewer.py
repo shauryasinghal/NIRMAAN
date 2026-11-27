@@ -11,6 +11,7 @@ from ..core.logging import get_logger
 from ..core.security import CurrentUser, get_db_reviewer, require_reviewer
 from ..db.session import Db
 from ..schemas.common import ApiModel
+from ..services import originality_ai
 from ..services.common import parse_uuid
 
 router = APIRouter(prefix="/api/reviewer", tags=["reviewer"])
@@ -62,6 +63,7 @@ def detail(review_id: str, user: CurrentUser = Depends(require_reviewer), db: Db
                            "corpusSize": a.get("corpusSize"), "thresholds": a.get("thresholds"), "disclaimer": a.get("disclaimer")},
             "matches": [{"id": m["id"], "kind": "reference" if m["kind"] == "reference" else ("owner's earlier check" if (m["overlap"] or {}).get("relation") == "own_previous" else "peer submission"), "title": m["title"], "description": m["description"], "source": m["source"],
                          "similarity": m["similarity"], "overlap": m["overlap"], "shownToSubmitter": m["visible_to_owner"]} for m in matches],
+            "sections": a.get("input") or None, "aiAnalysis": originality_ai.envelope_for(a.get("ai")),
             "submitterHistory": {row["status"]: row["n"] for row in history},
             "decisions": [{"decision": d["decision"], "note": d["note"], "at": d["created_at"], "reviewer": d["reviewer"]} for d in decisions],
             "canDecide": not (r["owner_id"] == user.id) and r["state"] != "decided" and (r["state"] != "escalated" or user.is_admin)}

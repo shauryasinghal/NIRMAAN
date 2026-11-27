@@ -76,6 +76,8 @@ def create_app() -> FastAPI:
         e = get_embedder()
         checks["embeddingModel"] = {"status": "loaded" if getattr(e, "_model", True) is not None else "lazy", "name": e.name, "dim": e.dim}
         checks["googleIntegrations"] = {"status": "enabled" if s.google_integrations_enabled else "disabled"}
+        cur = get_settings()        # read fresh: this flag can be toggled without rebuilding the app (tests do; operators may reload config)
+        checks["originalityAI"] = {"status": "enabled" if cur.originality_ai_available else "disabled", "model": cur.originality_ai_model if cur.originality_ai_available else None}
         return JSONResponse({"status": "ready" if ok else "not_ready", "checks": checks}, status_code=200 if ok else 503)
 
     return app

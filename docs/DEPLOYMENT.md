@@ -1,33 +1,10 @@
 # Deployment guide
 
-**Status: written and dry-run offline; nothing has been deployed and the hosted database has not been modified.**
-Do the steps in order. Every secret goes in the host's secret manager or a git-ignored `.env` — never in source.
+**Status (reviewed 2026-10-06):** deployment is not verified as live. The hosted Supabase project has all 21 repository migrations applied (read-only migration listing checked 2026-10-01). A separately approved demo seed on 2026-10-01 populated 64 demo opportunities, 28 demo organizations and 50 reference ideas; it did not change the three existing profiles or their profile data in the before/after check. No migration or deployment is part of this guide's current status.
 
-## 1. Supabase (database + auth)
+For a fresh local validation, use `supabase/tests/run.sh` and `supabase/tests/upgrade_test.sh`; these operate on local scratch databases. For future schema changes, review the migration, run both scripts, then use the normal reviewed deployment process. Do not replay the existing migrations or seed demo data into hosted environments as part of deployment.
 
-Project `nirmaan` (`kfdkesxvyugmwrutepjm`, ap-south-1) already exists with the first 8 migrations applied and 3 user accounts.
-
-**Before applying anything** (all already verified locally — rerun if migrations change):
-
-```bash
-supabase/tests/run.sh            # fresh DB → all migrations → 49 security checks
-supabase/tests/upgrade_test.sh   # hosted project's current state + real-looking data → new migrations → nothing lost
-```
-
-Catalog fingerprint comparison (read-only) showed my reconstruction of the 8 already-applied migrations matches the
-hosted schema exactly (columns, constraints, indexes, private functions, enums) with one cosmetic policy difference,
-`activities_insert`, normalised by the first new migration.
-
-**Apply the 13 new migrations** (`20260930090000` … `20260930091200`), in order — either
-`supabase db push` (CLI, project linked) or the MCP `apply_migration` tool, one file at a time. All are additive;
-none drops or truncates data. `20260930090800` relaxes two NOT NULL defaults; `20260930090000` normalises one policy.
-Afterwards run the Supabase advisors and confirm: RLS enabled on every table, no `rls_enabled_no_policy` findings.
-
-**Migration history.** The hosted project's 13 migrations were applied on 2026-09-30 through the MCP `apply_migration` tool, which stamps each with the
-*current time* instead of the filename version. That history was then reconciled with the supported CLI mechanism so `supabase db push` sees nothing pending:
-`supabase migration repair --status applied <the 13 filename versions>` followed by `--status reverted <the 13 stamped versions>`, then `supabase db push --dry-run`
-→ *"Remote database is up to date."* (`repair` edits only `supabase_migrations.schema_migrations`; it runs no SQL.) Prefer `supabase db push` for future migrations so the
-versions match the files from the start.
+**Hosted migration history:** all 21 versions from `20260919114229` through `20260930091200` were returned by the read-only Supabase migration listing on 2026-10-01. Recheck the remote list before any future migration; this document does not authorize applying SQL.
 
 **Dashboard settings (cannot be done from code):**
 
@@ -77,6 +54,7 @@ The variables `GOOGLE_CLIENT_ID/SECRET/REDIRECT_URI` in the API are for the **op
 | `FRONTEND_URL` | the frontend URL |
 | `CRON_SECRET` | long random string (for `POST /api/internal/jobs/{sql,alerts,ingest}` with `X-Cron-Secret`) |
 | `PRELOAD_EMBEDDING_MODEL` | `true` (loads MiniLM at startup; the weights are baked into the image) |
+| `GEMINI_API_KEY` + `ORIGINALITY_AI_ENABLED=true` | optional: switches on the Gemini deep-analysis stage of the originality checker (see [docs/ORIGINALITY_AI.md](ORIGINALITY_AI.md)). Backend only — never a `VITE_*` variable. Production refuses to start with the switch on and no key. `ORIGINALITY_AI_MODEL` picks the model (default `gemini-3.5-flash-lite`). |
 
 Health: `GET /health` (liveness, no dependencies) and `GET /ready` (database, pgvector, schema, auth config — no secrets in the output).
 The API runs behind one process-local rate limiter; for more than one instance swap `SlidingWindowLimiter` for Redis.
@@ -108,8 +86,8 @@ The API runs behind one process-local rate limiter; for more than one instance s
 - [ ] Google provider enabled and one real Google sign-in done (the automated suite cannot do this)
 - [ ] `python -m app.devseed catalog` is **not** run in production; enable a real source only after reviewing its terms/robots.txt
 - [ ] Sentry/log drain attached to the JSON logs (they are structured and secret-redacted)
+- [ ] If `ORIGINALITY_AI_ENABLED=true`: the Gemini key is on the intended billing tier (free-tier data may be used by Google), `/ready` shows `originalityAI: enabled`, and one synthetic idea has been run through the AI stage by hand
 
-## Not verified on the build machine
+## Not verified
 
-Docker image builds (`backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml`), the GitHub Actions workflow,
-Vercel/Render deployment, and anything involving real Google credentials or real email delivery.
+Docker image builds (`backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml`), Vercel/Render deployment, a complete real Google sign-in callback/session, and real email delivery. GitHub Actions did run successfully for `main` commit `8c13922` on 2026-10-01; that result does not validate later local changes.

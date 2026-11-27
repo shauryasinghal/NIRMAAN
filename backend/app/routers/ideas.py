@@ -1,46 +1,30 @@
 from __future__ import annotations
 
-import re
-from typing import Optional
+from fastapi import APIRouter, Depends, Query, Request, Response
 
-from fastapi import APIRouter, Depends, Response
-from pydantic import ConfigDict, Field, field_validator
-
-from ..core.errors import not_found
-from ..core.middleware import rate_limit
+from ..core.config import get_settings
+from ..core.errors import AppError, not_found
+from ..core.logging import get_logger
+from ..core.middleware import limiter, rate_limit
 from ..core.security import CurrentUser, get_db, require_student
 from ..db.session import Db
-from ..engines.originality import word_count
-from ..schemas.common import ApiModel
-from ..services import ideas as svc
+from ..schemas.originality import OriginalityCheckIn
+from ..services import ideas as svc, originality_ai
 from ..services.common import parse_uuid
 
 router = APIRouter(prefix="/api", tags=["originality"])
+log = get_logger("originality")
+
+CheckIn = OriginalityCheckIn      # the request model lives in schemas/originality.py; this name is kept for existing imports
 
 
-class CheckIn(ApiModel):
-    model_config = ConfigDict(extra="forbid", alias_generator=ApiModel.model_config["alias_generator"], populate_by_name=True)
-    title: str = Field(min_length=3, max_length=200)
-    description: str = Field(min_length=20, max_length=5000)
-    domain: Optional[str] = Field(None, max_length=80)
-    opportunity_id: Optional[str] = None
-
-    @field_validator("title", "description", "domain", mode="before")
-    @classmethod
-    def _clean(cls, v, info):
-        """Trim and drop control characters (NUL would make Postgres reject the row) BEFORE the length rules run, so whitespace-only text is rejected."""
-        if not isinstance(v, str):
-            return v
-        v = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", v).strip()
-        return v or (None if info.field_name == "domain" else "")
-
-    @field_validator("title", "description")
-    @classmethod
-    def _has_words(cls, v: str, info):
-        need = 1 if info.field_name == "title" else 3
-        if word_count(v) < need:     # Unicode-aware: a Chinese or Japanese sentence is many tokens, emoji/zero-width/punctuation-only text is none
-            raise ValueError("Please describe the idea in words." if need > 1 else "The title needs at least one letter or digit.")
-        return v
+@router.get("/originality/status", summary="Which stages of the originality pipeline are available on this server")
+def status(user: CurrentUser = Depends(require_student)):
+    s = get_settings()
+    # Model names are configuration, not secrets; the key never leaves the server. `provider` is the UI's data-use disclosure (who receives the text).
+    return {"semantic": {"enabled": True, "model": svc.eng.MODEL_TAG, "search": "pgvector-hnsw-cosine", "thresholds": {"review": s.similarity_review_threshold, "related": s.similarity_related_threshold}},
+            "ai": {"enabled": s.originality_ai_available, "provider": originality_ai.PROVIDER, "model": s.originality_ai_model if s.originality_ai_available else None,
+                   "disclaimer": originality_ai.AI_DISCLAIMER}}
 
 
 @router.post("/originality/check", status_code=201, summary="Analyse an idea against the comparison corpus (pgvector)",
@@ -49,7 +33,26 @@ def check(body: CheckIn, user: CurrentUser = Depends(require_student), db: Db = 
     opp = parse_uuid(body.opportunity_id, "opportunity") if body.opportunity_id else None
     if opp and not db.val("select 1 from public.opportunities where id = cast(:o as uuid)", o=opp):
         raise not_found("Opportunity")
-    return svc.check(db, user.id, body.title, body.description, body.domain, opp)
+    return svc.check(db, user.id, body.title, body.description, body.domain, opp, body.sections())
+
+
+def ai_gate(request: Request, user: CurrentUser = Depends(require_student)) -> CurrentUser:
+    """Per-user minute and day limits for the Gemini stage — counted only when the stage is actually on, so a disabled server never 429s."""
+    s = get_settings()
+    if not s.originality_ai_available:
+        return user
+    for key, limit, window in ((f"originality-ai:{user.id}", s.originality_ai_rate_limit_per_minute, 60), (f"originality-ai-day:{user.id}", s.originality_ai_daily_limit, 86400)):
+        ok, retry = limiter.hit(key, limit, window)
+        if not ok:
+            log.warning("rate limited", extra={"event": "rate_limited", "path": request.url.path})
+            raise AppError(429, "rate_limited", "You have run a lot of AI analyses. Please wait a bit and try again.", {"retryAfterSeconds": retry}, headers={"Retry-After": str(retry)})
+    return user
+
+
+@router.post("/ideas/{idea_id}/ai-analysis", summary="Stage 3: Gemini deep analysis of a checked idea (runs once; returns the stored report afterwards)")
+def ai_analysis(idea_id: str, force: bool = Query(False, description="Re-run even if a completed report exists"), user: CurrentUser = Depends(ai_gate)):
+    # No request-scoped DB dependency on purpose: the service opens two short transactions and holds no connection while the model runs.
+    return originality_ai.run(user.id, user.email, parse_uuid(idea_id, "idea"), force=force)
 
 
 @router.get("/ideas", summary="My checked ideas")
