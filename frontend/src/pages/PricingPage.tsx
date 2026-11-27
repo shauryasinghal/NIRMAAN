@@ -29,7 +29,7 @@ export function PricingPage() {
       </header>
       <main className="max-w-6xl mx-auto px-6 pt-6 sm:pt-10 pb-16">
         <h1 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">Plans that grow with you</h1>
-        <p className="text-center text-muted mt-3 max-w-xl mx-auto text-sm sm:text-base">Subscription pricing is coming soon. Nothing can be purchased yet, and no prices have been announced.</p>
+        <p className="text-center text-muted mt-3 max-w-xl mx-auto text-sm sm:text-base">Simple pricing in Indian rupees. Start free, no card needed.</p>
         {/* Both switches share one row (they wrap on narrow screens), so the billing period sits directly above the cards it applies to. */}
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 mt-6">
           <SegmentedControl label="Plan audience" value={audience} onChange={setAudience} options={[{ id: 'individual', label: 'Individual' }, { id: 'team', label: 'Team and Enterprise' }]} />
@@ -37,16 +37,16 @@ export function PricingPage() {
         </div>
         {audience === 'individual' ? (
           <div className="grid gap-5 lg:gap-6 mt-6 md:grid-cols-3 items-stretch">
-            {PLANS.map((p) => <PlanCard key={p.id} plan={p} billing={billing} />)}
+            {PLANS.map((p) => <PlanCard key={p.id} plan={p} billing={billing} isAuthenticated={isAuthenticated} />)}
           </div>
         ) : (
           <div className="max-w-2xl mx-auto mt-8">
-            <Notice tone="accent" title="Team and Enterprise plans are not defined yet">
-              There are no team or enterprise plans, prices or features to show. Individual accounts and Team Builder work today; this page will be updated when plans are announced.
+            <Notice tone="accent" title="Team and Enterprise">
+              Team Builder is included with every individual account. Organisation-wide Team and Enterprise plans are priced to fit your team, so they are not listed here.
             </Notice>
           </div>
         )}
-        <p className="text-center text-xs text-muted mt-8">Plans and prices are subject to change. Everything listed under Free is available to every NIRMAAN account today.</p>
+        <p className="text-center text-xs text-muted mt-8">Prices are in INR. Plans and prices are subject to change.</p>
       </main>
     </div>
   )
